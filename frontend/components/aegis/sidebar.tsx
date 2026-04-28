@@ -22,7 +22,11 @@ interface SidebarProps {
   onChange: (k: TabKey) => void
 }
 
-const NAV: { key: TabKey; label: string; icon: React.ComponentType<{ className?: string }> }[] = [
+const NAV: {
+  key: TabKey
+  label: string
+  icon: React.ComponentType<{ className?: string; strokeWidth?: number }>
+}[] = [
   { key: "match-hub", label: "Match Hub", icon: Radar },
   { key: "vault", label: "The Vault", icon: Vault },
   { key: "sentinel", label: "Live Sentinel", icon: Activity },

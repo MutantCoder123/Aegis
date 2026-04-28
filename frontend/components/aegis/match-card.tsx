@@ -3,6 +3,7 @@
 import * as React from "react"
 import { GlowCard } from "./glow-card"
 import type { Match } from "@/lib/aegis-data"
+import { useBroadcaster } from "@/lib/broadcaster-context"
 import { formatCurrency, formatNumber } from "@/lib/utils"
 import { ArrowUpRight, MapPin } from "lucide-react"
 import { cn } from "@/lib/utils"
@@ -13,6 +14,7 @@ interface MatchCardProps {
 }
 
 export function MatchCard({ match, onClick }: MatchCardProps) {
+  const { broadcaster } = useBroadcaster()
   const statusColor =
     match.status === "live"
       ? "bg-alert text-background"
@@ -58,7 +60,7 @@ export function MatchCard({ match, onClick }: MatchCardProps) {
         <div className="rounded-lg bg-white/40 border border-white/60 px-3 py-2.5">
           <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Revenue Claimed</div>
           <div className="scoreboard text-[18px] mt-0.5 text-success-deep">
-            {formatCurrency(match.revenue)}
+            {formatCurrency(match.revenue, broadcaster.currency)}
           </div>
         </div>
       </div>

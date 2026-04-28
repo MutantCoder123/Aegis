@@ -142,7 +142,7 @@ export function ForensicModal({ infringement, match, onClose }: ForensicModalPro
                         Issue DMCA · Notify host · Sever distribution
                       </div>
                     </div>
-                    <span className="text-[10px] text-alert-deep/70 scoreboard">Cmd + D</span>
+                    <span className="text-[10px] text-alert-deep/70 scoreboard">Ctrl + D</span>
                   </div>
                 </button>
 
@@ -158,7 +158,7 @@ export function ForensicModal({ infringement, match, onClose }: ForensicModalPro
                         Monetize · Route ads · Recover {`~$${(infringement.reach * 0.012).toFixed(0)}`}
                       </div>
                     </div>
-                    <span className="text-[10px] text-success-deep/70 scoreboard">Cmd + R</span>
+                    <span className="text-[10px] text-success-deep/70 scoreboard">Ctrl + R</span>
                   </div>
                 </button>
               </div>

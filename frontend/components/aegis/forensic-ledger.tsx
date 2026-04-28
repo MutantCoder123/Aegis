@@ -1,7 +1,8 @@
 "use client"
 
 import * as React from "react"
-import { type Infringement, INFRINGEMENTS } from "@/lib/aegis-data"
+import { type Infringement } from "@/lib/aegis-data"
+import { useBroadcaster } from "@/lib/broadcaster-context"
 import { cn, formatNumber } from "@/lib/utils"
 import { ChevronRight, Send } from "lucide-react"
 
@@ -10,6 +11,8 @@ interface ForensicLedgerProps {
 }
 
 export function ForensicLedger({ onOpenEvidence }: ForensicLedgerProps) {
+  const { data } = useBroadcaster()
+  const infringements = data.infringements
   return (
     <div>
       <div className="flex items-baseline justify-between mb-3">
@@ -20,7 +23,7 @@ export function ForensicLedger({ onOpenEvidence }: ForensicLedgerProps) {
           </p>
         </div>
         <span className="text-[11px] text-muted-foreground scoreboard">
-          {INFRINGEMENTS.length} entries
+          {infringements.length} entries
         </span>
       </div>
 
@@ -34,7 +37,7 @@ export function ForensicLedger({ onOpenEvidence }: ForensicLedgerProps) {
           <span />
         </div>
         <div>
-          {INFRINGEMENTS.map((inf, i) => (
+          {infringements.map((inf) => (
             <button
               key={inf.id}
               onClick={() => onOpenEvidence(inf)}

@@ -2,8 +2,8 @@
 
 import * as React from "react"
 import { GlowCard } from "./glow-card"
-import { SENSORS, type Sensor } from "@/lib/aegis-data"
-import { cn } from "@/lib/utils"
+import { SENSORS, FLEET_GROWTH, type Sensor } from "@/lib/aegis-data"
+import { cn, formatNumber } from "@/lib/utils"
 import {
   Bot,
   Globe,
@@ -14,7 +14,18 @@ import {
   PlayCircle,
   RefreshCw,
   Plus,
+  TrendingUp,
 } from "lucide-react"
+import {
+  CartesianGrid,
+  Legend,
+  Line,
+  LineChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts"
 
 const ICONS: Record<Sensor["type"], React.ComponentType<{ className?: string }>> = {
   "Telegram Bot": Bot,
@@ -130,6 +141,163 @@ export function IntelligenceFleet() {
           })}
         </div>
       </GlowCard>
+
+      <FleetGrowthChart />
+    </div>
+  )
+}
+
+function FleetGrowthChart() {
+  const last = FLEET_GROWTH[FLEET_GROWTH.length - 1]
+  const first = FLEET_GROWTH[0]
+  const userGrowth = ((last.extensionUsers - first.extensionUsers) / first.extensionUsers) * 100
+  const botGrowth = ((last.bots - first.bots) / first.bots) * 100
+
+  return (
+    <GlowCard className="p-6">
+      <div className="flex items-start justify-between mb-5">
+        <div>
+          <div className="flex items-center gap-2">
+            <TrendingUp className="h-3.5 w-3.5 text-highlight" />
+            <h3 className="text-[15px] font-semibold tracking-tight">Fleet Growth</h3>
+          </div>
+          <p className="text-[11px] text-muted-foreground mt-0.5">
+            Chrome extension installs · sensor bot count · trailing 11 months
+          </p>
+        </div>
+        <div className="grid grid-cols-2 gap-2">
+          <GrowthStat
+            label="Extension users"
+            value={formatNumber(last.extensionUsers)}
+            delta={`+${userGrowth.toFixed(0)}%`}
+            tone="highlight"
+          />
+          <GrowthStat
+            label="Active bots"
+            value={String(last.bots)}
+            delta={`+${botGrowth.toFixed(0)}%`}
+            tone="success"
+          />
+        </div>
+      </div>
+
+      <div className="h-[260px] w-full">
+        <ResponsiveContainer width="100%" height="100%">
+          <LineChart data={FLEET_GROWTH} margin={{ top: 8, right: 16, left: 0, bottom: 0 }}>
+            <CartesianGrid stroke="var(--border)" strokeDasharray="2 4" vertical={false} />
+            <XAxis
+              dataKey="month"
+              stroke="var(--muted-foreground)"
+              tick={{ fontSize: 10, fontFamily: "var(--font-mono)" }}
+              tickLine={false}
+              axisLine={false}
+            />
+            <YAxis
+              yAxisId="users"
+              stroke="var(--muted-foreground)"
+              tick={{ fontSize: 10, fontFamily: "var(--font-mono)" }}
+              tickLine={false}
+              axisLine={false}
+              tickFormatter={(v: number) => formatNumber(v)}
+              width={50}
+            />
+            <YAxis
+              yAxisId="bots"
+              orientation="right"
+              stroke="var(--muted-foreground)"
+              tick={{ fontSize: 10, fontFamily: "var(--font-mono)" }}
+              tickLine={false}
+              axisLine={false}
+              width={36}
+            />
+            <Tooltip content={<FleetTooltip />} cursor={{ stroke: "var(--border)" }} />
+            <Legend
+              wrapperStyle={{ fontSize: 11 }}
+              iconType="circle"
+              formatter={(v) => <span className="text-foreground/75">{v}</span>}
+            />
+            <Line
+              yAxisId="users"
+              type="monotone"
+              dataKey="extensionUsers"
+              name="Extension users"
+              stroke="var(--highlight)"
+              strokeWidth={2.25}
+              dot={{ r: 2.5, stroke: "var(--highlight)", fill: "var(--background)" }}
+              activeDot={{ r: 4 }}
+            />
+            <Line
+              yAxisId="bots"
+              type="monotone"
+              dataKey="bots"
+              name="Active bots"
+              stroke="var(--success)"
+              strokeWidth={2.25}
+              dot={{ r: 2.5, stroke: "var(--success)", fill: "var(--background)" }}
+              activeDot={{ r: 4 }}
+            />
+          </LineChart>
+        </ResponsiveContainer>
+      </div>
+    </GlowCard>
+  )
+}
+
+function GrowthStat({
+  label,
+  value,
+  delta,
+  tone,
+}: {
+  label: string
+  value: string
+  delta: string
+  tone: "highlight" | "success"
+}) {
+  return (
+    <div className="rounded-lg bg-white/40 border border-white/60 px-3 py-1.5 min-w-[120px]">
+      <div className="text-[9px] uppercase tracking-wider text-muted-foreground">{label}</div>
+      <div className="flex items-baseline gap-2 mt-1">
+        <span className="scoreboard text-[14px] leading-none">{value}</span>
+        <span
+          className={cn(
+            "scoreboard text-[10px] leading-none",
+            tone === "highlight" ? "text-highlight-deep" : "text-success-deep",
+          )}
+        >
+          {delta}
+        </span>
+      </div>
+    </div>
+  )
+}
+
+function FleetTooltip({
+  active,
+  payload,
+  label,
+}: {
+  active?: boolean
+  payload?: Array<{ name: string; value: number; color: string }>
+  label?: string
+}) {
+  if (!active || !payload || payload.length === 0) return null
+  return (
+    <div className="glass-strong rounded-lg px-3 py-2 text-[11px]">
+      <div className="font-semibold mb-1">{label}</div>
+      {payload.map((p) => (
+        <div key={p.name} className="flex items-center justify-between gap-3">
+          <span className="flex items-center gap-1.5">
+            <span
+              className="h-1.5 w-1.5 rounded-full"
+              style={{ backgroundColor: p.color }}
+              aria-hidden
+            />
+            <span className="text-muted-foreground">{p.name}</span>
+          </span>
+          <span className="scoreboard">{formatNumber(p.value)}</span>
+        </div>
+      ))}
     </div>
   )
 }

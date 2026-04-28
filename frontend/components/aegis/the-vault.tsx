@@ -1,8 +1,10 @@
 "use client"
 
 import * as React from "react"
+import { AnimatePresence, motion } from "framer-motion"
 import { GlowCard } from "./glow-card"
-import { ASSETS, type Asset, type AssetType } from "@/lib/aegis-data"
+import { type Asset, type AssetType } from "@/lib/aegis-data"
+import { useBroadcaster } from "@/lib/broadcaster-context"
 import {
   Vault,
   Sparkles,
@@ -16,6 +18,7 @@ import {
   Lock,
   Camera,
   Layers,
+  X,
 } from "lucide-react"
 import { cn, formatNumber } from "@/lib/utils"
 
@@ -195,7 +198,10 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
 }
 
 function AssetLibrary() {
+  const { data } = useBroadcaster()
+  const ASSETS = data.assets
   const [filter, setFilter] = React.useState<FilterKey>("all")
+  const [active, setActive] = React.useState<Asset | null>(null)
 
   const counts = React.useMemo(
     () => ({
@@ -203,7 +209,7 @@ function AssetLibrary() {
       video: ASSETS.filter((a) => a.media === "video").length,
       image: ASSETS.filter((a) => a.media === "image").length,
     }),
-    [],
+    [ASSETS],
   )
 
   const filtered = ASSETS.filter((a) => filter === "all" || a.media === filter)
@@ -214,7 +220,7 @@ function AssetLibrary() {
         <div>
           <h2 className="text-[15px] font-semibold tracking-tight">Asset Library · Ground Truth</h2>
           <p className="text-[11px] text-muted-foreground mt-0.5">
-            Mixed-media protected sources · video streams, masters & still imagery
+            Mixed-media protected sources · click any asset to play or view
           </p>
         </div>
         <div className="flex items-center gap-1 p-1 bg-white/50 border border-white/60 rounded-lg">
@@ -242,9 +248,11 @@ function AssetLibrary() {
       </div>
       <div className="grid grid-cols-2 xl:grid-cols-3 gap-4">
         {filtered.map((a) => (
-          <AssetThumb key={a.id} asset={a} />
+          <AssetCard key={a.id} asset={a} onOpen={() => setActive(a)} />
         ))}
       </div>
+
+      <AssetViewer asset={active} onClose={() => setActive(null)} />
     </div>
   )
 }
@@ -301,153 +309,210 @@ function typeIcon(type: AssetType) {
   }
 }
 
-function AssetThumb({ asset }: { asset: Asset }) {
+/**
+ * Card-style asset entry — info-first, no synthesized preview. Backend can
+ * supply `videoUrl` / `imageUrl`; the AssetViewer renders the real media on
+ * demand when the card is clicked.
+ */
+function AssetCard({ asset, onOpen }: { asset: Asset; onOpen: () => void }) {
   const Icon = typeIcon(asset.type)
   const isVideo = asset.media === "video"
 
   return (
-    <GlowCard className="overflow-hidden p-0">
-      <div
-        className="relative aspect-[16/9] overflow-hidden"
-        style={{
-          background: `linear-gradient(135deg, ${asset.toneA} 0%, ${asset.toneB} 100%)`,
-        }}
+    <GlowCard className="p-0 overflow-hidden">
+      <button
+        type="button"
+        onClick={onOpen}
+        aria-label={`Open ${asset.matchName}`}
+        className="w-full text-left flex flex-col"
       >
-        {isVideo ? <VideoVisual /> : <ImageVisual asset={asset} />}
-
-        {/* Top badges */}
-        <div className="absolute top-3 left-3 right-3 flex items-center justify-between">
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-success/90 backdrop-blur-md px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-background">
+        <div className="flex items-center justify-between px-4 pt-4">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-success/15 text-success-deep border border-success/25 px-2 py-0.5 text-[9.5px] font-bold uppercase tracking-wider">
             <ShieldCheck className="h-2.5 w-2.5" />
             Protected
           </span>
-          <span className="inline-flex items-center gap-1 rounded-md bg-background/15 backdrop-blur-md px-1.5 py-0.5 text-[9.5px] font-medium text-background border border-background/15">
+          <span className="inline-flex items-center gap-1 rounded-md bg-foreground/[0.04] border border-foreground/10 px-1.5 py-0.5 text-[9.5px] font-medium text-foreground/70">
             <Icon className="h-2.5 w-2.5" />
             {asset.type}
           </span>
         </div>
 
-        {/* Live indicator on Live HLS */}
-        {asset.type === "Live HLS" && (
-          <div className="absolute top-12 left-3 inline-flex items-center gap-1 rounded-full bg-alert/90 backdrop-blur-md px-1.5 py-0.5 text-[8.5px] font-bold uppercase tracking-wider text-background">
-            <span className="h-1 w-1 rounded-full bg-background live-dot" />
-            Live
+        <div className="px-4 pt-3 pb-4 flex items-start gap-3">
+          <div
+            className={cn(
+              "h-12 w-12 rounded-xl grid place-items-center shrink-0 transition-colors",
+              isVideo
+                ? "bg-foreground text-background"
+                : "bg-highlight/15 text-highlight-deep border border-highlight/25",
+            )}
+          >
+            {isVideo ? (
+              <Play className="h-5 w-5 fill-current" />
+            ) : (
+              <Camera className="h-5 w-5" />
+            )}
           </div>
-        )}
-
-        {/* Bottom HUD */}
-        <div className="absolute left-3 bottom-3 right-3 flex items-center justify-between font-mono text-[10px] text-background/85">
-          <span>{asset.id}</span>
-          <span className="text-right truncate ml-2 max-w-[60%]">{asset.meta}</span>
+          <div className="min-w-0 flex-1">
+            <div className="text-[13.5px] font-semibold tracking-tight leading-snug truncate">
+              {asset.matchName}
+            </div>
+            <div className="scoreboard text-[10px] text-muted-foreground mt-0.5 truncate">
+              {asset.id} · {asset.meta}
+            </div>
+          </div>
         </div>
-      </div>
 
-      <div className="p-4 flex items-center justify-between">
-        <div className="min-w-0">
-          <div className="text-[13px] font-semibold tracking-tight truncate">
-            {asset.matchName}
-          </div>
-          <div className="text-[10.5px] text-muted-foreground mt-0.5 flex items-center gap-1.5">
-            <span className="scoreboard">{formatNumber(asset.vectorCount)}</span>
+        <div className="px-4 py-2.5 border-t border-white/60 bg-white/30 flex items-center justify-between">
+          <div className="text-[10.5px] text-muted-foreground flex items-center gap-1.5">
+            <span className="scoreboard text-foreground/80">{formatNumber(asset.vectorCount)}</span>
             vectors · {asset.ingestedAt}
           </div>
+          <span
+            className={cn(
+              "text-[10.5px] font-semibold uppercase tracking-wider",
+              isVideo ? "text-foreground" : "text-highlight-deep",
+            )}
+          >
+            {isVideo ? "Play →" : "View →"}
+          </span>
         </div>
-        <button className="text-[11px] font-medium text-foreground/70 hover:text-foreground rounded-md px-2.5 py-1.5 hover:bg-white/60 transition-colors shrink-0">
-          Re-index
-        </button>
-      </div>
+      </button>
     </GlowCard>
   )
 }
 
-/** Video thumbnail visual: court silhouette + play overlay */
-function VideoVisual() {
+/**
+ * Functional viewer modal. Plays `asset.videoUrl` or shows `asset.imageUrl`
+ * (both populated by the backend). When the URL is missing we render an
+ * inline notice so the operator knows the asset is awaiting backend payload
+ * — but the player UI itself stays fully wired.
+ */
+function AssetViewer({ asset, onClose }: { asset: Asset | null; onClose: () => void }) {
+  React.useEffect(() => {
+    if (!asset) return
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose()
+    }
+    window.addEventListener("keydown", onKey)
+    return () => window.removeEventListener("keydown", onKey)
+  }, [asset, onClose])
+
   return (
-    <>
-      <div className="absolute inset-0 grid-bg opacity-30" />
-      <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-transparent to-transparent" />
+    <AnimatePresence>
+      {asset && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.18 }}
+          className="fixed inset-0 z-50 grid place-items-center p-6"
+          style={{ backdropFilter: "blur(14px)" }}
+        >
+          <div className="absolute inset-0 bg-foreground/30" onClick={onClose} aria-hidden />
+          <motion.div
+            initial={{ opacity: 0, y: 12, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 8, scale: 0.98 }}
+            transition={{ duration: 0.22 }}
+            className="glass-strong relative z-10 w-full max-w-4xl rounded-[var(--radius)] overflow-hidden"
+            role="dialog"
+            aria-modal="true"
+            aria-label={`Asset viewer · ${asset.matchName}`}
+          >
+            <div className="flex items-center justify-between px-5 py-3.5 border-b border-white/60">
+              <div className="flex items-center gap-3 min-w-0">
+                <div className="h-8 w-8 rounded-lg bg-foreground text-background grid place-items-center shrink-0">
+                  {asset.media === "video" ? (
+                    <Play className="h-3.5 w-3.5 fill-current" />
+                  ) : (
+                    <Camera className="h-3.5 w-3.5" />
+                  )}
+                </div>
+                <div className="min-w-0">
+                  <h2 className="text-[14px] font-semibold tracking-tight truncate">
+                    {asset.matchName}
+                  </h2>
+                  <p className="scoreboard text-[10px] text-muted-foreground truncate">
+                    {asset.id} · {asset.type} · {asset.meta}
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={onClose}
+                className="h-8 w-8 rounded-full hover:bg-foreground/5 grid place-items-center"
+                aria-label="Close viewer"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
 
-      <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 h-[55%] w-[75%] border-2 border-background/15 rounded-[35%]" />
-      <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 h-[80%] w-[1px] bg-background/15" />
+            <div className="bg-foreground">
+              <AssetMedia asset={asset} />
+            </div>
 
-      <div className="absolute inset-0 grid place-items-center">
-        <div className="h-11 w-11 rounded-full bg-background/15 backdrop-blur-md grid place-items-center border border-background/25">
-          <Play className="h-4 w-4 text-background fill-background" />
-        </div>
-      </div>
-    </>
+            <div className="flex items-center justify-between px-5 py-2.5 border-t border-white/60 bg-white/30">
+              <div className="flex items-center gap-3 text-[10.5px] text-muted-foreground">
+                <span className="inline-flex items-center gap-1 text-success-deep">
+                  <ShieldCheck className="h-3 w-3" />
+                  Protected
+                </span>
+                <span>
+                  <span className="scoreboard text-foreground/80">{formatNumber(asset.vectorCount)}</span>{" "}
+                  vectors · ingested {asset.ingestedAt}
+                </span>
+              </div>
+              <span className="text-[10px] text-muted-foreground scoreboard">Esc to close</span>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
   )
 }
 
-/** Image thumbnail visual: photographic still with vignette + grain */
-function ImageVisual({ asset }: { asset: Asset }) {
-  // Synthesize a photographic feel: soft radial highlights + film grain
+function AssetMedia({ asset }: { asset: Asset }) {
+  if (asset.media === "video") {
+    if (!asset.videoUrl) {
+      return <PendingMedia label="Awaiting video stream from backend" kind="video" />
+    }
+    return (
+      <video
+        key={asset.videoUrl}
+        src={asset.videoUrl}
+        controls
+        autoPlay
+        playsInline
+        className="w-full aspect-video bg-black"
+      />
+    )
+  }
+  if (!asset.imageUrl) {
+    return <PendingMedia label="Awaiting image payload from backend" kind="image" />
+  }
   return (
-    <>
-      {/* Atmospheric photo blobs — light glints simulating arena lighting */}
-      <div
-        className="absolute inset-0"
-        style={{
-          background: `
-            radial-gradient(circle at 22% 28%, rgba(255,236,210,0.55) 0%, transparent 32%),
-            radial-gradient(circle at 78% 18%, rgba(255,200,150,0.40) 0%, transparent 28%),
-            radial-gradient(circle at 60% 75%, rgba(0,0,0,0.35) 0%, transparent 45%)
-          `,
-        }}
-      />
-      {/* Subject silhouette — abstract player/object */}
-      <svg
-        className="absolute inset-0 w-full h-full"
-        viewBox="0 0 100 56"
-        preserveAspectRatio="xMidYMid slice"
-        aria-hidden
-      >
-        <defs>
-          <linearGradient id={`silhouette-${asset.id}`} x1="0" x2="0" y1="0" y2="1">
-            <stop offset="0%" stopColor="rgba(0,0,0,0.45)" />
-            <stop offset="100%" stopColor="rgba(0,0,0,0.15)" />
-          </linearGradient>
-        </defs>
-        {/* Soft athletic silhouette */}
-        <path
-          d="M 38 56 C 38 40 36 32 40 26 C 42 22 42 18 44 16 C 46 13 50 12 52 14 C 55 16 56 20 56 24 C 56 28 58 30 60 34 C 62 38 62 46 60 52 L 60 56 Z"
-          fill={`url(#silhouette-${asset.id})`}
-        />
-        {/* Crowd haze at the bottom */}
-        <rect
-          x="0"
-          y="48"
-          width="100"
-          height="8"
-          fill="rgba(0,0,0,0.35)"
-          style={{ filter: "blur(2px)" }}
-        />
-      </svg>
+    <img
+      src={asset.imageUrl || "/placeholder.svg"}
+      alt={asset.matchName}
+      className="w-full aspect-video object-contain bg-black"
+    />
+  )
+}
 
-      {/* Subtle grain texture */}
-      <div
-        className="absolute inset-0 mix-blend-overlay opacity-30"
-        style={{
-          backgroundImage:
-            "radial-gradient(rgba(255,255,255,0.18) 0.5px, transparent 0.6px)",
-          backgroundSize: "3px 3px",
-        }}
-      />
-
-      {/* Soft vignette */}
-      <div
-        className="absolute inset-0"
-        style={{
-          background:
-            "radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,0.45) 100%)",
-        }}
-      />
-
-      {/* Image-type marker (no play button) */}
-      <div className="absolute right-3 bottom-9 inline-flex items-center gap-1 rounded-md bg-background/15 backdrop-blur-md border border-background/20 px-1.5 py-0.5 text-[9px] font-medium text-background">
-        <Camera className="h-2.5 w-2.5" />
-        STILL
+function PendingMedia({ label, kind }: { label: string; kind: "video" | "image" }) {
+  const Icon = kind === "video" ? Play : Camera
+  return (
+    <div className="aspect-video w-full grid place-items-center text-background/80">
+      <div className="flex flex-col items-center gap-3 text-center px-6">
+        <div className="h-14 w-14 rounded-full bg-background/10 border border-background/20 grid place-items-center">
+          <Icon className="h-6 w-6" />
+        </div>
+        <div className="text-[12.5px] font-medium tracking-tight">{label}</div>
+        <div className="scoreboard text-[10px] text-background/60 max-w-[420px]">
+          {kind === "video"
+            ? "Backend will set asset.videoUrl. The <video> player is wired and ready."
+            : "Backend will set asset.imageUrl. The <img> renderer is wired and ready."}
+        </div>
       </div>
-    </>
+    </div>
   )
 }
