@@ -4,8 +4,8 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  /* Warm white glassmorphism — peach cream surface */
-  --background: #f5e9dc;
+  /* Premium peach-cream glassmorphism — broadcast-grade authority */
+  --background: #f4ece4;
   --foreground: #1c1917;
   --card: rgba(255, 255, 255, 0.55);
   --card-foreground: #1c1917;
@@ -25,16 +25,18 @@
   --input: rgba(255, 255, 255, 0.55);
   --ring: rgba(28, 25, 23, 0.18);
 
-  /* Legacy "cobalt" tokens retinted to warm bronze so existing utilities stay tasteful */
-  --cobalt: #b87547;
-  --cobalt-bright: #8a4a23;
-  --cobalt-dim: #f4dcc4;
+  /* Brand palette */
+  --bronze: #b87547;
+  --bronze-deep: #8a4a23;
+  --bronze-mist: #f4dcc4;
 
-  /* Accent palette: rose (alert) · peach (revenue/highlight) · emerald (ok) */
-  --crimson: #e11d48;
-  --crimson-bright: #be123c;
-  --gold: #ea7c45;
-  --gold-bright: #c25a25;
+  /* Functional accents */
+  --alert: #e11d48;
+  --alert-deep: #be123c;
+  --success: #15803d;
+  --success-deep: #14532d;
+  --highlight: #ea7c45;
+  --highlight-deep: #c25a25;
 
   --chart-1: #1c1917;
   --chart-2: #ea7c45;
@@ -42,7 +44,7 @@
   --chart-4: #15803d;
   --chart-5: #a8a29e;
 
-  --radius: 1rem;
+  --radius: 1.25rem;
 
   --sidebar: rgba(255, 255, 255, 0.55);
   --sidebar-foreground: #1c1917;
@@ -78,13 +80,15 @@
   --color-input: var(--input);
   --color-ring: var(--ring);
 
-  --color-cobalt: var(--cobalt);
-  --color-cobalt-bright: var(--cobalt-bright);
-  --color-cobalt-dim: var(--cobalt-dim);
-  --color-crimson: var(--crimson);
-  --color-crimson-bright: var(--crimson-bright);
-  --color-gold: var(--gold);
-  --color-gold-bright: var(--gold-bright);
+  --color-bronze: var(--bronze);
+  --color-bronze-deep: var(--bronze-deep);
+  --color-bronze-mist: var(--bronze-mist);
+  --color-alert: var(--alert);
+  --color-alert-deep: var(--alert-deep);
+  --color-success: var(--success);
+  --color-success-deep: var(--success-deep);
+  --color-highlight: var(--highlight);
+  --color-highlight-deep: var(--highlight-deep);
 
   --color-chart-1: var(--chart-1);
   --color-chart-2: var(--chart-2);
@@ -114,7 +118,7 @@
   html,
   body {
     @apply bg-background text-foreground;
-    background-color: #f5e9dc;
+    background-color: #f4ece4;
     background-image:
       radial-gradient(1100px 700px at 0% -10%, #fbd9b4 0%, transparent 55%),
       radial-gradient(900px 700px at 110% 30%, #f6cea0 0%, transparent 55%),
@@ -148,20 +152,12 @@
       box-shadow 280ms ease,
       background 280ms ease;
   }
-  .glass:hover {
-    border-color: rgba(255, 255, 255, 0.85);
-    box-shadow:
-      inset 0 1px 0 0 rgba(255, 255, 255, 0.95),
-      inset 0 0 0 1px rgba(255, 255, 255, 0.35),
-      0 16px 50px -16px rgba(80, 45, 20, 0.22),
-      0 4px 10px -2px rgba(80, 45, 20, 0.1);
-  }
 
   .glass-strong {
     background: linear-gradient(
       180deg,
-      rgba(255, 255, 255, 0.78) 0%,
-      rgba(255, 255, 255, 0.6) 100%
+      rgba(255, 255, 255, 0.82) 0%,
+      rgba(255, 255, 255, 0.62) 100%
     );
     backdrop-filter: blur(32px) saturate(180%);
     -webkit-backdrop-filter: blur(32px) saturate(180%);
@@ -171,7 +167,7 @@
       0 16px 48px -16px rgba(80, 45, 20, 0.18);
   }
 
-  /* Dark contrast panel — used sparingly for emphasis like in the reference */
+  /* Dark contrast panel for emphasis */
   .glass-dark {
     background: linear-gradient(160deg, #2a2723 0%, #1c1917 60%, #14110f 100%);
     border: 1px solid rgba(255, 255, 255, 0.06);
@@ -179,6 +175,65 @@
     box-shadow:
       inset 0 1px 0 0 rgba(255, 255, 255, 0.06),
       0 18px 50px -16px rgba(0, 0, 0, 0.4);
+  }
+
+  /* Mouse-tracking spotlight glow effect */
+  .spotlight {
+    position: relative;
+    overflow: hidden;
+  }
+  .spotlight::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 320ms ease;
+    background: radial-gradient(
+      350px circle at var(--mx, 50%) var(--my, 50%),
+      rgba(234, 124, 69, 0.18),
+      transparent 45%
+    );
+    z-index: 1;
+  }
+  .spotlight:hover::before {
+    opacity: 1;
+  }
+  .spotlight > * {
+    position: relative;
+    z-index: 2;
+  }
+
+  /* Border highlight that follows cursor */
+  .spotlight-border {
+    position: relative;
+    overflow: hidden;
+  }
+  .spotlight-border::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: radial-gradient(
+      280px circle at var(--mx, 50%) var(--my, 50%),
+      rgba(234, 124, 69, 0.55),
+      rgba(255, 255, 255, 0.05) 40%,
+      transparent 70%
+    );
+    -webkit-mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0;
+    transition: opacity 320ms ease;
+    pointer-events: none;
+    z-index: 3;
+  }
+  .spotlight-border:hover::after {
+    opacity: 1;
   }
 
   .scoreboard {
@@ -195,26 +250,45 @@
     background-size: 36px 36px;
   }
 
-  /* Hover halo for interactive panels */
-  .soft-edge {
-    transition:
-      border-color 280ms ease,
-      box-shadow 280ms ease,
-      background 280ms ease;
-  }
-  .soft-edge:hover {
-    border-color: rgba(28, 25, 23, 0.12);
-    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.6), 0 8px 24px -8px rgba(80, 45, 20, 0.12);
-  }
-
-  @keyframes marching-ants {
-    to {
-      stroke-dashoffset: -24;
+  /* Live status pulse */
+  @keyframes live-pulse {
+    0%, 100% {
+      box-shadow: 0 0 0 0 rgba(225, 29, 72, 0.55);
+    }
+    70% {
+      box-shadow: 0 0 0 8px rgba(225, 29, 72, 0);
     }
   }
-  .marching {
-    stroke-dasharray: 8 4;
-    animation: marching-ants 1.6s linear infinite;
+  .live-dot {
+    animation: live-pulse 1.8s ease-out infinite;
+  }
+
+  @keyframes ok-pulse {
+    0%, 100% {
+      box-shadow: 0 0 0 0 rgba(21, 128, 61, 0.5);
+    }
+    70% {
+      box-shadow: 0 0 0 6px rgba(21, 128, 61, 0);
+    }
+  }
+  .ok-dot {
+    animation: ok-pulse 2.4s ease-out infinite;
+  }
+
+  @keyframes scan-line {
+    0% { transform: translateY(-100%); }
+    100% { transform: translateY(100%); }
+  }
+  .scan-line {
+    animation: scan-line 3s linear infinite;
+  }
+
+  @keyframes star-twinkle {
+    0%, 100% { opacity: 0.7; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.15); }
+  }
+  .star-twinkle {
+    animation: star-twinkle 2.4s ease-in-out infinite;
   }
 
   .text-balance {
@@ -235,5 +309,12 @@
   }
   .thin-scroll::-webkit-scrollbar-thumb:hover {
     background: rgba(28, 25, 23, 0.22);
+  }
+
+  /* Terminal monospace */
+  .term {
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    letter-spacing: 0.01em;
   }
 }

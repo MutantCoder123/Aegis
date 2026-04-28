@@ -2,50 +2,71 @@
 
 import * as React from "react"
 import { AnimatePresence, motion } from "framer-motion"
-import { Sidebar } from "@/components/cyber/sidebar"
-import { Header } from "@/components/cyber/header"
-import { LayerViral } from "@/components/cyber/layer-viral"
-import { LayerIntercept } from "@/components/cyber/layer-intercept"
-import { LayerIntelligence } from "@/components/cyber/layer-intelligence"
-import { SettingsDialog } from "@/components/cyber/settings-dialog"
-import type { LayerKey } from "@/components/cyber/types"
+import { Sidebar } from "@/components/aegis/sidebar"
+import { TopBar } from "@/components/aegis/topbar"
+import { MatchHub } from "@/components/aegis/match-hub"
+import { TheVault } from "@/components/aegis/the-vault"
+import { LiveSentinel } from "@/components/aegis/live-sentinel"
+import { IntelligenceFleet } from "@/components/aegis/intelligence-fleet"
+import type { TabKey } from "@/lib/aegis-data"
 
-const META: Record<LayerKey, { title: string; subtitle: string }> = {
-  viral: { title: "Viral VOD & Revenue", subtitle: "Module 01 · Vector Matching & Claim Pipeline" },
-  intercept: { title: "Live Stream Interception", subtitle: "Module 02 · Real-time Pirate Broadcast Takedowns" },
-  intelligence: { title: "Distribution & Intelligence", subtitle: "Module 03 · Reach · Extension · Bot Network" },
+const META: Record<TabKey, { title: string; subtitle: string }> = {
+  "match-hub": {
+    title: "Match Hub",
+    subtitle: "Forensic dashboards · contextual deep-dives per broadcast",
+  },
+  vault: {
+    title: "The Vault",
+    subtitle: "Ground truth library · vector DNA ingestion",
+  },
+  sentinel: {
+    title: "Live Sentinel",
+    subtitle: "Real-time piracy detection · LLM adjudication pipeline",
+  },
+  fleet: {
+    title: "Intelligence Fleet",
+    subtitle: "Global ingestion sensors · scraper orchestration",
+  },
 }
 
 export default function Page() {
-  const [layer, setLayer] = React.useState<LayerKey>("viral")
-  const [settingsOpen, setSettingsOpen] = React.useState(false)
-  const meta = META[layer]
+  const [tab, setTab] = React.useState<TabKey>("match-hub")
+  const meta = META[tab]
 
   return (
-    <div className="flex h-screen w-full overflow-hidden bg-background text-foreground">
-      <Sidebar active={layer} onChange={setLayer} />
+    <div className="relative min-h-screen w-full overflow-hidden">
+      {/* Decorative ambient glow */}
+      <div
+        className="pointer-events-none fixed inset-0 z-0"
+        aria-hidden
+        style={{
+          background:
+            "radial-gradient(900px circle at 70% 0%, rgba(234,124,69,0.15), transparent 50%)",
+        }}
+      />
 
-      <main className="ml-72 flex h-screen flex-1 flex-col">
-        <Header title={meta.title} subtitle={meta.subtitle} onOpenSettings={() => setSettingsOpen(true)} />
-        <div className="thin-scroll relative flex-1 overflow-y-auto px-8 py-8">
+      <Sidebar active={tab} onChange={setTab} />
+
+      <main className="ml-[18.5rem] mr-4 flex h-screen flex-col">
+        <TopBar title={meta.title} subtitle={meta.subtitle} />
+
+        <div className="thin-scroll relative flex-1 overflow-y-auto px-6 pb-8 pt-2">
           <AnimatePresence mode="wait">
             <motion.div
-              key={layer}
-              initial={{ opacity: 0, y: 6 }}
+              key={tab}
+              initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -6 }}
               transition={{ duration: 0.25 }}
-              className="h-full"
             >
-              {layer === "viral" && <LayerViral />}
-              {layer === "intercept" && <LayerIntercept />}
-              {layer === "intelligence" && <LayerIntelligence />}
+              {tab === "match-hub" && <MatchHub />}
+              {tab === "vault" && <TheVault />}
+              {tab === "sentinel" && <LiveSentinel />}
+              {tab === "fleet" && <IntelligenceFleet />}
             </motion.div>
           </AnimatePresence>
         </div>
       </main>
-
-      <SettingsDialog open={settingsOpen} onClose={() => setSettingsOpen(false)} />
     </div>
   )
 }
