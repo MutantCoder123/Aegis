@@ -3,6 +3,7 @@
 import * as React from "react"
 import { cn } from "@/lib/utils"
 import type { TabKey } from "@/lib/aegis-data"
+import { useBroadcaster } from "@/lib/broadcaster-context"
 import {
   Hexagon,
   ChevronsUpDown,
@@ -28,18 +29,21 @@ const NAV: { key: TabKey; label: string; icon: React.ComponentType<{ className?:
   { key: "fleet", label: "Intelligence Fleet", icon: Satellite },
 ]
 
-const ORGS = [
-  { id: "nba", name: "NBA Global Security", tag: "Tier-1 League" },
-  { id: "uefa", name: "UEFA Anti-Piracy", tag: "EU Operations" },
-  { id: "f1", name: "Formula 1 Media Rights", tag: "Global" },
-  { id: "ufc", name: "UFC Broadcast Defense", tag: "PPV" },
-]
-
 export function Sidebar({ active, onChange }: SidebarProps) {
+  const { broadcaster, all, setBroadcasterId } = useBroadcaster()
   const [orgOpen, setOrgOpen] = React.useState(false)
-  const [orgIdx, setOrgIdx] = React.useState(0)
   const [settingsOpen, setSettingsOpen] = React.useState(false)
-  const org = ORGS[orgIdx]
+
+  // Close the org popover when clicking outside
+  const orgRef = React.useRef<HTMLDivElement | null>(null)
+  React.useEffect(() => {
+    if (!orgOpen) return
+    const onClick = (e: MouseEvent) => {
+      if (orgRef.current && !orgRef.current.contains(e.target as Node)) setOrgOpen(false)
+    }
+    window.addEventListener("mousedown", onClick)
+    return () => window.removeEventListener("mousedown", onClick)
+  }, [orgOpen])
 
   return (
     <aside className="fixed left-4 top-4 bottom-4 z-30 w-64 flex flex-col gap-4">
@@ -51,56 +55,68 @@ export function Sidebar({ active, onChange }: SidebarProps) {
         </div>
         <div className="flex flex-col leading-tight">
           <span className="text-[13px] font-semibold tracking-tight">AEGIS</span>
-          <span className="text-[10px] text-muted-foreground tracking-[0.18em] uppercase">Command Center</span>
+          <span className="text-[10px] text-muted-foreground tracking-[0.18em] uppercase">
+            Command Center
+          </span>
         </div>
       </div>
 
-      {/* Org Switcher */}
-      <div className="relative">
+      {/* Broadcaster Switcher */}
+      <div className="relative" ref={orgRef}>
         <button
           type="button"
           onClick={() => setOrgOpen((v) => !v)}
+          aria-haspopup="listbox"
+          aria-expanded={orgOpen}
           className="glass spotlight spotlight-border w-full flex items-center gap-3 rounded-xl px-3 py-2.5 text-left hover:bg-white/70"
         >
           <div className="h-8 w-8 rounded-md bg-gradient-to-br from-highlight to-highlight-deep grid place-items-center text-background text-[10px] font-bold">
-            {org.name
-              .split(" ")
-              .map((w) => w[0])
-              .slice(0, 2)
-              .join("")}
+            {broadcaster.shortName}
           </div>
           <div className="flex-1 min-w-0">
-            <div className="text-[12px] font-semibold leading-tight truncate">{org.name}</div>
-            <div className="text-[10px] text-muted-foreground truncate">{org.tag}</div>
+            <div className="text-[12px] font-semibold leading-tight truncate">
+              {broadcaster.name}
+            </div>
+            <div className="text-[10px] text-muted-foreground truncate">{broadcaster.tag}</div>
           </div>
           <ChevronsUpDown className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
         </button>
 
         {orgOpen && (
-          <div className="glass-strong absolute left-0 right-0 top-full mt-2 z-40 rounded-xl p-1.5">
-            {ORGS.map((o, i) => (
-              <button
-                key={o.id}
-                onClick={() => {
-                  setOrgIdx(i)
-                  setOrgOpen(false)
-                }}
-                className="w-full flex items-center gap-2 px-2 py-2 rounded-lg hover:bg-white/60 text-left"
-              >
-                <div className="h-6 w-6 rounded bg-foreground/90 text-background grid place-items-center text-[9px] font-bold">
-                  {o.name
-                    .split(" ")
-                    .map((w) => w[0])
-                    .slice(0, 2)
-                    .join("")}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="text-[11.5px] font-medium truncate">{o.name}</div>
-                  <div className="text-[9.5px] text-muted-foreground">{o.tag}</div>
-                </div>
-                {i === orgIdx && <Check className="h-3.5 w-3.5 text-success" />}
-              </button>
-            ))}
+          <div
+            role="listbox"
+            className="glass-strong absolute left-0 right-0 top-full mt-2 z-40 rounded-xl p-1.5"
+          >
+            <div className="px-2 py-1 text-[9.5px] uppercase tracking-[0.18em] text-muted-foreground">
+              Switch broadcaster
+            </div>
+            {all.map((o) => {
+              const isActive = o.id === broadcaster.id
+              return (
+                <button
+                  key={o.id}
+                  role="option"
+                  aria-selected={isActive}
+                  onClick={() => {
+                    setBroadcasterId(o.id)
+                    setOrgOpen(false)
+                  }}
+                  className="w-full flex items-center gap-2 px-2 py-2 rounded-lg hover:bg-white/60 text-left"
+                >
+                  <div className="h-6 w-6 rounded bg-foreground/90 text-background grid place-items-center text-[9px] font-bold">
+                    {o.shortName}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="text-[11.5px] font-medium truncate">{o.name}</div>
+                    <div className="text-[9.5px] text-muted-foreground">{o.tag}</div>
+                  </div>
+                  {isActive && <Check className="h-3.5 w-3.5 text-success" />}
+                </button>
+              )
+            })}
+            <div className="px-2 py-1.5 mt-1 border-t border-white/60 text-[9.5px] text-muted-foreground">
+              Switching resets Match Hub, Vault & Live Sentinel data
+            </div>
           </div>
         )}
       </div>
@@ -130,14 +146,14 @@ export function Sidebar({ active, onChange }: SidebarProps) {
               <Icon
                 className={cn(
                   "h-4 w-4 shrink-0",
-                  isActive ? "text-foreground" : "text-foreground/60 group-hover:text-foreground/80",
+                  isActive
+                    ? "text-foreground"
+                    : "text-foreground/60 group-hover:text-foreground/80",
                 )}
                 strokeWidth={isActive ? 2.4 : 2}
               />
               <span className="text-[13px] font-medium tracking-tight flex-1">{item.label}</span>
-              {isActive && (
-                <span className="h-1.5 w-1.5 rounded-full bg-success ok-dot" />
-              )}
+              {isActive && <span className="h-1.5 w-1.5 rounded-full bg-success ok-dot" />}
             </button>
           )
         })}
@@ -175,7 +191,7 @@ export function Sidebar({ active, onChange }: SidebarProps) {
           </div>
         </div>
         <kbd className="text-[9px] font-mono tracking-wider text-muted-foreground bg-foreground/5 border border-foreground/10 rounded px-1 py-0.5">
-          ⌘,
+          Ctrl ,
         </kbd>
       </button>
 
@@ -184,7 +200,15 @@ export function Sidebar({ active, onChange }: SidebarProps) {
   )
 }
 
-function HealthRow({ label, value, tone }: { label: string; value: string; tone: "ok" | "neutral" }) {
+function HealthRow({
+  label,
+  value,
+  tone,
+}: {
+  label: string
+  value: string
+  tone: "ok" | "neutral"
+}) {
   return (
     <div className="flex items-center justify-between text-[11px]">
       <span className="text-muted-foreground flex items-center gap-1.5">

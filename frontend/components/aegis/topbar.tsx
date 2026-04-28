@@ -3,7 +3,6 @@
 import * as React from "react"
 import {
   Search,
-  Command,
   Bell,
   ShieldCheck,
   ShieldAlert,
@@ -11,9 +10,12 @@ import {
   Sparkles,
   Check,
   X,
+  Sun,
+  Moon,
 } from "lucide-react"
 import { AnimatePresence, motion } from "framer-motion"
 import { cn } from "@/lib/utils"
+import { useTheme } from "@/lib/use-theme"
 
 interface TopBarProps {
   title: string
@@ -81,10 +83,12 @@ export function TopBar({ title, subtitle, eyebrow }: TopBarProps) {
   const [notifications, setNotifications] = React.useState<Notification[]>(SEED_NOTIFICATIONS)
   const inputRef = React.useRef<HTMLInputElement | null>(null)
   const bellRef = React.useRef<HTMLDivElement | null>(null)
+  const { theme, toggle: toggleTheme } = useTheme()
 
   React.useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
+      // Ctrl+K (Windows / Linux) — also accept Meta for Mac users transparently
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") {
         e.preventDefault()
         inputRef.current?.focus()
       }
@@ -106,12 +110,11 @@ export function TopBar({ title, subtitle, eyebrow }: TopBarProps) {
   const unreadCount = notifications.filter((n) => n.unread).length
 
   const markAllRead = () => setNotifications((ns) => ns.map((n) => ({ ...n, unread: false })))
-  const dismiss = (id: number) =>
-    setNotifications((ns) => ns.filter((n) => n.id !== id))
+  const dismiss = (id: number) => setNotifications((ns) => ns.filter((n) => n.id !== id))
 
   return (
     <header className="flex items-center gap-6 px-6 pt-6 pb-4">
-      {/* Title cluster — refined editorial styling */}
+      {/* Title cluster */}
       <div className="min-w-[260px]">
         <div className="flex items-center gap-2 mb-1.5">
           <span className="h-1.5 w-1.5 rounded-full bg-highlight" />
@@ -147,8 +150,8 @@ export function TopBar({ title, subtitle, eyebrow }: TopBarProps) {
             className="w-full bg-transparent pl-11 pr-24 py-3 text-[13px] placeholder:text-muted-foreground focus:outline-none rounded-full"
           />
           <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1">
-            <kbd className="flex items-center gap-0.5 rounded-md bg-foreground/5 px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground border border-foreground/10">
-              <Command className="h-2.5 w-2.5" />K
+            <kbd className="rounded-md bg-foreground/5 px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground border border-foreground/10 scoreboard">
+              Ctrl K
             </kbd>
           </div>
         </div>
@@ -161,6 +164,35 @@ export function TopBar({ title, subtitle, eyebrow }: TopBarProps) {
           <span className="text-[11px] font-medium">Defense Active</span>
           <span className="h-1.5 w-1.5 rounded-full bg-success ok-dot" />
         </div>
+
+        {/* Theme toggle */}
+        <button
+          type="button"
+          onClick={toggleTheme}
+          aria-label={`Switch to ${theme === "light" ? "dark" : "light"} mode`}
+          className="glass spotlight relative rounded-full h-10 w-10 grid place-items-center transition-all hover:bg-white/70 overflow-hidden"
+        >
+          <span
+            className={cn(
+              "absolute transition-all duration-400",
+              theme === "light"
+                ? "opacity-100 rotate-0 scale-100"
+                : "opacity-0 rotate-90 scale-50",
+            )}
+          >
+            <Sun className="h-4 w-4" />
+          </span>
+          <span
+            className={cn(
+              "absolute transition-all duration-400",
+              theme === "dark"
+                ? "opacity-100 rotate-0 scale-100"
+                : "opacity-0 -rotate-90 scale-50",
+            )}
+          >
+            <Moon className="h-4 w-4" />
+          </span>
+        </button>
 
         {/* Notifications */}
         <div ref={bellRef} className="relative">
