@@ -59,22 +59,28 @@ function Workspace() {
 
         {/* All tabs are mounted simultaneously so Live Sentinel keeps streaming
             in the background even when the user navigates to other tabs.
-            Switching broadcasters resets all state via the outer key. */}
+            Switching broadcasters re-mounts only the broadcaster-scoped tabs
+            (Match Hub, The Vault, Live Sentinel) so they pick up fresh data;
+            Intelligence Fleet stays mounted and unchanged across switches. */}
         <div className="thin-scroll relative flex-1 overflow-y-auto px-6 pb-8 pt-2">
-          <div key={broadcaster.id} className="space-y-0">
-            <TabPane visible={tab === "match-hub"}>
+          <TabPane visible={tab === "match-hub"}>
+            <div key={`mh-${broadcaster.id}`}>
               <MatchHub />
-            </TabPane>
-            <TabPane visible={tab === "vault"}>
+            </div>
+          </TabPane>
+          <TabPane visible={tab === "vault"}>
+            <div key={`vault-${broadcaster.id}`}>
               <TheVault />
-            </TabPane>
-            <TabPane visible={tab === "sentinel"}>
+            </div>
+          </TabPane>
+          <TabPane visible={tab === "sentinel"}>
+            <div key={`sent-${broadcaster.id}`}>
               <LiveSentinel />
-            </TabPane>
-            <TabPane visible={tab === "fleet"}>
-              <IntelligenceFleet />
-            </TabPane>
-          </div>
+            </div>
+          </TabPane>
+          <TabPane visible={tab === "fleet"}>
+            <IntelligenceFleet />
+          </TabPane>
         </div>
       </main>
     </div>

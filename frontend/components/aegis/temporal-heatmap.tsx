@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import { Flame, Activity } from "lucide-react"
-import { HEATMAP_DATA } from "@/lib/aegis-data"
+import { useBroadcaster } from "@/lib/broadcaster-context"
 
 /**
  * Smooth Catmull-Rom → cubic Bezier path generator.
@@ -27,6 +27,8 @@ function buildSmoothPath(points: { x: number; y: number }[]) {
 }
 
 export function TemporalHeatmap() {
+  const { data } = useBroadcaster()
+  const HEATMAP_DATA = data.heatmap
   const [hoverIdx, setHoverIdx] = React.useState<number | null>(null)
   const max = Math.max(...HEATMAP_DATA.map((d) => d.detections))
 
