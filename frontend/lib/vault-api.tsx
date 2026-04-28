@@ -25,19 +25,10 @@ export function useVaultIngest(broadcasterId: BroadcasterId) {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: (payload: VaultIngestPayload) =>
+    mutationFn: (formData: FormData) =>
       aegisFetch("/api/vault/ingest", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          match_id: payload.matchId,
-          display_name: payload.displayName,
-          source_url: payload.sourceUrl,
-          asset_type: payload.assetType,
-          file_type: payload.fileType || toFileType(payload.assetType),
-        }),
+        body: formData,
       }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["vault", "assets", broadcasterId] })

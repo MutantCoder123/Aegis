@@ -13,12 +13,17 @@ import tempfile
 import uuid
 import datetime
 from typing import Optional
+from services.s3_utils import upload_to_s3
 
 import numpy as np
 from PIL import Image
 from sentence_transformers import SentenceTransformer
 
 logger = logging.getLogger(__name__)
+
+def debug_vault(msg):
+    with open("/tmp/vault_debug.log", "a") as f:
+        f.write(f"{datetime.datetime.now()} - {msg}\n")
 
 # ── Lazy CLIP singleton ────────────────────────────────────────────────────────
 _clip_model: Optional[SentenceTransformer] = None
@@ -80,22 +85,33 @@ async def _extract_middle_frame(chunk_path: str, duration: float) -> Optional[st
         return out_path
     return None
 
-async def _mock_upload_chunk(chunk_path: str, match_id: str) -> Optional[str]:
+async def _upload_asset(local_path: str, match_id: str, is_static: bool = False) -> Optional[str]:
+    """
+    Saves an asset (video or image) to a permanent storage location.
+    If AWS environment variables are set, uploads to S3. 
+    Otherwise, saves to the local /official_archive/ directory for development.
+    """
     import shutil
+    ext = os.path.splitext(local_path)[1] or (".jpg" if is_static else ".ts")
+    filename = f"{match_id}_{uuid.uuid4().hex[:8]}{ext}"
+    
+    # Try S3 first
+    s3_key = f"assets/{match_id}/{filename}"
+    s3_url = upload_to_s3(local_path, s3_key)
+    if s3_url and s3_url.startswith("https://"):
+        return s3_url
+
+    # Fallback to local archive
     archive_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "official_archive")
     os.makedirs(archive_dir, exist_ok=True)
-    ext = os.path.splitext(chunk_path)[1]
-    if not ext:
-        ext = ".ts"
-    filename = f"{match_id}_{uuid.uuid4().hex[:8]}{ext}"
     dest_path = os.path.join(archive_dir, filename)
     try:
         def _copy():
-            shutil.copy2(chunk_path, dest_path)
+            shutil.copy2(local_path, dest_path)
         await asyncio.to_thread(_copy)
         return f"/official_archive/{filename}"
-    except Exception as exc:
-        logger.error(f"[VaultWorker] Archiving failed: {exc}")
+    except Exception as e:
+        logger.error(f"[VaultWorker] Local upload failed: {e}")
         return None
 
 
@@ -107,8 +123,10 @@ async def _vectorize_bytes(frame_bytes: bytes) -> Optional[np.ndarray]:
         try:
             model = _get_clip_model()
             img = Image.open(io.BytesIO(frame_bytes)).convert("RGB")
+            debug_vault("CLIP Model Loaded & Image Opened. Encoding...")
             return model.encode(img)
         except Exception as exc:
+            debug_vault(f"Vectorize Error: {exc}")
             logger.warning(f"[VaultWorker] Encoding error: {exc}")
             return None
 
@@ -130,6 +148,7 @@ async def _store_vector(
     """Insert one OfficialAssetVector row into PostgreSQL."""
     try:
         from database import OfficialAssetVector
+        debug_vault(f"Attempting to store vector for match={match_id}, broadcaster={broadcaster_id}")
         record = OfficialAssetVector(
             match_id=match_id,
             broadcaster_id=broadcaster_id,
@@ -148,6 +167,7 @@ async def _store_vector(
         async with db_session_factory() as session:
             session.add(record)
             await session.commit()
+            debug_vault(f"Stored vector for match={match_id} (id={record.id})")
         return True
     except Exception as exc:
         logger.error(f"[VaultWorker] DB insert failed: {exc}")
@@ -265,7 +285,7 @@ async def continuous_ingest_broadcast(
                         raise RuntimeError("Failed to extract frames via pipe")
 
                     # Mock Upload
-                    video_chunk_url = await _mock_upload_chunk(chunk_path, match_id)
+                    video_chunk_url = await _upload_asset(chunk_path, match_id)
 
                     try: os.remove(chunk_path)
                     except OSError: pass
@@ -318,6 +338,7 @@ async def process_master_vod(
     broadcaster_id: Optional[str] = None,
     file_type: str = "video"
 ) -> None:
+    debug_vault(f"process_master_vod START: {match_id}, type={file_type}, broadcaster={broadcaster_id}")
     """
     Indexes a full Master VOD MP4 or a static JPEG/PNG image into the Ground Truth Vector Vault.
     """
@@ -351,6 +372,10 @@ async def process_master_vod(
     import glob
     import shutil
     
+    # NEW: Archive the FULL video first so playback represents the whole match, not just 5s chunks.
+    master_vod_url = await _upload_asset(video_path, match_id)
+    debug_vault(f"Master VOD archived: {master_vod_url}")
+
     temp_dir = tempfile.mkdtemp(prefix="vault_master_")
     
     cmd = [
@@ -387,6 +412,7 @@ async def process_master_vod(
     total_chunks = len(chunk_files)
     
     for i, chunk_path in enumerate(chunk_files):
+        # We still use chunk_path for frame extraction, but we associate vectors with master_vod_url
         try:
             # Piped streaming to fetch 1 frame per 2 seconds
             pipe_cmd = [
@@ -410,8 +436,8 @@ async def process_master_vod(
                     break
                 buffer += chunk
                 while True:
-                    start = buffer.find(b"\\xff\\xd8")
-                    end = buffer.find(b"\\xff\\xd9")
+                    start = buffer.find(b"\xff\xd8")
+                    end = buffer.find(b"\xff\xd9")
                     if start != -1 and end != -1 and end > start:
                         img_data = buffer[start:end+2]
                         frames.append(img_data)
@@ -424,13 +450,14 @@ async def process_master_vod(
             if not frames:
                 continue
 
-            video_chunk_url = await _mock_upload_chunk(chunk_path, match_id)
+            video_chunk_url = await _upload_asset(chunk_path, match_id)
             
             for frame_bytes in frames:
                 vector = await _vectorize_bytes(frame_bytes)
                 if vector is None:
                     continue
-                ok = await _store_vector(vector, match_id, video_path, video_chunk_url, db_session_factory, source_origin, broadcaster_id)
+                # Use master_vod_url here for all vectors so the UI plays the FULL VOD.
+                ok = await _store_vector(vector, match_id, video_path, master_vod_url, db_session_factory, source_origin, broadcaster_id)
                 if ok:
                     vectors_inserted += 1
             

@@ -55,11 +55,11 @@ export function MatchCard({ match, onClick }: MatchCardProps) {
       <div className="mt-5 grid grid-cols-2 gap-3">
         <div className="rounded-lg bg-white/40 border border-white/60 px-3 py-2.5">
           <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Detections</div>
-          <div className="scoreboard text-[18px] mt-0.5">{formatNumber(match.detections)}</div>
+          <div className="scoreboard text-[18px] mt-0.5" suppressHydrationWarning>{formatNumber(match.detections)}</div>
         </div>
         <div className="rounded-lg bg-white/40 border border-white/60 px-3 py-2.5">
           <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Revenue Claimed</div>
-          <div className="scoreboard text-[18px] mt-0.5 text-success-deep">
+          <div className="scoreboard text-[18px] mt-0.5 text-success-deep" suppressHydrationWarning>
             {formatCurrency(match.revenue, broadcaster.currency)}
           </div>
         </div>

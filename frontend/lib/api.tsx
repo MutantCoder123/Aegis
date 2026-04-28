@@ -20,8 +20,8 @@ export class AegisApiError extends Error {
   }
 }
 
-function toApiUrl(input: string | URL) {
-  if (input instanceof URL) return input
+export function resolveAssetUrl(input: string | null | undefined) {
+  if (!input) return ""
   if (/^https?:\/\//i.test(input)) return input
   return `${API_BASE_URL}${input.startsWith("/") ? input : `/${input}`}`
 }
@@ -52,7 +52,8 @@ export async function aegisFetch<TResponse = unknown>(
   input: string | URL,
   init?: RequestInit,
 ): Promise<TResponse> {
-  const response = await fetch(toApiUrl(input), withTenantHeaders(init))
+  const url = input instanceof URL ? input : resolveAssetUrl(input)
+  const response = await fetch(url, withTenantHeaders(init))
   const payload = await parseResponse(response)
 
   if (!response.ok) {
@@ -68,5 +69,6 @@ export async function aegisFetch<TResponse = unknown>(
 }
 
 export function aegisFetchRaw(input: string | URL, init?: RequestInit) {
-  return fetch(toApiUrl(input), withTenantHeaders(init))
+  const url = input instanceof URL ? input : resolveAssetUrl(input)
+  return fetch(url, withTenantHeaders(init))
 }

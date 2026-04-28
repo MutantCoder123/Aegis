@@ -15,6 +15,11 @@ The system is now fully implemented and verified with a local test suite. It use
 - [ai_arbiter.py](file:///home/indranil/GoogleSolution/DigitalAssetProtection/services/ai_arbiter.py): Gemini LLM orchestration.
 - [test_webhook.py](file:///home/indranil/GoogleSolution/DigitalAssetProtection/test_webhook.py): Verification script.
 
+### Vault Ingestion & Playback Enhancements
+- **Full VOD Archiving**: Updated `services/vault_worker.py` to archive the complete original video file before segmentation. This ensures the asset library plays the full match rather than isolated 5-second segments.
+- **Seekable Playback**: By serving the full VOD, the frontend video player now has a functional progress bar and supports seeking across the entire duration.
+- **Representative URL Logic**: Fixed the API route `/api/vault/assets` to prioritize the earliest segment (or the master VOD) as the representative playback source, preventing the player from defaulting to the very end of the stream.
+
 ## 🧪 Verification Results
 
 The test script [test_webhook.py](file:///home/indranil/GoogleSolution/DigitalAssetProtection/test_webhook.py) verified the following flows:

@@ -35,10 +35,17 @@ app.add_middleware(
 # Wire up the router
 app.include_router(analyze_router)
 
+# Serve official archive statically for playback
+from fastapi.staticfiles import StaticFiles
+import os
+archive_path = os.path.join(os.getcwd(), "official_archive")
+os.makedirs(archive_path, exist_ok=True)
+app.mount("/official_archive", StaticFiles(directory=archive_path), name="official_archive")
+
 @app.get("/")
 def root():
     return {"message": "Sports Media Copyright Engine Running. Use /analyze_media to process payloads."}
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)

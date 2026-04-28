@@ -1,0 +1,24 @@
+# Use the same base as the API
+FROM python:3.11-slim
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    ffmpeg \
+    libsm6 \
+    libxext6 \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Set the working directory
+WORKDIR /app
+
+# Copy requirements and install
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy the application code
+COPY . .
+
+# Command to run the ingestion worker
+# Note: You can override this CMD in the ECS task definition to run different workers
+CMD ["python", "ingestion_worker.py"]

@@ -34,6 +34,11 @@ export function MatchHub() {
   const threatsQuery = useMatchThreats(selectedMatch?.id ?? null, broadcaster.id)
   const heatmap = heatmapQuery.data?.length ? heatmapQuery.data : data.heatmap
   const infringements = threatsQuery.data ?? data.infringements
+  const [mounted, setMounted] = React.useState(false)
+
+  React.useEffect(() => {
+    setMounted(true)
+  }, [])
 
   const totalDetections =
     summaryQuery.data?.totalDetections ?? matches.reduce((s, m) => s + m.detections, 0)
@@ -111,8 +116,8 @@ export function MatchHub() {
                 </div>
               </div>
 
-              <div className="rounded-xl bg-white/30 border border-white/60 p-5">
-                <TemporalHeatmap points={heatmap} />
+              <div className="rounded-xl bg-white/30 border border-white/60 p-5 min-h-[300px]">
+                {mounted ? <TemporalHeatmap points={heatmap} /> : <div className="h-[250px] w-full animate-pulse bg-white/20 rounded-lg" />}
               </div>
             </GlowCard>
 
@@ -167,11 +172,15 @@ export function MatchHub() {
             </div>
 
             {/* Revenue chart */}
-            <RevenueChart
-              broadcasterId={broadcaster.id}
-              currency={broadcaster.currency}
-              liveSeries={summaryQuery.data?.revenueSeries}
-            />
+            {mounted ? (
+              <RevenueChart
+                broadcasterId={broadcaster.id}
+                currency={broadcaster.currency}
+                liveSeries={summaryQuery.data?.revenueSeries}
+              />
+            ) : (
+              <div className="h-[350px] w-full glass animate-pulse rounded-2xl" />
+            )}
           </motion.div>
         )}
       </AnimatePresence>
@@ -211,7 +220,7 @@ function KpiCard({
       </div>
       <div className="flex-1">
         <div className="text-[11px] uppercase tracking-wider text-muted-foreground">{label}</div>
-        <div className="scoreboard text-[26px] mt-0.5 leading-none">{value}</div>
+        <div className="scoreboard text-[26px] mt-0.5 leading-none" suppressHydrationWarning>{value}</div>
       </div>
       <div
         className={`scoreboard text-[11px] tabular-nums ${
@@ -241,7 +250,7 @@ function StatBlock({
         {icon}
         {label}
       </div>
-      <div className={`scoreboard text-[20px] mt-1 leading-none ${accent ?? ""}`}>{value}</div>
+      <div className={`scoreboard text-[20px] mt-1 leading-none ${accent ?? ""}`} suppressHydrationWarning>{value}</div>
     </div>
   )
 }
@@ -353,7 +362,7 @@ function ChartStat({
   return (
     <div className="rounded-lg bg-white/40 border border-white/60 px-3 py-1.5 min-w-[110px]">
       <div className="text-[9px] uppercase tracking-wider text-muted-foreground">{label}</div>
-      <div className={`scoreboard text-[13px] leading-none mt-1 ${accent ?? ""}`}>{value}</div>
+      <div className={`scoreboard text-[13px] leading-none mt-1 ${accent ?? ""}`} suppressHydrationWarning>{value}</div>
     </div>
   )
 }
@@ -383,7 +392,7 @@ function RevenueTooltip({
             />
             <span className="text-muted-foreground">{p.name}</span>
           </span>
-          <span className="scoreboard">{formatCurrency(p.value, currency)}</span>
+          <span className="scoreboard" suppressHydrationWarning>{formatCurrency(p.value, currency)}</span>
         </div>
       ))}
     </div>

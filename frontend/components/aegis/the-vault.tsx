@@ -6,6 +6,7 @@ import { GlowCard } from "./glow-card"
 import { type Asset, type AssetType } from "@/lib/aegis-data"
 import { useBroadcaster } from "@/lib/broadcaster-context"
 import { useVaultAssets, useVaultIngest } from "@/lib/vault-api"
+import { resolveAssetUrl } from "@/lib/api"
 import {
   Vault,
   Sparkles,
@@ -20,6 +21,8 @@ import {
   Camera,
   Layers,
   X,
+  Upload,
+  FileUp,
 } from "lucide-react"
 import { cn, formatNumber } from "@/lib/utils"
 
@@ -51,20 +54,31 @@ function Ingestor() {
   const [matchId, setMatchId] = React.useState("LAKERS_WARRIORS_001")
   const [displayName, setDisplayName] = React.useState("Lakers vs Warriors · Court Side HD")
   const [sourceKey, setSourceKey] = React.useState("hls_a4e8b2c19f3d7e0a8b6c2f1d")
+  const [assetSource, setAssetSource] = React.useState<File | string | null>(null)
   const [indexing, setIndexing] = React.useState(false)
   const [progress, setProgress] = React.useState(0)
 
+  const fileInputRef = React.useRef<HTMLInputElement>(null)
+
   const handleIndex = async () => {
-    if (indexing) return
+    if (indexing || !assetSource) return
     setIndexing(true)
     setProgress(0)
-    ingest.mutate({
-      matchId,
-      displayName,
-      sourceUrl: sourceKey,
-      assetType: type,
-      fileType: type === "Press Photo" || type === "Key Frame" ? "image" : "video",
-    })
+
+    const formData = new FormData()
+    formData.append("match_id", matchId)
+    formData.append("display_name", displayName)
+    formData.append("asset_type", type)
+    formData.append("file_type", type === "Press Photo" || type === "Key Frame" ? "image" : "video")
+    
+    if (typeof assetSource === "string") {
+      formData.append("source_url", assetSource)
+    } else {
+      formData.append("file", assetSource)
+    }
+
+    ingest.mutate(formData as any) // We'll update the hook type next
+
     const id = setInterval(() => {
       setProgress((p) => {
         if (p >= 100) {
@@ -111,7 +125,9 @@ function Ingestor() {
             className="w-full bg-white/50 border border-white/70 rounded-lg px-3.5 py-2.5 text-[13px] focus:outline-none focus:border-highlight/50 focus:bg-white/70 transition-colors"
           />
         </Field>
+      </div>
 
+      <div className="mt-4">
         <Field label="Asset Type">
           <div className="flex flex-wrap gap-1.5 p-1 bg-white/40 border border-white/60 rounded-lg">
             {ASSET_TYPE_OPTIONS.map((t) => {
@@ -135,7 +151,80 @@ function Ingestor() {
             })}
           </div>
         </Field>
+      </div>
 
+      {/* Asset Source Dropzone */}
+      <Field label="ASSET SOURCE (UPLOAD FILE OR STREAM URL)" className="mt-4">
+        <div
+          onDragOver={(e) => {
+            e.preventDefault()
+            e.stopPropagation()
+          }}
+          onDrop={(e) => {
+            e.preventDefault()
+            e.stopPropagation()
+            const file = e.dataTransfer.files?.[0]
+            if (file) setAssetSource(file)
+          }}
+          className={cn(
+            "glass spotlight spotlight-border relative w-full h-40 rounded-xl border-2 border-dashed flex flex-col items-center justify-center gap-3 transition-all cursor-pointer group focus-within:ring-2 focus-within:ring-highlight/30",
+            assetSource ? "border-success/50 bg-success/5" : "border-foreground/10 hover:border-highlight/40 hover:bg-white/40",
+          )}
+          onClick={() => fileInputRef.current?.click()}
+        >
+          <input
+            type="file"
+            ref={fileInputRef}
+            className="hidden"
+            onChange={(e) => {
+              const file = e.target.files?.[0]
+              if (file) setAssetSource(file)
+            }}
+          />
+          <div className="h-12 w-12 rounded-full bg-foreground/5 grid place-items-center group-hover:scale-110 transition-transform">
+            <Upload className={cn("h-6 w-6", assetSource ? "text-success" : "text-muted-foreground")} />
+          </div>
+          <div className="text-center px-4">
+            {assetSource instanceof File ? (
+              <div className="flex flex-col items-center">
+                <span className="text-[14px] font-semibold text-foreground truncate max-w-[300px]">{assetSource.name}</span>
+                <span className="text-[10px] text-muted-foreground scoreboard mt-0.5">
+                  {(assetSource.size / (1024 * 1024)).toFixed(2)} MB · File Ready
+                </span>
+              </div>
+            ) : typeof assetSource === "string" && assetSource.length > 0 ? (
+              <div className="flex flex-col items-center">
+                <span className="text-[14px] font-semibold text-foreground truncate max-w-[300px]">
+                  {assetSource}
+                </span>
+                <span className="text-[10px] text-muted-foreground scoreboard mt-0.5">Stream URL Active</span>
+              </div>
+            ) : (
+              <>
+                <span className="text-[14px] font-semibold text-foreground block">
+                  Click to choose or drag & drop files
+                </span>
+                <span className="text-[11px] text-muted-foreground">
+                  Or paste a live stream link here
+                </span>
+              </>
+            )}
+          </div>
+          
+          <input
+            placeholder="Paste URL (e.g. https://.../stream.m3u8)"
+            onClick={(e) => e.stopPropagation()}
+            value={typeof assetSource === "string" ? assetSource : ""}
+            onChange={(e) => setAssetSource(e.target.value)}
+            className="absolute bottom-3 left-1/2 -translate-x-1/2 w-[80%] bg-white/60 border border-white/80 rounded-md px-3 py-1.5 text-[11px] font-mono text-center focus:outline-none focus:border-highlight/40 focus:bg-white/80 transition-all opacity-0 group-hover:opacity-100"
+          />
+        </div>
+        <p className="text-[9.5px] font-mono text-muted-foreground mt-2 uppercase tracking-wider text-center">
+          Accepted formats: .mp4, .mkv, .mov, .m3u8, .jpeg, .png
+        </p>
+      </Field>
+
+      <div className="mt-4">
         <Field label="X-Source-Key (masked)">
           <div className="relative">
             <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
@@ -172,9 +261,12 @@ function Ingestor() {
             "relative overflow-hidden rounded-lg px-5 py-2.5 text-[12.5px] font-semibold flex items-center gap-2 transition-all",
             indexing
               ? "bg-foreground/40 text-background cursor-wait"
-              : "bg-foreground text-background hover:bg-foreground/90",
+              : "bg-foreground text-background hover:bg-foreground/90 disabled:opacity-50 disabled:cursor-not-allowed",
           )}
         >
+          {indexing && (
+            <div className="absolute inset-0 bg-highlight/10 animate-pulse pointer-events-none" />
+          )}
           {indexing ? (
             <>
               <span
@@ -196,9 +288,9 @@ function Ingestor() {
   )
 }
 
-function Field({ label, children }: { label: string; children: React.ReactNode }) {
+function Field({ label, children, className }: { label: string; children: React.ReactNode; className?: string }) {
   return (
-    <label className="block">
+    <label className={cn("block", className)}>
       <span className="text-[10.5px] uppercase tracking-[0.16em] text-muted-foreground font-medium mb-1.5 block">
         {label}
       </span>
@@ -489,7 +581,7 @@ function AssetMedia({ asset }: { asset: Asset }) {
     return (
       <video
         key={asset.videoUrl}
-        src={asset.videoUrl}
+        src={resolveAssetUrl(asset.videoUrl)}
         controls
         autoPlay
         playsInline
@@ -502,7 +594,7 @@ function AssetMedia({ asset }: { asset: Asset }) {
   }
   return (
     <img
-      src={asset.imageUrl || "/placeholder.svg"}
+      src={resolveAssetUrl(asset.imageUrl) || "/placeholder.svg"}
       alt={asset.matchName}
       className="w-full aspect-video object-contain bg-black"
     />
