@@ -33,14 +33,16 @@ export function BroadcasterProvider({
   children: React.ReactNode
   initialId?: BroadcasterId
 }) {
-  const [id, setId] = React.useState<BroadcasterId>(() => {
+  const [id, setId] = React.useState<BroadcasterId>(initialId)
+  const [hasHydrated, setHasHydrated] = React.useState(false)
+
+  React.useEffect(() => {
     const stored = readStoredAegisIdentity()
     if (stored && BROADCASTERS.some((b) => b.id === stored.broadcasterId)) {
-      return stored.broadcasterId as BroadcasterId
+      setId(stored.broadcasterId as BroadcasterId)
     }
-
-    return initialId
-  })
+    setHasHydrated(true)
+  }, [])
   const broadcaster = React.useMemo(
     () => BROADCASTERS.find((b) => b.id === id) ?? BROADCASTERS[0],
     [id],
