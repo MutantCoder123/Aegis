@@ -34,3 +34,13 @@ class IngestOfficialRequest(BaseModel):
     stream_url: str
     match_id: str
     interval_seconds: int = 10
+
+class VaultIngestRequest(BaseModel):
+    match_id: str
+    display_name: str
+    source_url: str
+    asset_type: str = "Live HLS"
+    file_type: str = "video"
+
+class EnforcementActionRequest(BaseModel):
+    action: str

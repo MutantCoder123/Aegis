@@ -8,6 +8,7 @@ import { TheVault } from "@/components/aegis/the-vault"
 import { LiveSentinel } from "@/components/aegis/live-sentinel"
 import { IntelligenceFleet } from "@/components/aegis/intelligence-fleet"
 import { BroadcasterProvider, useBroadcaster } from "@/lib/broadcaster-context"
+import { AegisQueryProvider } from "@/lib/query-client"
 import { ThemeProvider } from "@/lib/use-theme"
 import type { TabKey } from "@/lib/aegis-data"
 import { cn } from "@/lib/utils"
@@ -107,9 +108,11 @@ function TabPane({ visible, children }: { visible: boolean; children: React.Reac
 export default function Page() {
   return (
     <ThemeProvider>
-      <BroadcasterProvider>
-        <Workspace />
-      </BroadcasterProvider>
+      <AegisQueryProvider>
+        <BroadcasterProvider>
+          <Workspace />
+        </BroadcasterProvider>
+      </AegisQueryProvider>
     </ThemeProvider>
   )
 }

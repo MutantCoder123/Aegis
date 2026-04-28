@@ -3,6 +3,7 @@
 import * as React from "react"
 import { AnimatePresence, motion } from "framer-motion"
 import type { Infringement, Match } from "@/lib/aegis-data"
+import { useEnforcementAction, type EnforcementAction } from "@/lib/enforcement-api"
 import { X, Play, ShieldOff, Coins, Fingerprint, Clock, Hash } from "lucide-react"
 import { cn, formatNumber } from "@/lib/utils"
 
@@ -13,6 +14,8 @@ interface ForensicModalProps {
 }
 
 export function ForensicModal({ infringement, match, onClose }: ForensicModalProps) {
+  const enforcement = useEnforcementAction()
+
   React.useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose()
@@ -20,6 +23,16 @@ export function ForensicModal({ infringement, match, onClose }: ForensicModalPro
     window.addEventListener("keydown", onKey)
     return () => window.removeEventListener("keydown", onKey)
   }, [onClose])
+
+  const handleAction = (action: EnforcementAction) => {
+    if (!infringement) return
+    enforcement.mutate(
+      { id: infringement.id, action },
+      {
+        onSuccess: onClose,
+      },
+    )
+  }
 
   return (
     <AnimatePresence>
@@ -130,7 +143,11 @@ export function ForensicModal({ infringement, match, onClose }: ForensicModalPro
 
               {/* Action buttons */}
               <div className="grid grid-cols-2 gap-3">
-                <button className="group relative overflow-hidden rounded-xl border border-alert/30 bg-alert/10 hover:bg-alert/15 px-5 py-4 text-left transition-all">
+                <button
+                  onClick={() => handleAction("TAKEDOWN")}
+                  disabled={enforcement.isPending}
+                  className="group relative overflow-hidden rounded-xl border border-alert/30 bg-alert/10 hover:bg-alert/15 px-5 py-4 text-left transition-all"
+                >
                   <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity bg-gradient-to-r from-transparent via-alert/15 to-transparent" />
                   <div className="relative flex items-center gap-4">
                     <div className="h-10 w-10 rounded-lg bg-alert text-background grid place-items-center">
@@ -146,7 +163,11 @@ export function ForensicModal({ infringement, match, onClose }: ForensicModalPro
                   </div>
                 </button>
 
-                <button className="group relative overflow-hidden rounded-xl border border-success/30 bg-success/10 hover:bg-success/15 px-5 py-4 text-left transition-all">
+                <button
+                  onClick={() => handleAction("MONETIZE")}
+                  disabled={enforcement.isPending}
+                  className="group relative overflow-hidden rounded-xl border border-success/30 bg-success/10 hover:bg-success/15 px-5 py-4 text-left transition-all"
+                >
                   <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity bg-gradient-to-r from-transparent via-success/15 to-transparent" />
                   <div className="relative flex items-center gap-4">
                     <div className="h-10 w-10 rounded-lg bg-success text-background grid place-items-center">

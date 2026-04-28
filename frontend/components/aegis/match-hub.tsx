@@ -4,6 +4,7 @@ import * as React from "react"
 import { AnimatePresence, motion } from "framer-motion"
 import { REVENUE_SERIES, type Match, type Infringement } from "@/lib/aegis-data"
 import { useBroadcaster } from "@/lib/broadcaster-context"
+import { useMatchHeatmap, useMatchSummary, useMatchThreats } from "@/lib/match-hub-api"
 import { MatchCard } from "./match-card"
 import { GlowCard } from "./glow-card"
 import { TemporalHeatmap } from "./temporal-heatmap"
@@ -24,19 +25,29 @@ import {
 
 export function MatchHub() {
   const { data, broadcaster } = useBroadcaster()
-  const matches = data.matches
   const [selected, setSelected] = React.useState<Match | null>(null)
   const [evidence, setEvidence] = React.useState<Infringement | null>(null)
+  const summaryQuery = useMatchSummary(broadcaster.id)
+  const matches = summaryQuery.data?.matches?.length ? summaryQuery.data.matches : data.matches
+  const selectedMatch = selected ? matches.find((m) => m.id === selected.id) ?? selected : null
+  const heatmapQuery = useMatchHeatmap(selectedMatch?.id ?? null, broadcaster.id)
+  const threatsQuery = useMatchThreats(selectedMatch?.id ?? null, broadcaster.id)
+  const heatmap = heatmapQuery.data?.length ? heatmapQuery.data : data.heatmap
+  const infringements = threatsQuery.data ?? data.infringements
 
-  const totalDetections = matches.reduce((s, m) => s + m.detections, 0)
-  const totalRevenue = matches.reduce((s, m) => s + m.revenue, 0)
-  const liveCount = matches.filter((m) => m.status === "live").length
+  const totalDetections =
+    summaryQuery.data?.totalDetections ?? matches.reduce((s, m) => s + m.detections, 0)
+  const totalRevenue =
+    summaryQuery.data?.revenueRecovered ?? matches.reduce((s, m) => s + m.revenue, 0)
+  const liveCount =
+    summaryQuery.data?.liveOperations ?? matches.filter((m) => m.status === "live").length
+  const totalOperations = summaryQuery.data?.totalOperations ?? matches.length
   const fmt = (v: number) => formatCurrency(v, broadcaster.currency)
 
   return (
     <div className="space-y-5">
       <AnimatePresence mode="wait">
-        {selected ? (
+        {selectedMatch ? (
           <motion.div
             key="deepdive"
             initial={{ opacity: 0, y: 10 }}
@@ -55,8 +66,10 @@ export function MatchHub() {
                 Back to Match Hub
               </button>
               <div className="flex items-center gap-2">
-                <span className="scoreboard text-[11px] text-muted-foreground">{selected.id}</span>
-                {selected.status === "live" && (
+                <span className="scoreboard text-[11px] text-muted-foreground">
+                  {selectedMatch.id}
+                </span>
+                {selectedMatch.status === "live" && (
                   <span className="inline-flex items-center gap-1.5 rounded-full bg-alert text-background px-2 py-0.5 text-[10px] font-semibold uppercase">
                     <span className="h-1.5 w-1.5 rounded-full bg-background live-dot" />
                     Live
@@ -69,25 +82,25 @@ export function MatchHub() {
               <div className="flex items-end justify-between mb-5">
                 <div>
                   <div className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
-                    {selected.league}
+                    {selectedMatch.league}
                   </div>
                   <h2 className="text-[36px] leading-none font-semibold tracking-[-0.025em] mt-2 text-balance">
-                    {selected.title}
+                    {selectedMatch.title}
                   </h2>
                   <p className="text-[12px] text-muted-foreground mt-2">
-                    {selected.venue} · {selected.date}
+                    {selectedMatch.venue} · {selectedMatch.date}
                   </p>
                 </div>
                 <div className="grid grid-cols-3 gap-3 min-w-[420px]">
                   <StatBlock
                     icon={<ShieldAlert className="h-3.5 w-3.5" />}
                     label="Detections"
-                    value={formatNumber(selected.detections)}
+                    value={formatNumber(selectedMatch.detections)}
                   />
                   <StatBlock
                     icon={<Coins className="h-3.5 w-3.5" />}
                     label="Revenue Claimed"
-                    value={fmt(selected.revenue)}
+                    value={fmt(selectedMatch.revenue)}
                     accent="text-success-deep"
                   />
                   <StatBlock
@@ -99,12 +112,12 @@ export function MatchHub() {
               </div>
 
               <div className="rounded-xl bg-white/30 border border-white/60 p-5">
-                <TemporalHeatmap />
+                <TemporalHeatmap points={heatmap} />
               </div>
             </GlowCard>
 
             <GlowCard className="p-6">
-              <ForensicLedger onOpenEvidence={(inf) => setEvidence(inf)} />
+              <ForensicLedger infringements={infringements} onOpenEvidence={(inf) => setEvidence(inf)} />
             </GlowCard>
           </motion.div>
         ) : (
@@ -132,7 +145,7 @@ export function MatchHub() {
               />
               <KpiCard
                 label="Live Operations"
-                value={`${liveCount} / ${matches.length}`}
+                value={`${liveCount} / ${totalOperations}`}
                 delta="2 streams"
                 isLive
               />
@@ -154,14 +167,18 @@ export function MatchHub() {
             </div>
 
             {/* Revenue chart */}
-            <RevenueChart broadcasterId={broadcaster.id} currency={broadcaster.currency} />
+            <RevenueChart
+              broadcasterId={broadcaster.id}
+              currency={broadcaster.currency}
+              liveSeries={summaryQuery.data?.revenueSeries}
+            />
           </motion.div>
         )}
       </AnimatePresence>
 
       <ForensicModal
         infringement={evidence}
-        match={selected ?? matches.find((m) => m.id === evidence?.matchId) ?? null}
+        match={selectedMatch ?? matches.find((m) => m.id === evidence?.matchId) ?? null}
         onClose={() => setEvidence(null)}
       />
     </div>
@@ -233,14 +250,16 @@ function StatBlock({
 function RevenueChart({
   broadcasterId,
   currency,
+  liveSeries,
 }: {
   broadcasterId: keyof typeof REVENUE_SERIES
   currency: "USD" | "INR"
+  liveSeries?: Array<{ month: string; projected: number; recovered: number }>
 }) {
-  const series = REVENUE_SERIES[broadcasterId]
+  const series = liveSeries?.length ? liveSeries : REVENUE_SERIES[broadcasterId]
   const totalProjected = series.reduce((s, p) => s + p.projected, 0)
   const totalRecovered = series.reduce((s, p) => s + p.recovered, 0)
-  const recoveryPct = Math.round((totalRecovered / totalProjected) * 100)
+  const recoveryPct = Math.round((totalRecovered / Math.max(1, totalProjected)) * 100)
   const compact = (v: number) => formatCurrency(v, currency)
 
   return (

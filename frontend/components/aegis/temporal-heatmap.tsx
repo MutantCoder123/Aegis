@@ -3,6 +3,7 @@
 import * as React from "react"
 import { Flame, Activity } from "lucide-react"
 import { useBroadcaster } from "@/lib/broadcaster-context"
+import type { HeatmapPoint } from "@/lib/aegis-data"
 
 /**
  * Smooth Catmull-Rom → cubic Bezier path generator.
@@ -26,11 +27,11 @@ function buildSmoothPath(points: { x: number; y: number }[]) {
   return d
 }
 
-export function TemporalHeatmap() {
+export function TemporalHeatmap({ points: livePoints }: { points?: HeatmapPoint[] }) {
   const { data } = useBroadcaster()
-  const HEATMAP_DATA = data.heatmap
+  const HEATMAP_DATA = livePoints?.length ? livePoints : data.heatmap
   const [hoverIdx, setHoverIdx] = React.useState<number | null>(null)
-  const max = Math.max(...HEATMAP_DATA.map((d) => d.detections))
+  const max = Math.max(1, ...HEATMAP_DATA.map((d) => d.detections))
 
   const W = 1000
   const H = 240
@@ -40,7 +41,7 @@ export function TemporalHeatmap() {
   const innerH = H - padY * 2
 
   const points = HEATMAP_DATA.map((d, i) => {
-    const x = padX + (i / (HEATMAP_DATA.length - 1)) * innerW
+    const x = padX + (i / Math.max(1, HEATMAP_DATA.length - 1)) * innerW
     const y = padY + innerH - (d.detections / max) * innerH
     return { x, y, ...d, idx: i }
   })

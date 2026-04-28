@@ -5,6 +5,8 @@ import { GlowCard } from "./glow-card"
 import { ForensicModal } from "./forensic-modal"
 import { useBroadcaster } from "@/lib/broadcaster-context"
 import type { Infringement, Match } from "@/lib/aegis-data"
+import { useEnforcementAction } from "@/lib/enforcement-api"
+import { useFirehoseStream, type FirehoseActionEvent } from "@/lib/sentinel-api"
 import { Activity, Brain, Eye, ShieldOff, Coins, Cpu } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { motion, AnimatePresence } from "framer-motion"
@@ -56,10 +58,9 @@ function nowTs() {
 
 export function LiveSentinel() {
   const { data } = useBroadcaster()
-  const FIREHOSE_LOGS = data.firehose
-  const liveMatchIds = data.liveMatchIds
   const matches = data.matches
   const infringements = data.infringements
+  const enforcement = useEnforcementAction()
 
   const [logs, setLogs] = React.useState<LogEntry[]>([])
   const [actions, setActions] = React.useState<ActionCard[]>([])
@@ -70,51 +71,30 @@ export function LiveSentinel() {
   const counterRef = React.useRef(0)
   const feedRef = React.useRef<HTMLDivElement | null>(null)
 
-  // Stream logs
-  React.useEffect(() => {
-    let mounted = true
-    const tick = () => {
-      if (!mounted) return
-      const tpl = FIREHOSE_LOGS[Math.floor(Math.random() * FIREHOSE_LOGS.length)]
-      counterRef.current += 1
-      const entry: LogEntry = {
-        id: counterRef.current,
-        ts: nowTs(),
-        lvl: tpl.lvl,
-        text: tpl.text,
-      }
-      setLogs((prev) => [...prev.slice(-80), entry])
+  const handleLog = React.useCallback((entry: LogEntry) => {
+    setLogs((prev) => [...prev.slice(-80), entry])
+  }, [])
 
-      // Occasionally promote to an action card
-      if (tpl.lvl === "MATCH" && Math.random() > 0.55) {
-        const cosine = 0.85 + Math.random() * 0.13
-        const isHigh = cosine > 0.92
-        const platforms = ["Telegram", "Reddit", "Discord", "X / Twitter", "TikTok"]
-        const platform = platforms[Math.floor(Math.random() * platforms.length)]
-        const matchId =
-          liveMatchIds[Math.floor(Math.random() * liveMatchIds.length)] ?? liveMatchIds[0]
-        const action: ActionCard = {
-          id: counterRef.current,
-          ts: nowTs(),
-          matchId,
-          cosine: Number(cosine.toFixed(3)),
-          platform,
-          url: `${platform.toLowerCase().replace(/[^a-z]/g, "")}.com/${Math.random()
-            .toString(36)
-            .slice(2, 10)}`,
-          reasoning:
-            REASONING_TEMPLATES[isHigh ? 0 : Math.random() > 0.5 ? 1 : 2],
-          verdict: isHigh ? "INFRINGEMENT_CONFIRMED" : "BORDERLINE",
-        }
-        setActions((prev) => [action, ...prev].slice(0, 4))
-      }
-    }
-    const id = setInterval(tick, 600)
-    return () => {
-      mounted = false
-      clearInterval(id)
-    }
-  }, [FIREHOSE_LOGS, liveMatchIds])
+  const handleAction = React.useCallback((event: FirehoseActionEvent) => {
+    setActions((prev) => [
+      {
+        id: event.id,
+        ts: event.ts,
+        matchId: event.matchId,
+        cosine: event.cosine,
+        platform: event.platform,
+        url: event.url,
+        reasoning: event.reasoning,
+        verdict: event.verdict,
+      },
+      ...prev,
+    ].slice(0, 4))
+  }, [])
+
+  useFirehoseStream({
+    onLog: handleLog,
+    onAction: handleAction,
+  })
 
   // Auto-scroll log feed
   React.useEffect(() => {
@@ -154,6 +134,11 @@ export function LiveSentinel() {
         }
     const match = matches.find((m) => m.id === a.matchId) ?? null
     setEvidenceTarget({ infringement, match })
+  }
+
+  const handleEnforce = (a: ActionCard, action: "TAKEDOWN" | "MONETIZE") => {
+    enforcement.mutate({ id: `LIVE-${a.id}`, action })
+    setActions((prev) => prev.filter((item) => item.id !== a.id))
   }
 
   return (
@@ -301,12 +286,18 @@ export function LiveSentinel() {
                         View Evidence
                       </button>
                       {a.verdict === "INFRINGEMENT_CONFIRMED" ? (
-                        <button className="inline-flex items-center justify-center gap-1.5 rounded-md bg-alert text-background hover:bg-alert-deep px-3 py-2 text-[11.5px] font-semibold transition-colors">
+                        <button
+                          onClick={() => handleEnforce(a, "TAKEDOWN")}
+                          className="inline-flex items-center justify-center gap-1.5 rounded-md bg-alert text-background hover:bg-alert-deep px-3 py-2 text-[11.5px] font-semibold transition-colors"
+                        >
                           <ShieldOff className="h-3 w-3" />
                           Dismantle
                         </button>
                       ) : (
-                        <button className="inline-flex items-center justify-center gap-1.5 rounded-md bg-success text-background hover:bg-success-deep px-3 py-2 text-[11.5px] font-semibold transition-colors">
+                        <button
+                          onClick={() => handleEnforce(a, "MONETIZE")}
+                          className="inline-flex items-center justify-center gap-1.5 rounded-md bg-success text-background hover:bg-success-deep px-3 py-2 text-[11.5px] font-semibold transition-colors"
+                        >
                           <Coins className="h-3 w-3" />
                           Claim
                         </button>

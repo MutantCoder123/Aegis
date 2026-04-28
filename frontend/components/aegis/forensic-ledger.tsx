@@ -7,12 +7,13 @@ import { cn, formatNumber } from "@/lib/utils"
 import { ChevronRight, Send } from "lucide-react"
 
 interface ForensicLedgerProps {
+  infringements?: Infringement[]
   onOpenEvidence: (inf: Infringement) => void
 }
 
-export function ForensicLedger({ onOpenEvidence }: ForensicLedgerProps) {
+export function ForensicLedger({ infringements: liveInfringements, onOpenEvidence }: ForensicLedgerProps) {
   const { data } = useBroadcaster()
-  const infringements = data.infringements
+  const infringements = liveInfringements ?? data.infringements
   return (
     <div>
       <div className="flex items-baseline justify-between mb-3">

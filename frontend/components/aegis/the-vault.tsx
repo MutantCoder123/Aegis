@@ -5,6 +5,7 @@ import { AnimatePresence, motion } from "framer-motion"
 import { GlowCard } from "./glow-card"
 import { type Asset, type AssetType } from "@/lib/aegis-data"
 import { useBroadcaster } from "@/lib/broadcaster-context"
+import { useVaultAssets, useVaultIngest } from "@/lib/vault-api"
 import {
   Vault,
   Sparkles,
@@ -43,6 +44,8 @@ export function TheVault() {
 }
 
 function Ingestor() {
+  const { broadcaster } = useBroadcaster()
+  const ingest = useVaultIngest(broadcaster.id)
   const [showKey, setShowKey] = React.useState(false)
   const [type, setType] = React.useState<AssetType>("Live HLS")
   const [matchId, setMatchId] = React.useState("LAKERS_WARRIORS_001")
@@ -51,10 +54,17 @@ function Ingestor() {
   const [indexing, setIndexing] = React.useState(false)
   const [progress, setProgress] = React.useState(0)
 
-  const handleIndex = () => {
+  const handleIndex = async () => {
     if (indexing) return
     setIndexing(true)
     setProgress(0)
+    ingest.mutate({
+      matchId,
+      displayName,
+      sourceUrl: sourceKey,
+      assetType: type,
+      fileType: type === "Press Photo" || type === "Key Frame" ? "image" : "video",
+    })
     const id = setInterval(() => {
       setProgress((p) => {
         if (p >= 100) {
@@ -198,8 +208,9 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
 }
 
 function AssetLibrary() {
-  const { data } = useBroadcaster()
-  const ASSETS = data.assets
+  const { data, broadcaster } = useBroadcaster()
+  const assetsQuery = useVaultAssets(broadcaster.id)
+  const ASSETS = assetsQuery.data?.length ? assetsQuery.data : data.assets
   const [filter, setFilter] = React.useState<FilterKey>("all")
   const [active, setActive] = React.useState<Asset | null>(null)
 
