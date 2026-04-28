@@ -167,15 +167,15 @@ export function LiveSentinel() {
                 <Activity className="h-4 w-4 text-success" />
               </div>
               <div>
-                <h3 className="text-[14px] font-semibold tracking-tight text-background">
+                <h3 className="text-[14px] font-semibold tracking-tight text-stone-100">
                   The Firehose
                 </h3>
-                <p className="text-[10.5px] text-background/55">
+                <p className="text-[10.5px] text-stone-100/55">
                   Raw scraper telemetry · 1.2k events/min
                 </p>
               </div>
             </div>
-            <div className="flex items-center gap-2 text-[10.5px] text-background/70">
+            <div className="flex items-center gap-2 text-[10.5px] text-stone-100/70">
               <span className="h-1.5 w-1.5 rounded-full bg-success live-dot" />
               <span className="scoreboard">{logs.length} events buffered</span>
             </div>
@@ -186,26 +186,26 @@ export function LiveSentinel() {
             className="thin-scroll flex-1 overflow-y-auto px-5 py-4 space-y-1"
           >
             {logs.map((l) => (
-              <div key={l.id} className="term flex gap-2.5 text-background/85 leading-snug">
-                <span className="text-background/40 shrink-0">{l.ts}</span>
+              <div key={l.id} className="term flex gap-2.5 text-stone-100/85 leading-snug">
+                <span className="text-stone-100/40 shrink-0">{l.ts}</span>
                 <span className={cn("shrink-0 font-bold", levelColor(l.lvl))}>
                   [{l.lvl.padEnd(7, " ")}]
                 </span>
-                <span className="text-background/85 truncate">{l.text}</span>
+                <span className="text-stone-100/85 truncate">{l.text}</span>
               </div>
             ))}
             {logs.length === 0 && (
-              <div className="term text-background/40">Awaiting telemetry…</div>
+              <div className="term text-stone-100/40">Awaiting telemetry…</div>
             )}
           </div>
 
           <div className="px-5 py-3 border-t border-white/10 flex items-center justify-between">
-            <div className="flex items-center gap-3 text-[10px] text-background/55 scoreboard">
+            <div className="flex items-center gap-3 text-[10px] text-stone-100/55 scoreboard">
               <span>CPU: 38%</span>
               <span>RAM: 6.2/16 GB</span>
               <span>Vector ops/s: 1,420</span>
             </div>
-            <Cpu className="h-3.5 w-3.5 text-background/40" />
+            <Cpu className="h-3.5 w-3.5 text-stone-100/40" />
           </div>
         </GlowCard>
 
@@ -340,7 +340,7 @@ export function LiveSentinel() {
 function levelColor(lvl: string) {
   switch (lvl) {
     case "SCAN":
-      return "text-background/70"
+      return "text-stone-100/70"
     case "VECTOR":
       return "text-highlight"
     case "MATCH":
@@ -348,6 +348,6 @@ function levelColor(lvl: string) {
     case "ARBITER":
       return "text-success"
     default:
-      return "text-background/60"
+      return "text-stone-100/60"
   }
 }
