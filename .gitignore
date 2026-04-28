@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.env
+
+# Node
+node_modules/
+dist/
+.next/
+
+# HLS Artifacts & Media
+official_archive/
+demo_stream/
+*.ts
+*.m3u8
+*.mp4
+*.mkv
+*.png
+*.jpg
+*.jpeg
+
+# OS
+.DS_Store

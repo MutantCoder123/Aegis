@@ -1,0 +1,11 @@
+{
+  "manifest_version": 3,
+  "name": "Aegis Network Defender",
+  "version": "1.0.0",
+  "description": "Silent telemetry monitor for malicious streaming activity.",
+  "permissions": ["webNavigation", "tabs"],
+  "host_permissions": ["<all_urls>"],
+  "background": {
+    "service_worker": "background.js"
+  }
+}
