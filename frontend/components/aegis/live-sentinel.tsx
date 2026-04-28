@@ -37,7 +37,7 @@ const REASONING_TEMPLATES: ActionCard["reasoning"][] = [
     "→ Scoreboard OCR: 'LAL 84 — GSW 79' matches frame #7420",
     "→ Embedding similarity: 0.962 (top 0.5%)",
     "→ Source IP geolocates to known piracy hub (Sofia, BG)",
-    "→ Gemini 3 Flash verdict: HIGH_CONFIDENCE_INFRINGEMENT",
+    "→ Gemini 2.5 Flash verdict: HIGH_CONFIDENCE_INFRINGEMENT",
   ],
   [
     "→ Vector match weak (0.871) but jersey logos legible",
@@ -173,7 +173,7 @@ export function LiveSentinel() {
             <div>
               <h3 className="text-[14px] font-semibold tracking-tight">Active Adjudication</h3>
               <p className="text-[10.5px] text-muted-foreground">
-                Gemini 3 Flash · Tier-2 verdict pipeline
+                Gemini 2.5 Flash · Tier-2 verdict pipeline
               </p>
             </div>
           </div>

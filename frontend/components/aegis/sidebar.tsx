@@ -12,7 +12,9 @@ import {
   Satellite,
   Check,
   Circle,
+  Settings,
 } from "lucide-react"
+import { SettingsDialog } from "./settings-dialog"
 
 interface SidebarProps {
   active: TabKey
@@ -36,6 +38,7 @@ const ORGS = [
 export function Sidebar({ active, onChange }: SidebarProps) {
   const [orgOpen, setOrgOpen] = React.useState(false)
   const [orgIdx, setOrgIdx] = React.useState(0)
+  const [settingsOpen, setSettingsOpen] = React.useState(false)
   const org = ORGS[orgIdx]
 
   return (
@@ -151,10 +154,32 @@ export function Sidebar({ active, onChange }: SidebarProps) {
         <div className="space-y-1.5">
           <HealthRow label="HLS Sync" value="Active" tone="ok" />
           <HealthRow label="Vector DB" value="< 15 ms" tone="ok" />
-          <HealthRow label="Arbiter LLM" value="Gemini 3 Flash" tone="neutral" />
+          <HealthRow label="Arbiter LLM" value="Gemini 2.5 Flash" tone="neutral" />
           <HealthRow label="Sensors" value="08 / 08" tone="ok" />
         </div>
       </div>
+
+      {/* Settings — opens credential vault */}
+      <button
+        type="button"
+        onClick={() => setSettingsOpen(true)}
+        className="glass spotlight spotlight-border w-full flex items-center gap-3 rounded-xl px-3 py-2.5 text-left hover:bg-white/70 group"
+      >
+        <div className="h-8 w-8 rounded-md bg-foreground/[0.04] border border-white/70 grid place-items-center text-foreground group-hover:bg-foreground group-hover:text-background transition-colors">
+          <Settings className="h-3.5 w-3.5" />
+        </div>
+        <div className="flex-1 min-w-0">
+          <div className="text-[12px] font-semibold leading-tight">Settings</div>
+          <div className="text-[10px] text-muted-foreground truncate">
+            API keys · firehose credentials
+          </div>
+        </div>
+        <kbd className="text-[9px] font-mono tracking-wider text-muted-foreground bg-foreground/5 border border-foreground/10 rounded px-1 py-0.5">
+          ⌘,
+        </kbd>
+      </button>
+
+      <SettingsDialog open={settingsOpen} onClose={() => setSettingsOpen(false)} />
     </aside>
   )
 }
