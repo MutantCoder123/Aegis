@@ -6,8 +6,8 @@ import { ForensicModal } from "./forensic-modal"
 import { useBroadcaster } from "@/lib/broadcaster-context"
 import type { Infringement, Match } from "@/lib/aegis-data"
 import { useEnforcementAction } from "@/lib/enforcement-api"
-import { useFirehoseStream, type FirehoseActionEvent } from "@/lib/sentinel-api"
-import { Activity, Brain, Eye, ShieldOff, Coins, Cpu } from "lucide-react"
+import { useFirehoseStream, type FirehoseActionEvent, type FirehoseTargetEvent } from "@/lib/sentinel-api"
+import { Activity, Brain, Eye, ShieldOff, Coins, Cpu, TrendingUp, ChevronDown, ChevronUp, AlertTriangle, Sparkles } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { motion, AnimatePresence } from "framer-motion"
 
@@ -27,33 +27,15 @@ interface ActionCard {
   url: string
   reasoning: string[]
   verdict: "INFRINGEMENT_CONFIRMED" | "BORDERLINE" | "BENIGN" | "PENDING"
-}
-
-const REASONING_TEMPLATES: ActionCard["reasoning"][] = [
-  [
-    "→ Frame analysis: jersey color match, court geometry aligned",
-    "→ Audio fingerprint: commentator timbre matches broadcast master",
-    "→ Cosine 0.943 vs Master HLS · Δ < 0.06 threshold",
-    "→ EXT-X-PROGRAM-DATE-TIME drift: +480ms (within window)",
-    "→ Conclusion: VERIFIED INFRINGEMENT · DMCA-eligible",
-  ],
-  [
-    "→ Scoreboard OCR matches frame-aligned scoreline",
-    "→ Embedding similarity: 0.962 (top 0.5%)",
-    "→ Source IP geolocates to known piracy hub",
-    "→ Gemini 2.5 Flash verdict: HIGH_CONFIDENCE_INFRINGEMENT",
-  ],
-  [
-    "→ Vector match weak (0.871) but logos legible",
-    "→ Background crowd noise matches game ambience",
-    "→ Escalating to Tier-2 LLM adjudication",
-    "→ Pending verdict… 1.2s",
-  ],
-]
-
-function nowTs() {
-  const d = new Date()
-  return d.toTimeString().slice(0, 8) + "." + String(d.getMilliseconds()).padStart(3, "0").slice(0, 3)
+  // Phase 5 Fields
+  ingestionMode: "LIVE" | "POST_MATCH"
+  priority: number
+  velocity?: {
+    vph: number
+  }
+  isEscalated: boolean
+  aiVerdict?: "MALICIOUS" | "WHITELISTED" | "PENDING"
+  aiReasoning?: string
 }
 
 export function LiveSentinel() {
@@ -62,21 +44,20 @@ export function LiveSentinel() {
   const infringements = data.infringements
   const enforcement = useEnforcementAction()
 
-  const [logs, setLogs] = React.useState<LogEntry[]>([])
-  const [actions, setActions] = React.useState<ActionCard[]>([])
+  const [systemLogs, setSystemLogs] = React.useState<FirehoseTargetEvent[]>([])
+  const [adjudications, setAdjudications] = React.useState<ActionCard[]>([])
   const [evidenceTarget, setEvidenceTarget] = React.useState<{
     infringement: Infringement
     match: Match | null
   } | null>(null)
-  const counterRef = React.useRef(0)
   const feedRef = React.useRef<HTMLDivElement | null>(null)
 
-  const handleLog = React.useCallback((entry: LogEntry) => {
-    setLogs((prev) => [...prev.slice(-80), entry])
+  const handleTarget = React.useCallback((entry: FirehoseTargetEvent) => {
+    setSystemLogs((prev) => [...prev, entry].slice(-100))
   }, [])
 
   const handleAction = React.useCallback((event: FirehoseActionEvent) => {
-    setActions((prev) => {
+    setAdjudications((prev) => {
       const existingIdx = prev.findIndex((a) => a.url === event.url || a.id === event.id)
       if (existingIdx !== -1) {
         const next = [...prev]
@@ -89,6 +70,12 @@ export function LiveSentinel() {
           url: event.url,
           reasoning: event.reasoning,
           verdict: event.verdict,
+          ingestionMode: event.ingestion_mode,
+          priority: event.priority_score,
+          velocity: event.velocity_metrics ? { vph: event.velocity_metrics.views_per_hour } : undefined,
+          isEscalated: event.tier_3_escalation,
+          aiVerdict: event.ai_verdict,
+          aiReasoning: event.ai_reasoning,
         }
         return next
       }
@@ -102,15 +89,22 @@ export function LiveSentinel() {
           url: event.url,
           reasoning: event.reasoning,
           verdict: event.verdict,
+          ingestionMode: event.ingestion_mode,
+          priority: event.priority_score,
+          velocity: event.velocity_metrics ? { vph: event.velocity_metrics.views_per_hour } : undefined,
+          isEscalated: event.tier_3_escalation,
+          aiVerdict: event.ai_verdict,
+          aiReasoning: event.ai_reasoning,
         },
         ...prev,
-      ].slice(0, 5)
+      ].slice(0, 10)
     })
   }, [])
 
   useFirehoseStream({
-    onLog: handleLog,
+    onLog: (l) => console.log("System Log:", l.text),
     onAction: handleAction,
+    onTarget: handleTarget,
   })
 
   // Auto-scroll log feed
@@ -118,7 +112,7 @@ export function LiveSentinel() {
     if (feedRef.current) {
       feedRef.current.scrollTop = feedRef.current.scrollHeight
     }
-  }, [logs])
+  }, [systemLogs])
 
   // Open the Forensic Evidence Chamber for a given live action card. We
   // synthesize a real Infringement record from the action so the modal can
@@ -155,7 +149,7 @@ export function LiveSentinel() {
 
   const handleEnforce = (a: ActionCard, action: "TAKEDOWN" | "MONETIZE" | "WHITELIST") => {
     enforcement.mutate({ id: `LIVE-${a.id}`, action })
-    setActions((prev) => prev.filter((item) => item.id !== a.id))
+    setAdjudications((prev) => prev.filter((item) => item.id !== a.id))
   }
 
   return (
@@ -170,34 +164,48 @@ export function LiveSentinel() {
               </div>
               <div>
                 <h3 className="text-[14px] font-semibold tracking-tight text-stone-100">
-                  The Firehose
+                  Live System Log
                 </h3>
                 <p className="text-[10.5px] text-stone-100/55">
-                  Raw scraper telemetry · 1.2k events/min
+                  Raw radar telemetry · Targeted Intel Pipeline
                 </p>
               </div>
             </div>
             <div className="flex items-center gap-2 text-[10.5px] text-stone-100/70">
               <span className="h-1.5 w-1.5 rounded-full bg-success live-dot" />
-              <span className="scoreboard">{logs.length} events buffered</span>
+              <span className="scoreboard">{systemLogs.length} targets buffered</span>
             </div>
           </div>
 
           <div
             ref={feedRef}
-            className="thin-scroll flex-1 overflow-y-auto px-5 py-4 space-y-1"
+            className="thin-scroll flex-1 overflow-y-auto px-5 py-4 space-y-2.5"
           >
-            {logs.map((l) => (
-              <div key={l.id} className="term flex gap-2.5 text-stone-100/85 leading-snug">
-                <span className="text-stone-100/40 shrink-0">{l.ts}</span>
-                <span className={cn("shrink-0 font-bold", levelColor(l.lvl))}>
-                  [{l.lvl.padEnd(7, " ")}]
-                </span>
-                <span className="text-stone-100/85 truncate">{l.text}</span>
+            {systemLogs.map((l) => (
+              <div key={l.id} className="flex items-center justify-between group">
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-2 mb-0.5">
+                    <span className="text-[10px] text-stone-100/40 scoreboard">{l.ts}</span>
+                    <span className="px-1.5 rounded bg-stone-100/10 text-stone-100/70 text-[9px] font-bold uppercase tracking-wider">
+                      {l.platform}
+                    </span>
+                    <span className="text-highlight text-[9px] font-bold uppercase tracking-wider">
+                      {l.velocity.toLocaleString()} VPH
+                    </span>
+                  </div>
+                  <div className="text-[11px] text-stone-100/80 truncate font-mono">
+                    {l.url}
+                  </div>
+                </div>
+                <div className="shrink-0 flex items-center gap-2">
+                   <span className="px-2 py-0.5 rounded-full bg-success/20 text-success text-[9px] font-bold uppercase animate-pulse">
+                     {l.status}
+                   </span>
+                </div>
               </div>
             ))}
-            {logs.length === 0 && (
-              <div className="term text-stone-100/40">Awaiting telemetry…</div>
+            {systemLogs.length === 0 && (
+              <div className="term text-stone-100/40 text-[11px]">Awaiting radar telemetry…</div>
             )}
           </div>
 
@@ -226,13 +234,13 @@ export function LiveSentinel() {
               </div>
             </div>
             <span className="text-[10.5px] text-muted-foreground scoreboard">
-              {actions.length} pending
+              {adjudications.length} pending
             </span>
           </div>
 
           <div className="thin-scroll flex-1 overflow-y-auto space-y-3 pr-1">
             <AnimatePresence initial={false}>
-              {actions.map((a) => (
+              {adjudications.map((a) => (
                 <motion.div
                   key={a.id}
                   initial={{ opacity: 0, y: -8, scale: 0.98 }}
@@ -243,6 +251,7 @@ export function LiveSentinel() {
                   <GlowCard className="p-4">
                     <div className="flex items-start justify-between mb-3">
                       <div className="flex items-center gap-2">
+                        {/* Status Badge */}
                         <span
                           className={cn(
                             "inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-[9.5px] font-bold uppercase tracking-wider",
@@ -259,6 +268,15 @@ export function LiveSentinel() {
                             ? "Investigating"
                             : "Borderline"}
                         </span>
+                        {/* Mode Badge */}
+                        <span className={cn(
+                          "inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[9.5px] font-bold uppercase tracking-wider border",
+                          a.ingestionMode === "LIVE" 
+                            ? "bg-alert/10 text-alert border-alert/20" 
+                            : "bg-highlight/10 text-highlight border-highlight/20"
+                        )}>
+                          {a.ingestionMode === "LIVE" ? "Live Stream" : "Post-Match"}
+                        </span>
                         <span className="scoreboard text-[10.5px] text-muted-foreground">
                           {a.matchId}
                         </span>
@@ -267,11 +285,17 @@ export function LiveSentinel() {
                     </div>
 
                     <div className="flex items-center justify-between mb-3">
-                      <div>
+                      <div className="min-w-0 flex-1">
                         <div className="text-[11.5px] text-muted-foreground">Suspect feed</div>
-                        <div className="font-mono text-[11.5px] truncate max-w-[280px]">{a.url}</div>
+                        <div className="font-mono text-[11.5px] truncate pr-4">{a.url}</div>
+                        {a.ingestionMode === "POST_MATCH" && a.velocity && (
+                          <div className="flex items-center gap-1.5 mt-1 text-[10.5px] text-highlight font-medium">
+                            <TrendingUp className="h-3 w-3" />
+                            Trending: {a.velocity.vph.toLocaleString()} views/hr
+                          </div>
+                        )}
                       </div>
-                      <div className="text-right">
+                      <div className="text-right shrink-0">
                         <div className="text-[10px] uppercase tracking-wider text-muted-foreground">
                           Similarity
                         </div>
@@ -284,25 +308,70 @@ export function LiveSentinel() {
                       </div>
                     </div>
 
-                    <div className="rounded-lg bg-foreground/[0.04] border border-foreground/10 p-3 mb-3">
-                      <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-wider text-muted-foreground mb-2">
-                        <Brain className="h-3 w-3" />
-                        AI Reasoning Trace
-                      </div>
-                      <div className="space-y-0.5">
-                        {a.reasoning.map((r, i) => (
-                          <div
-                            key={i}
-                            className="term text-foreground/85 leading-snug"
-                            style={{
-                              opacity: 0.6 + (i / a.reasoning.length) * 0.4,
-                            }}
-                          >
-                            {r}
+                    {/* AI Arbiter Section */}
+                    {a.isEscalated && (
+                      <div className={cn(
+                        "rounded-lg border p-3 mb-3 transition-all",
+                        a.aiVerdict === "MALICIOUS" 
+                          ? "bg-alert/5 border-alert/20" 
+                          : a.aiVerdict === "WHITELISTED"
+                          ? "bg-success/5 border-success/20"
+                          : "bg-foreground/[0.04] border-foreground/10"
+                      )}>
+                        <div className="flex items-center justify-between mb-2">
+                          <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-wider font-bold">
+                            <Sparkles className="h-3 w-3 text-highlight" />
+                            <span className="text-muted-foreground">Gemini AI Arbiter</span>
+                            {a.aiVerdict && (
+                              <span className={cn(
+                                "ml-1.5 px-1.5 rounded",
+                                a.aiVerdict === "MALICIOUS" ? "text-alert" : "text-success"
+                              )}>
+                                {a.aiVerdict}
+                              </span>
+                            )}
                           </div>
-                        ))}
+                          <div className="flex items-center gap-1 text-[10px] text-highlight font-bold uppercase tracking-tighter">
+                            <AlertTriangle className="h-3 w-3" />
+                            Gray Zone
+                          </div>
+                        </div>
+                        
+                        {a.aiReasoning ? (
+                          <div className="text-[11px] leading-relaxed text-foreground/80 italic border-l-2 border-highlight/30 pl-2.5 py-0.5">
+                            "{a.aiReasoning}"
+                          </div>
+                        ) : (
+                          <div className="flex items-center gap-2 text-[11px] text-muted-foreground animate-pulse">
+                            <Brain className="h-3 w-3" />
+                            Adjudicating semantic context...
+                          </div>
+                        )}
                       </div>
-                    </div>
+                    )}
+
+                    {/* Reasoning Trace (Optional/Manual override) */}
+                    {!a.isEscalated && (
+                      <div className="rounded-lg bg-foreground/[0.04] border border-foreground/10 p-3 mb-3">
+                        <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-wider text-muted-foreground mb-2">
+                          <Brain className="h-3 w-3" />
+                          AI Reasoning Trace
+                        </div>
+                        <div className="space-y-0.5">
+                          {a.reasoning.map((r, i) => (
+                            <div
+                              key={i}
+                              className="term text-foreground/85 leading-snug"
+                              style={{
+                                opacity: 0.6 + (i / a.reasoning.length) * 0.4,
+                              }}
+                            >
+                              {r}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
 
                     <div className="flex items-center gap-2">
                       <button
@@ -344,10 +413,10 @@ export function LiveSentinel() {
               ))}
             </AnimatePresence>
 
-            {actions.length === 0 && (
-              <GlowCard className="p-8 text-center">
+            {adjudications.length === 0 && (
+              <GlowCard className="p-8 text-center border-dashed">
                 <div className="text-[12px] text-muted-foreground">
-                  Waiting for next match event…
+                  Waiting for match adjudication…
                 </div>
               </GlowCard>
             )}
@@ -366,12 +435,14 @@ export function LiveSentinel() {
 
 function levelColor(lvl: string) {
   switch (lvl) {
+    case "SCRAPE":
     case "SCAN":
       return "text-stone-100/70"
     case "VECTOR":
       return "text-highlight"
     case "MATCH":
       return "text-alert"
+    case "ARB":
     case "ARBITER":
       return "text-success"
     default:

@@ -3,6 +3,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from api.routes import router as analyze_router
 from services.matching_engine import initialize_ground_truth
+from services.discovery_manager import DiscoveryManager
 
 from database import engine, Base
 
@@ -18,6 +19,9 @@ async def lifespan(app: FastAPI):
         await conn.run_sync(Base.metadata.create_all)
     import logging
     logging.getLogger(__name__).info("[Aegis] ✅ Vector Vault table ready (official_asset_vectors with HNSW index)")
+    
+    # Launch Discovery Radar background tasks
+    await DiscoveryManager.start()
     yield
     # Cleanup if needed
 

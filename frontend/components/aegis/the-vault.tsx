@@ -200,24 +200,26 @@ function Ingestor() {
                 <span className="text-[10px] text-muted-foreground scoreboard mt-0.5">Stream URL Active</span>
               </div>
             ) : (
-              <>
+              <div className="flex flex-col items-center">
                 <span className="text-[14px] font-semibold text-foreground block">
                   Click to choose or drag & drop files
                 </span>
                 <span className="text-[11px] text-muted-foreground">
                   Or paste a live stream link here
                 </span>
-              </>
+              </div>
             )}
           </div>
-          
-          <input
-            placeholder="Paste URL (e.g. https://.../stream.m3u8)"
-            onClick={(e) => e.stopPropagation()}
-            value={typeof assetSource === "string" ? assetSource : ""}
-            onChange={(e) => setAssetSource(e.target.value)}
-            className="absolute bottom-3 left-1/2 -translate-x-1/2 w-[80%] bg-white/60 border border-white/80 rounded-md px-3 py-1.5 text-[11px] font-mono text-center focus:outline-none focus:border-highlight/40 focus:bg-white/80 transition-all opacity-0 group-hover:opacity-100"
-          />
+
+          <div className="w-full px-8 mt-2">
+            <input
+              placeholder="Or paste a live stream link (m3u8/mp4) here…"
+              onClick={(e) => e.stopPropagation()}
+              value={typeof assetSource === "string" ? assetSource : ""}
+              onChange={(e) => setAssetSource(e.target.value)}
+              className="w-full bg-white/40 border border-white/60 rounded-lg px-3.5 py-2 text-[12.5px] font-mono text-center focus:outline-none focus:border-highlight/50 focus:bg-white/80 transition-all"
+            />
+          </div>
         </div>
         <p className="text-[9.5px] font-mono text-muted-foreground mt-2 uppercase tracking-wider text-center">
           Accepted formats: .mp4, .mkv, .mov, .m3u8, .jpeg, .png

@@ -1,3 +1,4 @@
+from typing import Dict, Any
 from fastapi import APIRouter, HTTPException, status, Depends, BackgroundTasks, Header, Form, File, UploadFile
 from fastapi.responses import StreamingResponse
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -29,6 +30,8 @@ import json
 import logging
 import hashlib
 from services.queue_orchestrator import QueueOrchestrator
+from services.pubsub import firehose_pubsub
+from services.config_manager import get_current_config, update_config
 
 def debug_vault(msg):
     with open("/tmp/vault_debug.log", "a") as f:
@@ -41,25 +44,6 @@ from services.vod_processor import process_vod_asset
 import datetime
 import os
 
-class FirehosePubSub:
-    def __init__(self):
-        self.subscribers = []
-
-    def subscribe(self):
-        queue = asyncio.Queue()
-        self.subscribers.append(queue)
-        return queue
-
-    def unsubscribe(self, queue):
-        if queue in self.subscribers:
-            self.subscribers.remove(queue)
-
-    async def publish(self, event_type, data):
-        print(f"[PubSub] Publishing {event_type} to {len(self.subscribers)} subscribers")
-        for queue in self.subscribers:
-            await queue.put((event_type, data))
-
-firehose_pubsub = FirehosePubSub()
 
 DEMO_MATCHES = {
     "nba": [
@@ -1139,3 +1123,21 @@ async def get_recent_actions(db: AsyncSession = Depends(get_postgres_db)):
         actions.append(f"[{ts}] ARBITER ACTION: {act} executed on {domain}")
     
     return actions
+@router.post("/api/internal/publish")
+async def internal_publish(request: Dict[str, Any]):
+    """
+    Relay endpoint for the ingestion worker to publish events to the UI.
+    """
+    event_type = request.get("event_type", "log")
+    data = request.get("data", {})
+    await firehose_pubsub.publish(event_type, data)
+    return {"status": "ok"}
+
+@router.get("/api/config")
+async def get_config(tenant=Depends(tenant_context)):
+    return get_current_config()
+
+@router.post("/api/config")
+async def save_config(config: Dict[str, Any], tenant=Depends(tenant_context)):
+    update_config(config)
+    return {"status": "ok"}

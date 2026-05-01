@@ -5,8 +5,17 @@ import random
 import re
 from datetime import datetime, timezone
 import httpx
-from database import social_intel_collection, raw_telemetry_collection
-import traceback
+from services.media_extractor import MediaExtractor
+from services.vector_vault import CLIPVectorizer, VaultSearch
+from services.temporal_guard import TemporalGuard
+from services.config import USE_MOCK_SERVICES
+if USE_MOCK_SERVICES:
+    from services.mocks import mock_handoff_to_arbiter as handoff_to_arbiter
+else:
+    from services.arbiter_handoff import handoff_to_arbiter
+from models.schemas import IngestionMode
+import hashlib
+from database import mongo_db, social_intel_collection
 
 # --- 1. REDDIT DAEMON ---
 async def scrape_reddit():
@@ -59,90 +68,157 @@ async def scrape_telegram():
              print("[Telegram] Link ingested.")
     await client.run_until_disconnected()
 
-# --- 3. HEADLESS SCRAPER ---
-from playwright.async_api import async_playwright
-async def run_headless_scraper():
-    from database import MONGO_URI
-    print(f"[*] Connecting to MongoDB: {MONGO_URI}")
-    from database import mongo_client
-    print(f"[*] Databases: {await mongo_client.list_database_names()}")
-    from database import mongo_db
-    print(f"[*] Current DB: {mongo_db.name}")
-    print(f"[*] Collections in {mongo_db.name}: {await mongo_db.list_collection_names()}")
+# --- 3. STEALTH EXTRACTION PIPELINE ---
+async def run_stealth_extractor():
+    print("[*] Stealth Extraction Worker initiated.")
+    
+    # Initialize CLIP model once
+    vectorizer = CLIPVectorizer()
+    
     # STARTUP RESET: Mark everything as pending to scan from start
-    print("[Scraper] Startup Reset: Clearing 'scanned' status for all records...")
+    print("[Worker] Startup Reset: Clearing 'scanned' status for all records...")
     await social_intel_collection.update_many({}, {"$set": {"scanned": False}})
     
     while True:
         try:
             # CHECK MONGODB
-            total_count = await social_intel_collection.count_documents({})
             pending_count = await social_intel_collection.count_documents({"scanned": False})
-            scanned_count = await social_intel_collection.count_documents({"scanned": True})
-            print(f"[Scraper] DB Status: {pending_count} pending / {scanned_count} scanned / {total_count} total")
             
             target = None
             if pending_count > 0:
-                print(f"[Scraper] Processing pending queue...")
                 # Targeted Intelligence Pipeline: Pull LIVE targets before POST_MATCH
                 target = await social_intel_collection.find_one_and_update(
                     {"scanned": False},
-                    {"$set": {"scanned": True}},
+                    {"$set": {"scanned": True, "processing_started_at": datetime.now(timezone.utc)}},
                     sort=[("ingestion_mode", 1), ("priority_score", -1)]
                 )
+            
             if not target:
-                # Eliminate repeated heartbeat scan loop
-                # print("[Scraper] Queue empty. Waiting for new links...")
-                await asyncio.sleep(20)
+                await asyncio.sleep(10)
                 continue
             
-            print(f"[Scraper] Found link in DB: {target.get('raw_url')} (ID: {target.get('_id')})")
+            raw_url = target.get('raw_url')
+            mode = target.get('ingestion_mode', IngestionMode.POST_MATCH)
+            platform = target.get('platform', 'Unknown')
             
-            m3u8_found = target['raw_url']
-            platform = target['platform']
+            print(f"[Worker] Found target: {raw_url} | Mode: {mode}")
 
-            # Process
-            final_media_url = m3u8_found
-            if not m3u8_found.startswith("/"):
-                async with async_playwright() as p:
-                    browser = await p.chromium.launch(headless=True)
-                    page = await browser.new_page()
-                    def intercept(request):
-                        nonlocal final_media_url
-                        if any(x in request.url for x in [".m3u8", ".ts", ".mp4"]):
-                            final_media_url = request.url
-                    page.on("request", intercept)
-                    try:
-                        await page.goto(m3u8_found, timeout=30000)
-                        await asyncio.sleep(5)
-                    except: pass
-                    await browser.close()
+            # 1. Resolve Media Stream URL
+            stream_url = await MediaExtractor.get_stream_url(raw_url)
+            if not stream_url:
+                print(f"[!] Extraction Failed: Could not resolve stream for {raw_url}")
+                continue
 
-            # Analyze
-            is_verified_media = (final_media_url != m3u8_found) or m3u8_found.startswith("/") or any(x in final_media_url for x in [".m3u8", ".ts", ".mp4"])
-            if is_verified_media:
-                print(f"[*] Calling /analyze_media for {final_media_url}")
-                async with httpx.AsyncClient() as client:
-                    try:
-                        resp = await client.post("http://127.0.0.1:8000/analyze_media", json={
-                            "media_url": final_media_url,
-                            "platform": platform,
-                            "username": target.get("metadata", {}).get("username", "anonymous_detector"),
-                            "post_text": target.get("metadata", {}).get("text", "Suspected piracy stream detected via telemetry."),
-                            "engagement_metrics": target.get("metadata", {}).get("engagement_metrics", {})
-                        }, timeout=30.0)
-                        print(f"[+] Response: {resp.status_code} - {resp.json().get('status')}")
-                    except Exception as e:
-                        print(f"[!] API Error: {e}")
-            else:
-                print(f"[!] Skip: No media stream found on page {m3u8_found}")
+            # 2. Process Stream In-Memory
+            is_live = (mode == IngestionMode.LIVE)
+            print(f"[*] Starting In-Memory Extraction ({'LIVE' if is_live else 'VOD'}) at 1fps...")
+            
+            frame_count = 0
+            async for frame_bytes in MediaExtractor.stream_frames(stream_url, is_live=is_live):
+                frame_count += 1
+                
+                # SIMULATION GATE: For mock targets, force an AI escalation periodically to test the Arbiter
+                if USE_MOCK_SERVICES and "mock_" in raw_url and frame_count == 10:
+                    print(f"[Simulation] Forcing Mock AI Escalation for {raw_url}")
+                    asyncio.create_task(handoff_to_arbiter(
+                        frame_bytes=frame_bytes,
+                        url=raw_url,
+                        platform=platform,
+                        similarity=0.82, # Simulated gray zone score
+                        metadata=target.get("metadata", {})
+                    ))
+
+                # PHASE 4: Vector Vault & Temporal Guard
+                try:
+                    # 1. Vectorize
+                    vector = vectorizer.vectorize(frame_bytes)
+                    
+                    # 2. Search Vault
+                    match_data = await VaultSearch.find_nearest(vector)
+                    
+                    if match_data:
+                        # 3. Adjudicate (Temporal Guard)
+                        adjudication = TemporalGuard.evaluate(match_data, mode)
+                        verdict = adjudication["verdict"]
+                        confidence = adjudication["confidence"]
+                        
+                        if verdict == "CONFIRMED_MALICIOUS":
+                            print(f"[Phase 4] {verdict} | Conf: {confidence:.2f} | Asset: {match_data['asset'].match_id}")
+                            
+                            # Emit PubSub Event to UI via Relay
+                            stable_id = hashlib.md5(raw_url.encode()).hexdigest()[:12]
+                            event_data = {
+                                "id": stable_id,
+                                "ts": datetime.now(timezone.utc).strftime("%H:%M:%S"),
+                                "matchId": match_data['asset'].match_id,
+                                "cosine": confidence,
+                                "platform": platform,
+                                "url": raw_url,
+                                "verdict": verdict,
+                                "reasoning": [
+                                    f"→ Match Found: {match_data['asset'].match_id}",
+                                    f"→ Confidence Score: {int(confidence * 100)}%",
+                                    f"→ Mode: {mode}",
+                                    f"→ Temporal Guard: {verdict}"
+                                ]
+                            }
+                            
+                            async with httpx.AsyncClient() as client:
+                                try:
+                                    await client.post("http://127.0.0.1:8000/api/internal/publish", json={
+                                        "event_type": "action",
+                                        "data": event_data
+                                    })
+                                except Exception as e:
+                                    print(f"[!] Relay failed: {e}")
+
+                        elif verdict == "TIER_3_REQUIRED":
+                            print(f"[Phase 5] Escalating Gray Zone to Gemini AI Arbiter...")
+                            # NON-BLOCKING HANDOFF: Spawn a background task
+                            asyncio.create_task(handoff_to_arbiter(
+                                frame_bytes=frame_bytes,
+                                url=raw_url,
+                                platform=platform,
+                                similarity=confidence,
+                                metadata=target.get("metadata", {})
+                            ))
+                            
+                            # Log the escalation to the UI relay
+                            async with httpx.AsyncClient() as client:
+                                try:
+                                    await client.post("http://127.0.0.1:8000/api/internal/publish", json={
+                                        "event_type": "log",
+                                        "data": {
+                                            "id": f"esc-{datetime.now().timestamp()}",
+                                            "ts": datetime.now(timezone.utc).strftime("%H:%M:%S"),
+                                            "url": raw_url,
+                                            "msg": "⚠️ Gray Zone detected. Escalating to Gemini AI Arbiter for semantic analysis..."
+                                        }
+                                    })
+                                except: pass
+
+                        if verdict == "CONFIRMED_MALICIOUS" and is_live:
+                            # For live mirrors, we don't need to keep scanning if we're certain.
+                            # But for this demo, let's keep going to show stability.
+                            pass
+
+                except Exception as e:
+                    print(f"[Phase 4 Error] {e}")
+
+                # If it's a VOD (POST_MATCH) and we've gathered enough frames (e.g., 60), we can stop.
+                if not is_live and frame_count >= 60:
+                    print("[Worker] VOD sample limit reached. Moving to next target.")
+                    break
+            
+            print(f"[Worker] Finished processing {raw_url}. Total frames: {frame_count}")
 
         except Exception as e:
-            print(f"[Scraper Error] {e}")
-        await asyncio.sleep(10)
+            print(f"[Worker Error] {e}")
+            traceback.print_exc()
+        await asyncio.sleep(5)
 
 async def run_worker():
-    await asyncio.gather(scrape_reddit(), scrape_telegram(), run_headless_scraper())
+    await asyncio.gather(scrape_reddit(), scrape_telegram(), run_stealth_extractor())
 
 if __name__ == "__main__":
     asyncio.run(run_worker())

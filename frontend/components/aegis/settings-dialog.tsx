@@ -19,6 +19,7 @@ import {
   ShieldCheck,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { aegisFetch } from "@/lib/api"
 
 interface SettingsDialogProps {
   open: boolean
@@ -90,9 +91,27 @@ export function SettingsDialog({ open, onClose }: SettingsDialogProps) {
     return () => window.removeEventListener("keydown", onKey)
   }, [open, onClose])
 
-  const handleSave = () => {
-    setSaved(true)
-    setTimeout(() => setSaved(false), 1800)
+  React.useEffect(() => {
+    if (open) {
+      aegisFetch<ConfigState>("/api/config")
+        .then((data) => setConfig(data))
+        .catch((err) => console.error("Failed to load config:", err))
+    }
+  }, [open])
+
+  const handleSave = async () => {
+    try {
+      await aegisFetch("/api/config", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(config),
+      })
+      setSaved(true)
+      setTimeout(() => setSaved(false), 1800)
+    } catch (err) {
+      console.error("Failed to save config:", err)
+      alert("Failed to save configuration. Check console for details.")
+    }
   }
 
   return (

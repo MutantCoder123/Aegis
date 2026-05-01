@@ -18,15 +18,37 @@ export interface FirehoseActionEvent {
   url: string
   reasoning: string[]
   verdict: "INFRINGEMENT_CONFIRMED" | "BORDERLINE" | "BENIGN" | "PENDING"
+  // New Targeted Intelligence Pipeline fields
+  ingestion_mode: "LIVE" | "POST_MATCH"
+  priority_score: number
+  velocity_metrics?: {
+    views_per_hour: number
+    uptime_minutes?: number
+  }
+  similarity_score: number
+  tier_3_escalation: boolean
+  ai_verdict?: "MALICIOUS" | "WHITELISTED" | "PENDING"
+  ai_reasoning?: string
   infringement?: Infringement
+}
+
+export interface FirehoseTargetEvent {
+  id: string
+  ts: string
+  url: string
+  platform: string
+  velocity: number
+  status: string
 }
 
 export function useFirehoseStream({
   onLog,
   onAction,
+  onTarget,
 }: {
   onLog: (event: FirehoseLogEvent) => void
   onAction: (event: FirehoseActionEvent) => void
+  onTarget?: (event: FirehoseTargetEvent) => void
 }) {
   React.useEffect(() => {
     const controller = new AbortController()
@@ -66,6 +88,7 @@ export function useFirehoseStream({
           const payload = JSON.parse(data)
           if (event === "log") onLog(payload)
           if (event === "action") onAction(payload)
+          if (event === "target" && onTarget) onTarget(payload)
         }
       }
     }

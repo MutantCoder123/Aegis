@@ -36,7 +36,7 @@ def adjudicate_edge_case(image: Image.Image, post_text: str) -> dict:
 
     try:
         response = client.models.generate_content(
-            model='gemini-2.5-flash',
+            model=os.getenv("GEMINI_MODEL", "gemini-2.5-flash"),
             contents=[image, prompt],
         )
         
@@ -120,7 +120,7 @@ async def adjudicate_stream(
 
             def _call_gemini():
                 response = client.models.generate_content(
-                    model="gemini-2.5-flash",
+                    model=os.getenv("GEMINI_MODEL", "gemini-2.5-flash"),
                     contents=[system_prompt],
                 )
                 text = response.text
