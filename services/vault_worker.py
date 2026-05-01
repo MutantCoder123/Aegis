@@ -411,8 +411,11 @@ async def process_master_vod(
     vectors_inserted = 0
     total_chunks = len(chunk_files)
     
+    # Use a stable start time for the VOD (e.g. today at midnight) and add offsets
+    import datetime
+    vod_start_time = datetime.datetime.now(datetime.timezone.utc).replace(hour=0, minute=0, second=0, microsecond=0)
+    
     for i, chunk_path in enumerate(chunk_files):
-        # We still use chunk_path for frame extraction, but we associate vectors with master_vod_url
         try:
             # Piped streaming to fetch 1 frame per 2 seconds
             pipe_cmd = [
@@ -450,17 +453,31 @@ async def process_master_vod(
             if not frames:
                 continue
 
+            # Calculate timestamp for this chunk (5s interval)
+            chunk_timestamp = vod_start_time + datetime.timedelta(seconds=i * 5)
             video_chunk_url = await _upload_asset(chunk_path, match_id)
             
-            for frame_bytes in frames:
+            for frame_idx, frame_bytes in enumerate(frames):
                 vector = await _vectorize_bytes(frame_bytes)
                 if vector is None:
                     continue
-                # Use master_vod_url here for all vectors so the UI plays the FULL VOD.
-                ok = await _store_vector(vector, match_id, video_path, master_vod_url, db_session_factory, source_origin, broadcaster_id)
+                
+                # Fine-grained timestamp within the chunk (2s frame interval)
+                frame_timestamp = chunk_timestamp + datetime.timedelta(seconds=frame_idx * 2)
+                
+                # Use the specific chunk URL for this vector so the UI plays the exact segment matched.
+                ok = await _store_vector(
+                    vector, 
+                    match_id, 
+                    video_path, 
+                    video_chunk_url, 
+                    db_session_factory, 
+                    source_origin, 
+                    broadcaster_id,
+                    timestamp=frame_timestamp
+                )
                 if ok:
                     vectors_inserted += 1
-            
         except Exception as e:
             logger.error(f"[VaultWorker] Error processing chunk {i}: {e}")
             

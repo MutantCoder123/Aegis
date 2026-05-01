@@ -17,7 +17,7 @@ export interface FirehoseActionEvent {
   platform: string
   url: string
   reasoning: string[]
-  verdict: "INFRINGEMENT_CONFIRMED" | "BORDERLINE" | "BENIGN"
+  verdict: "INFRINGEMENT_CONFIRMED" | "BORDERLINE" | "BENIGN" | "PENDING"
   infringement?: Infringement
 }
 

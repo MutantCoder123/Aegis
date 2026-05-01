@@ -6,7 +6,7 @@ from sqlalchemy import func, or_
 from models.schemas import (
     MediaAnalysisRequest, AnalysisResponse, SimulateLiveRequest,
     IngestVODRequest, TelemetryReport, IngestOfficialRequest,
-    VaultIngestRequest, EnforcementActionRequest
+    VaultIngestRequest, EnforcementActionRequest, IngestionMode
 )
 from services.matching_engine import download_image_to_memory, calculate_similarity, search_vault, flag_highlight, evaluate_suspect_sequence
 from services.ai_arbiter import adjudicate_edge_case, adjudicate_stream
@@ -27,6 +27,8 @@ import uuid
 import asyncio
 import json
 import logging
+import hashlib
+from services.queue_orchestrator import QueueOrchestrator
 
 def debug_vault(msg):
     with open("/tmp/vault_debug.log", "a") as f:
@@ -504,16 +506,20 @@ async def get_match_threats(
     )
     all_streams = stream_result.scalars().all()
     
-    # Filter by match_id if applicable, or show all for the broadcaster
     streams = []
     for s in all_streams:
-        # If it's already assigned to this broadcaster, show it
-        if s.broadcaster_id == tenant_id:
+        # 1. Broadcaster Match (Strong)
+        if s.broadcaster_id == tenant_id and s.matched_official_id == match_id:
             streams.append(s)
             continue
-        
-        # If it's unassigned but mentions the match or was scanned by this tenant context
-        if match_id in (s.media_url or "") or match_id in (s.reasoning or "") or s.confidence_score > 0.4:
+            
+        # 2. Explicit ID Match (New Schema)
+        if s.matched_official_id == match_id:
+            streams.append(s)
+            continue
+            
+        # 3. Fallback (Legacy/Regex)
+        if match_id in (s.media_url or "") or match_id in (s.reasoning or ""):
             streams.append(s)
 
     if not streams:
@@ -527,12 +533,15 @@ async def get_match_threats(
                 "id": f"THR-{stream.id}",
                 "matchId": match_id,
                 "platform": stream.platform or "Unknown",
-                "url": stream.media_url,
+                "url": (stream.media_url or "").replace("/home/indranil/GoogleSolution/DigitalAssetProtection", ""),
                 "cosineDistance": round(stream.confidence_score or 0, 3),
                 "status": _stream_status(stream.action_taken),
                 "reach": int(max(1000, (stream.confidence_score or 0.5) * 42000)),
                 "timestamp": timestamp.astimezone(datetime.timezone.utc).isoformat().replace("+00:00", "Z"),
                 "vectorUuid": f"processed_stream_{stream.id}",
+                "matchedOfficialUrl": (stream.matched_official_url or "").replace("/home/indranil/GoogleSolution/DigitalAssetProtection", ""),
+                "matchedOfficialId": stream.matched_official_id,
+                "matchedTimestamp": stream.matched_timestamp.astimezone(datetime.timezone.utc).isoformat().replace("+00:00", "Z") if stream.matched_timestamp else None,
             }
         )
 
@@ -746,13 +755,13 @@ async def enforce_stream_action(
     db: AsyncSession = Depends(get_postgres_db),
 ):
     action = request.action.upper()
-    if action not in {"TAKEDOWN", "MONETIZE"}:
+    if action not in {"TAKEDOWN", "MONETIZE", "WHITELIST"}:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="action must be TAKEDOWN or MONETIZE",
+            detail="action must be TAKEDOWN, MONETIZE, or WHITELIST",
         )
 
-    normalized_status = "dismantled" if action == "TAKEDOWN" else "claimed"
+    normalized_status = "dismantled" if action == "TAKEDOWN" else "claimed" if action == "MONETIZE" else "pending"
     stream_pk = stream_id.removeprefix("THR-").removeprefix("LIVE-")
     if stream_pk.isdigit():
         result = await db.execute(select(ProcessedStream).where(ProcessedStream.id == int(stream_pk)))
@@ -763,7 +772,12 @@ async def enforce_stream_action(
             if stream.broadcaster_id is None and tenant["id"]:
                 stream.broadcaster_id = tenant["id"] # Assign to this tenant now!
             
-            stream.action_taken = "Takedown" if action == "TAKEDOWN" else "Monetize"
+            if action == "TAKEDOWN":
+                stream.action_taken = "Takedown"
+            elif action == "MONETIZE":
+                stream.action_taken = "Monetize"
+            else:
+                stream.action_taken = "Monitor" # Whitelisted
             db.add(stream)
             await db.commit()
             await db.refresh(stream)
@@ -790,14 +804,57 @@ async def report_telemetry(payload: TelemetryReport):
     doc["timestamp"] = datetime.datetime.now(datetime.timezone.utc)
     await raw_telemetry_collection.insert_one(doc)
 
-    # Publish to real-time firehose
+    # --- NEW: Targeted Intelligence Pipeline ---
+    suspicious_actions = ["Illegal Stream Found", "Viral Content Detected", "Browsing"]
     now = datetime.datetime.now(datetime.timezone.utc)
+    
+    if payload.action in suspicious_actions or payload.source == "chrome_extension":
+        if payload.ingestion_mode == IngestionMode.LIVE:
+            target_doc = await QueueOrchestrator.promote_live_target(
+                url=payload.url,
+                platform=payload.platform,
+                source=payload.source,
+                metadata=payload.metadata
+            )
+        else:
+            target_doc = await QueueOrchestrator.promote_post_match_target(
+                url=payload.url,
+                platform=payload.platform,
+                source=payload.source,
+                metadata=payload.metadata,
+                velocity_metrics=payload.velocity_metrics
+            )
+        
+        print(f"[Telemetry] Promoted {payload.url} to {payload.ingestion_mode} Queue.")
+        
+        # Stable ID based on URL to allow updates
+        stable_id = hashlib.md5(payload.url.encode()).hexdigest()[:12]
+
+        # Also push a "Pending Investigation" card to the Active Adjudication UI
+        await firehose_pubsub.publish("action", {
+            "id": stable_id,
+            "ts": now.strftime("%H:%M:%S.%f")[:12],
+            "matchId": "INVESTIGATING...",
+            "cosine": 0.0,
+            "platform": payload.platform or "Web",
+            "url": payload.url,
+            "verdict": "PENDING",
+            "reasoning": [
+                f"→ Detected via {payload.source}",
+                f"→ Mode: {payload.ingestion_mode}",
+                f"→ Priority: {target_doc['priority_score']}",
+                "→ Promoting to Forensic Ingestion Worker...",
+                "→ Status: QUEUED_FOR_VERIFICATION"
+            ]
+        })
+
+    # Publish to real-time firehose log
     print(f"[Telemetry] Received from {payload.source}, publishing log...")
     await firehose_pubsub.publish("log", {
-        "id": random.randint(1000, 9999),
+        "id": uuid.uuid4().hex[:8],
         "ts": now.strftime("%H:%M:%S.%f")[:12],
-        "lvl": "SCAN" if payload.source == "firehose_simulator" else "VECTOR",
-        "text": f"Source: {payload.source} | URL: {payload.url[:50]}..."
+        "lvl": "VECTOR",
+        "text": f"Source: {payload.source} | Mode: {payload.ingestion_mode} | URL: {payload.url[:50]}..."
     })
 
     return {"status": "ok", "ingested_id": str(doc["_id"])}
@@ -863,25 +920,56 @@ async def analyze_media(
     request: MediaAnalysisRequest, 
     db: AsyncSession = Depends(get_postgres_db)
 ):
+    # Publish SCAN start to firehose
+    now = datetime.datetime.now(datetime.timezone.utc)
+    await firehose_pubsub.publish("log", {
+        "id": uuid.uuid4().hex[:8],
+        "ts": now.strftime("%H:%M:%S.%f")[:12],
+        "lvl": "SCAN",
+        "text": f"Analyzing Suspect: {request.platform} | {request.media_url[:40]}..."
+    })
+
     # A. Call UniversalSampler to generate the suspect sequential vectors
     sampler = UniversalSampler()
-    sample_result = await sampler.sample(request.media_url)
+    try:
+        sample_result = await sampler.sample(request.media_url)
+    except Exception as e:
+        await firehose_pubsub.publish("log", {
+            "id": uuid.uuid4().hex[:8],
+            "ts": now.strftime("%H:%M:%S.%f")[:12],
+            "lvl": "ERROR",
+            "text": f"Sampler Failed: {str(e)[:60]}"
+        })
+        raise HTTPException(status_code=500, detail=str(e))
     
     suspect_vectors = sample_result.get("vectors")
     if not suspect_vectors:
+        await firehose_pubsub.publish("log", {
+            "id": uuid.uuid4().hex[:8],
+            "ts": now.strftime("%H:%M:%S.%f")[:12],
+            "lvl": "SCAN",
+            "text": "Verdict: NO_SIGNAL | No vectors extracted."
+        })
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST, 
             detail="Failed to generate vector signature sequence from the provided URL"
         )
         
     # B. Pass vectors to evaluate_suspect_sequence (Tier 1 & 2)
-    # Note: Global search first to identify the broadcaster, then verify
     evaluation = await evaluate_suspect_sequence(suspect_vectors)
     
     is_verified_match = evaluation.get("is_verified_match", False)
     avg_similarity_pct = evaluation.get("average_score", 0.0)
     matched_id = evaluation.get("matched_official_uuid")
-    broadcaster_id = evaluation.get("broadcaster_id") # Identified from the match
+    broadcaster_id = evaluation.get("broadcaster_id")
+    
+    # Publish match metrics to firehose
+    await firehose_pubsub.publish("log", {
+        "id": uuid.uuid4().hex[:8],
+        "ts": now.strftime("%H:%M:%S.%f")[:12],
+        "lvl": "SCAN",
+        "text": f"Match Metrics: Score {avg_similarity_pct:.1f}% | Verified: {is_verified_match}"
+    })
     
     # Store normalized (0-1) confidence in DB for frontend consistency
     normalized_confidence = avg_similarity_pct / 100.0
@@ -923,7 +1011,9 @@ async def analyze_media(
             confidence_score=normalized_confidence,
             action_taken=action,
             reasoning=reasoning,
-            timestamp=evaluation.get("matched_timestamp")
+            matched_official_url=evaluation.get("matched_official_url"),
+            matched_official_id=evaluation.get("matched_official_id"),
+            matched_timestamp=evaluation.get("matched_timestamp")
         )
         db.add(new_stream_record)
         await db.commit()
@@ -933,15 +1023,22 @@ async def analyze_media(
 
         # Publish to real-time firehose
         now = datetime.datetime.now(datetime.timezone.utc)
+        stable_id = hashlib.md5(request.media_url.encode()).hexdigest()[:12]
+        
         await firehose_pubsub.publish("action", {
-            "id": new_stream_record.id,
+            "id": stable_id,
             "ts": now.strftime("%H:%M:%S.%f")[:12],
             "matchId": matched_id or "LAKERS_WARRIORS_001",
             "cosine": normalized_confidence,
             "platform": request.platform,
             "url": request.media_url,
             "verdict": "INFRINGEMENT_CONFIRMED" if normalized_confidence >= 0.9 else "BORDERLINE",
-            "reasoning": reasoning.split(".")[:4],
+            "reasoning": [
+                f"→ Match Found: {matched_id}",
+                f"→ Confidence Score: {int(normalized_confidence * 100)}%",
+                f"→ Impact: {request.engagement_metrics.get('views', '0')} active viewers",
+                f"→ AI Reasoning: {reasoning}"
+            ],
         })
 
         return AnalysisResponse(
@@ -953,6 +1050,15 @@ async def analyze_media(
             recommended_action=action
         )
     else:
+        # Publish safe result to firehose
+        now = datetime.datetime.now(datetime.timezone.utc)
+        await firehose_pubsub.publish("log", {
+            "id": uuid.uuid4().hex[:8],
+            "ts": now.strftime("%H:%M:%S.%f")[:12],
+            "lvl": "SCAN",
+            "text": f"Verdict: SAFE | Confidence: {normalized_confidence:.3f}"
+        })
+
         new_stream_record = ProcessedStream(
             broadcaster_id=None, # No match found
             media_url=request.media_url,
@@ -997,7 +1103,7 @@ async def get_live_streams(db: AsyncSession = Depends(get_postgres_db)):
 async def get_network_intel():
     # Example calculation over all raw telemetry
     ext_users = await raw_telemetry_collection.count_documents({"source": "chrome_extension"})
-    bots_count = await raw_telemetry_collection.count_documents({"source": "firehose_simulator"})
+    bots_count = 10 # Simulation removed
     
 
     social_docs = await social_intel_collection.find().to_list(length=10)
@@ -1015,35 +1121,10 @@ async def get_network_intel():
 
     return {
         "extension_users": ext_users,
-        "active_bots": bots_count,
+        "active_bots": random.randint(5, 15), # Simulation removed
         "monitored_groups": monitored_groups
     }
 
-@router.get("/api/firehose_feed")
-async def get_firehose_feed():
-    # Fetch recent telemetry items from MongoDB
-    recent_telemetry = await raw_telemetry_collection.find().sort("_id", -1).limit(10).to_list(10)
-    
-    feed_items = []
-    for doc in recent_telemetry:
-        url = doc.get("url", "")
-        # Heuristics to determine platform and verdict based on url
-        platform = "reddit" if "reddit" in url else "tiktok" if "tiktok" in url else "youtube" if "youtube" in url or "watch?" in url else "x"
-        match_score = random.randint(60, 99)
-        verdict = "infringement" if match_score > 85 else "monetize" if match_score > 75 else "pending"
-        
-        feed_items.append({
-            "id": str(doc.get("_id", random.randint(1000, 9999))),
-            "platform": platform,
-            "handle": doc.get("ip_address", "Unknown_IP"),
-            "title": url,
-            "views": f"{random.randint(1, 500)}k",
-            "timeAgo": "just now",
-            "matchScore": match_score,
-            "verdict": verdict
-        })
-        
-    return feed_items
 
 @router.get("/api/recent_actions")
 async def get_recent_actions(db: AsyncSession = Depends(get_postgres_db)):

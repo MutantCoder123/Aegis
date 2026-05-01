@@ -1,0 +1,537 @@
+[*] Starting Reddit daemon...
+[!] No REDDIT_CLIENT_ID provided. Skipping simulation.
+[*] Starting Telegram listener...
+[!] No TELEGRAM_API_ID provided. Skipping simulation.
+[*] Connecting to MongoDB: mongodb+srv://indranil9905_db_user:a8zkwSAMnZayVkku@cluster0.6wzxkhs.mongodb.net/?appName=Cluster0
+[*] Databases: ['CampusExchange', 'aegis_telemetry', 'campusexchangedb', 'test', 'admin', 'local']
+[*] Current DB: aegis_telemetry
+[*] Collections in aegis_telemetry: ['social_intel', 'raw_telemetry']
+[Scraper] Startup Reset: Clearing 'scanned' status for all records...
+[Scraper] DB Status: 40 pending / 0 scanned / 40 total
+[Scraper] Processing pending queue...
+[Scraper] Found link in DB: /home/indranil/GoogleSolution/DigitalAssetProtection/official_archive/LAKERS_WARRIORS_001_5da7c1c2.mp4 (ID: 69f23b19993752d440f5f8c5)
+[*] Calling /analyze_media for /home/indranil/GoogleSolution/DigitalAssetProtection/official_archive/LAKERS_WARRIORS_001_5da7c1c2.mp4
+[+] Response: 200 - Piracy
+[Scraper] DB Status: 39 pending / 1 scanned / 40 total
+[Scraper] Processing pending queue...
+[Scraper] Found link in DB: /home/indranil/GoogleSolution/DigitalAssetProtection/official_archive/LAKERS_WARRIORS_001_c01d133d.mp4 (ID: 69f23b1b993752d440f5f8c6)
+[*] Calling /analyze_media for /home/indranil/GoogleSolution/DigitalAssetProtection/official_archive/LAKERS_WARRIORS_001_c01d133d.mp4
+[+] Response: 200 - Piracy
+[Scraper] DB Status: 38 pending / 2 scanned / 40 total
+[Scraper] Processing pending queue...
+[Scraper] Found link in DB: /home/indranil/GoogleSolution/DigitalAssetProtection/official_archive/LAKERS_WARRIORS_001_54772ad0.mp4 (ID: 69f23b1b993752d440f5f8c7)
+[*] Calling /analyze_media for /home/indranil/GoogleSolution/DigitalAssetProtection/official_archive/LAKERS_WARRIORS_001_54772ad0.mp4
+[!] API Error: Expecting value: line 1 column 1 (char 0)
+[Scraper] DB Status: 37 pending / 3 scanned / 40 total
+[Scraper] Processing pending queue...
+[Scraper] Found link in DB: /home/indranil/GoogleSolution/DigitalAssetProtection/official_archive/LAKERS_WARRIORS_001_d4adf9ff.mp4 (ID: 69f23b1b993752d440f5f8c8)
+[*] Calling /analyze_media for /home/indranil/GoogleSolution/DigitalAssetProtection/official_archive/LAKERS_WARRIORS_001_d4adf9ff.mp4
+[!] API Error: Expecting value: line 1 column 1 (char 0)
+[Scraper] DB Status: 36 pending / 4 scanned / 40 total
+[Scraper] Processing pending queue...
+[Scraper] Found link in DB: /home/indranil/GoogleSolution/DigitalAssetProtection/official_archive/LAKERS_WARRIORS_001_6ed1c7a3.mp4 (ID: 69f23b1b993752d440f5f8c9)
+[*] Calling /analyze_media for /home/indranil/GoogleSolution/DigitalAssetProtection/official_archive/LAKERS_WARRIORS_001_6ed1c7a3.mp4
+[!] API Error: Expecting value: line 1 column 1 (char 0)
+[Scraper] DB Status: 35 pending / 5 scanned / 40 total
+[Scraper] Processing pending queue...
+[Scraper] Found link in DB: /home/indranil/GoogleSolution/DigitalAssetProtection/official_archive/LAKERS_WARRIORS_001_381d4748.mp4 (ID: 69f23b1b993752d440f5f8ca)
+[*] Calling /analyze_media for /home/indranil/GoogleSolution/DigitalAssetProtection/official_archive/LAKERS_WARRIORS_001_381d4748.mp4
+[!] API Error: Expecting value: line 1 column 1 (char 0)
+[Scraper] DB Status: 34 pending / 6 scanned / 40 total
+[Scraper] Processing pending queue...
+[Scraper] Found link in DB: /home/indranil/GoogleSolution/DigitalAssetProtection/official_archive/LAKERS_WARRIORS_001_c877ed9b.mp4 (ID: 69f23b1b993752d440f5f8cb)
+[*] Calling /analyze_media for /home/indranil/GoogleSolution/DigitalAssetProtection/official_archive/LAKERS_WARRIORS_001_c877ed9b.mp4
+[!] API Error: Expecting value: line 1 column 1 (char 0)
+[Scraper] DB Status: 33 pending / 7 scanned / 40 total
+[Scraper] Processing pending queue...
+[Scraper] Found link in DB: /home/indranil/GoogleSolution/DigitalAssetProtection/official_archive/LAKERS_WARRIORS_001_2ce84d45.mp4 (ID: 69f23b1b993752d440f5f8cc)
+[*] Calling /analyze_media for /home/indranil/GoogleSolution/DigitalAssetProtection/official_archive/LAKERS_WARRIORS_001_2ce84d45.mp4
+[!] API Error: Expecting value: line 1 column 1 (char 0)
+[Scraper] DB Status: 32 pending / 8 scanned / 40 total
+[Scraper] Processing pending queue...
+[Scraper] Found link in DB: /home/indranil/GoogleSolution/DigitalAssetProtection/official_archive/LAKERS_WARRIORS_001_53b8b7de.mp4 (ID: 69f23b1b993752d440f5f8cd)
+[*] Calling /analyze_media for /home/indranil/GoogleSolution/DigitalAssetProtection/official_archive/LAKERS_WARRIORS_001_53b8b7de.mp4
+[!] API Error: Expecting value: line 1 column 1 (char 0)
+[Scraper] DB Status: 31 pending / 9 scanned / 40 total
+[Scraper] Processing pending queue...
+[Scraper] Found link in DB: /home/indranil/GoogleSolution/DigitalAssetProtection/official_archive/LAKERS_WARRIORS_001_ca496d68.mp4 (ID: 69f23b1b993752d440f5f8ce)
+[*] Calling /analyze_media for /home/indranil/GoogleSolution/DigitalAssetProtection/official_archive/LAKERS_WARRIORS_001_ca496d68.mp4
+[!] API Error: Expecting value: line 1 column 1 (char 0)
+[Scraper] DB Status: 30 pending / 10 scanned / 40 total
+[Scraper] Processing pending queue...
+[Scraper] Found link in DB: /home/indranil/GoogleSolution/DigitalAssetProtection/official_archive/LAKERS_WARRIORS_001_e3569d19.mp4 (ID: 69f242b66a21cd2f8d148fa9)
+[*] Calling /analyze_media for /home/indranil/GoogleSolution/DigitalAssetProtection/official_archive/LAKERS_WARRIORS_001_e3569d19.mp4
+[!] API Error: Expecting value: line 1 column 1 (char 0)
+[Scraper] DB Status: 29 pending / 11 scanned / 40 total
+[Scraper] Processing pending queue...
+[Scraper] Found link in DB: /home/indranil/GoogleSolution/DigitalAssetProtection/official_archive/LAKERS_WARRIORS_001_e02565eb.mp4 (ID: 69f242b66a21cd2f8d148faa)
+[*] Calling /analyze_media for /home/indranil/GoogleSolution/DigitalAssetProtection/official_archive/LAKERS_WARRIORS_001_e02565eb.mp4
+[!] API Error: Expecting value: line 1 column 1 (char 0)
+[Scraper] DB Status: 28 pending / 12 scanned / 40 total
+[Scraper] Processing pending queue...
+[Scraper] Found link in DB: /home/indranil/GoogleSolution/DigitalAssetProtection/official_archive/LAKERS_WARRIORS_001_96a7cc93.mp4 (ID: 69f242b66a21cd2f8d148fab)
+[*] Calling /analyze_media for /home/indranil/GoogleSolution/DigitalAssetProtection/official_archive/LAKERS_WARRIORS_001_96a7cc93.mp4
+[!] API Error: Expecting value: line 1 column 1 (char 0)
+[Scraper] DB Status: 27 pending / 13 scanned / 40 total
+[Scraper] Processing pending queue...
+[Scraper] Found link in DB: /home/indranil/GoogleSolution/DigitalAssetProtection/official_archive/LAKERS_WARRIORS_001_931333d5.mp4 (ID: 69f242b66a21cd2f8d148fac)
+[*] Calling /analyze_media for /home/indranil/GoogleSolution/DigitalAssetProtection/official_archive/LAKERS_WARRIORS_001_931333d5.mp4
+[!] API Error: Expecting value: line 1 column 1 (char 0)
+[Scraper] DB Status: 26 pending / 14 scanned / 40 total
+[Scraper] Processing pending queue...
+[Scraper] Found link in DB: /home/indranil/GoogleSolution/DigitalAssetProtection/official_archive/LAKERS_WARRIORS_001_da88f336.mp4 (ID: 69f242b66a21cd2f8d148fad)
+[*] Calling /analyze_media for /home/indranil/GoogleSolution/DigitalAssetProtection/official_archive/LAKERS_WARRIORS_001_da88f336.mp4
+[!] API Error: Expecting value: line 1 column 1 (char 0)
+[Scraper] DB Status: 25 pending / 15 scanned / 40 total
+[Scraper] Processing pending queue...
+[Scraper] Found link in DB: /home/indranil/GoogleSolution/DigitalAssetProtection/official_archive/LAKERS_WARRIORS_001_8b147e7e.mp4 (ID: 69f242b66a21cd2f8d148fae)
+[*] Calling /analyze_media for /home/indranil/GoogleSolution/DigitalAssetProtection/official_archive/LAKERS_WARRIORS_001_8b147e7e.mp4
+[!] API Error: Expecting value: line 1 column 1 (char 0)
+[Scraper] DB Status: 24 pending / 16 scanned / 40 total
+[Scraper] Processing pending queue...
+[Scraper] Found link in DB: /home/indranil/GoogleSolution/DigitalAssetProtection/official_archive/LAKERS_WARRIORS_001_d191e03e.mp4 (ID: 69f242b66a21cd2f8d148faf)
+[*] Calling /analyze_media for /home/indranil/GoogleSolution/DigitalAssetProtection/official_archive/LAKERS_WARRIORS_001_d191e03e.mp4
+[!] API Error: Expecting value: line 1 column 1 (char 0)
+[Scraper] DB Status: 23 pending / 17 scanned / 40 total
+[Scraper] Processing pending queue...
+[Scraper] Found link in DB: /home/indranil/GoogleSolution/DigitalAssetProtection/official_archive/LAKERS_WARRIORS_001_570296fb.mp4 (ID: 69f242b66a21cd2f8d148fb0)
+[*] Calling /analyze_media for /home/indranil/GoogleSolution/DigitalAssetProtection/official_archive/LAKERS_WARRIORS_001_570296fb.mp4
+[!] API Error: Expecting value: line 1 column 1 (char 0)
+[Scraper] DB Status: 22 pending / 18 scanned / 40 total
+[Scraper] Processing pending queue...
+[Scraper] Found link in DB: /home/indranil/GoogleSolution/DigitalAssetProtection/official_archive/LAKERS_WARRIORS_001_5114edb4.mp4 (ID: 69f242b66a21cd2f8d148fb1)
+[*] Calling /analyze_media for /home/indranil/GoogleSolution/DigitalAssetProtection/official_archive/LAKERS_WARRIORS_001_5114edb4.mp4
+[!] API Error: Expecting value: line 1 column 1 (char 0)
+[Scraper] DB Status: 21 pending / 19 scanned / 40 total
+[Scraper] Processing pending queue...
+[Scraper] Found link in DB: /home/indranil/GoogleSolution/DigitalAssetProtection/official_archive/LAKERS_WARRIORS_001_f2e311a9.mp4 (ID: 69f242b66a21cd2f8d148fb2)
+[*] Calling /analyze_media for /home/indranil/GoogleSolution/DigitalAssetProtection/official_archive/LAKERS_WARRIORS_001_f2e311a9.mp4
+[!] API Error: Expecting value: line 1 column 1 (char 0)
+[Scraper] DB Status: 20 pending / 20 scanned / 40 total
+[Scraper] Processing pending queue...
+[Scraper] Found link in DB: /home/indranil/GoogleSolution/DigitalAssetProtection/official_archive/LAKERS_WARRIORS_001_63af6ec3.mp4 (ID: 69f2454a0ce2886b96d1ccb2)
+[*] Calling /analyze_media for /home/indranil/GoogleSolution/DigitalAssetProtection/official_archive/LAKERS_WARRIORS_001_63af6ec3.mp4
+[!] API Error: Expecting value: line 1 column 1 (char 0)
+[Scraper] DB Status: 19 pending / 21 scanned / 40 total
+[Scraper] Processing pending queue...
+[Scraper] Found link in DB: /home/indranil/GoogleSolution/DigitalAssetProtection/official_archive/LAKERS_WARRIORS_001_95cb8841.mp4 (ID: 69f2454a0ce2886b96d1ccb3)
+[*] Calling /analyze_media for /home/indranil/GoogleSolution/DigitalAssetProtection/official_archive/LAKERS_WARRIORS_001_95cb8841.mp4
+[!] API Error: Expecting value: line 1 column 1 (char 0)
+[Scraper] DB Status: 18 pending / 22 scanned / 40 total
+[Scraper] Processing pending queue...
+[Scraper] Found link in DB: /home/indranil/GoogleSolution/DigitalAssetProtection/official_archive/LAKERS_WARRIORS_001_cdac6474.mp4 (ID: 69f2454a0ce2886b96d1ccb4)
+[*] Calling /analyze_media for /home/indranil/GoogleSolution/DigitalAssetProtection/official_archive/LAKERS_WARRIORS_001_cdac6474.mp4
+[!] API Error: Expecting value: line 1 column 1 (char 0)
+[Scraper] DB Status: 17 pending / 23 scanned / 40 total
+[Scraper] Processing pending queue...
+[Scraper] Found link in DB: /home/indranil/GoogleSolution/DigitalAssetProtection/official_archive/LAKERS_WARRIORS_001_28c848e1.mp4 (ID: 69f2454a0ce2886b96d1ccb5)
+[*] Calling /analyze_media for /home/indranil/GoogleSolution/DigitalAssetProtection/official_archive/LAKERS_WARRIORS_001_28c848e1.mp4
+[!] API Error: Expecting value: line 1 column 1 (char 0)
+[Scraper] DB Status: 16 pending / 24 scanned / 40 total
+[Scraper] Processing pending queue...
+[Scraper] Found link in DB: /home/indranil/GoogleSolution/DigitalAssetProtection/official_archive/LAKERS_WARRIORS_001_501fd051.mp4 (ID: 69f2454a0ce2886b96d1ccb6)
+[*] Calling /analyze_media for /home/indranil/GoogleSolution/DigitalAssetProtection/official_archive/LAKERS_WARRIORS_001_501fd051.mp4
+[!] API Error: Expecting value: line 1 column 1 (char 0)
+[Scraper] DB Status: 15 pending / 25 scanned / 40 total
+[Scraper] Processing pending queue...
+[Scraper] Found link in DB: /home/indranil/GoogleSolution/DigitalAssetProtection/official_archive/LAKERS_WARRIORS_001_9a7db99c.mp4 (ID: 69f2454a0ce2886b96d1ccb7)
+[*] Calling /analyze_media for /home/indranil/GoogleSolution/DigitalAssetProtection/official_archive/LAKERS_WARRIORS_001_9a7db99c.mp4
+[!] API Error: All connection attempts failed
+[Scraper] DB Status: 14 pending / 26 scanned / 40 total
+[Scraper] Processing pending queue...
+[Scraper] Found link in DB: /home/indranil/GoogleSolution/DigitalAssetProtection/official_archive/LAKERS_WARRIORS_001_66d1970f.mp4 (ID: 69f2454a0ce2886b96d1ccb8)
+[*] Calling /analyze_media for /home/indranil/GoogleSolution/DigitalAssetProtection/official_archive/LAKERS_WARRIORS_001_66d1970f.mp4
+[!] API Error: All connection attempts failed
+[Scraper] DB Status: 13 pending / 27 scanned / 40 total
+[Scraper] Processing pending queue...
+[Scraper] Found link in DB: /home/indranil/GoogleSolution/DigitalAssetProtection/official_archive/LAKERS_WARRIORS_001_5eb4cf20.mp4 (ID: 69f2454a0ce2886b96d1ccb9)
+[*] Calling /analyze_media for /home/indranil/GoogleSolution/DigitalAssetProtection/official_archive/LAKERS_WARRIORS_001_5eb4cf20.mp4
+[!] API Error: All connection attempts failed
+[Scraper] DB Status: 12 pending / 28 scanned / 40 total
+[Scraper] Processing pending queue...
+[Scraper] Found link in DB: /home/indranil/GoogleSolution/DigitalAssetProtection/official_archive/LAKERS_WARRIORS_001_71f29e24.mp4 (ID: 69f2454a0ce2886b96d1ccba)
+[*] Calling /analyze_media for /home/indranil/GoogleSolution/DigitalAssetProtection/official_archive/LAKERS_WARRIORS_001_71f29e24.mp4
+[!] API Error: All connection attempts failed
+[Scraper] DB Status: 11 pending / 29 scanned / 40 total
+[Scraper] Processing pending queue...
+[Scraper] Found link in DB: /home/indranil/GoogleSolution/DigitalAssetProtection/official_archive/LAKERS_WARRIORS_001_ed39db2d.mp4 (ID: 69f2454a0ce2886b96d1ccbb)
+[*] Calling /analyze_media for /home/indranil/GoogleSolution/DigitalAssetProtection/official_archive/LAKERS_WARRIORS_001_ed39db2d.mp4
+[+] Response: 200 - Piracy
+[Scraper] DB Status: 10 pending / 30 scanned / 40 total
+[Scraper] Processing pending queue...
+[Scraper] Found link in DB: /home/indranil/GoogleSolution/DigitalAssetProtection/official_archive/LAKERS_WARRIORS_001_ca496d68.mp4 (ID: 69f248421b24172266fb551f)
+[*] Calling /analyze_media for /home/indranil/GoogleSolution/DigitalAssetProtection/official_archive/LAKERS_WARRIORS_001_ca496d68.mp4
+[+] Response: 200 - Safe
+[Scraper] DB Status: 9 pending / 31 scanned / 40 total
+[Scraper] Processing pending queue...
+[Scraper] Found link in DB: /home/indranil/GoogleSolution/DigitalAssetProtection/official_archive/LAKERS_WARRIORS_001_861beb57.mp4 (ID: 69f248421b24172266fb5520)
+[*] Calling /analyze_media for /home/indranil/GoogleSolution/DigitalAssetProtection/official_archive/LAKERS_WARRIORS_001_861beb57.mp4
+[+] Response: 200 - Piracy
+[Scraper] DB Status: 8 pending / 32 scanned / 40 total
+[Scraper] Processing pending queue...
+[Scraper] Found link in DB: /home/indranil/GoogleSolution/DigitalAssetProtection/official_archive/LAKERS_WARRIORS_001_4cd08d25.mp4 (ID: 69f248421b24172266fb5521)
+[*] Calling /analyze_media for /home/indranil/GoogleSolution/DigitalAssetProtection/official_archive/LAKERS_WARRIORS_001_4cd08d25.mp4
+[+] Response: 200 - Piracy
+[Scraper] DB Status: 7 pending / 33 scanned / 40 total
+[Scraper] Processing pending queue...
+[Scraper] Found link in DB: /home/indranil/GoogleSolution/DigitalAssetProtection/official_archive/LAKERS_WARRIORS_001_e37127ec.mp4 (ID: 69f248421b24172266fb5522)
+[*] Calling /analyze_media for /home/indranil/GoogleSolution/DigitalAssetProtection/official_archive/LAKERS_WARRIORS_001_e37127ec.mp4
+[+] Response: 200 - Piracy
+[Scraper] DB Status: 15 pending / 34 scanned / 49 total
+[Scraper] Processing pending queue...
+[Scraper] Found link in DB: /home/indranil/GoogleSolution/DigitalAssetProtection/official_archive/LAKERS_WARRIORS_001_6c502ea5.mp4 (ID: 69f248421b24172266fb5523)
+[*] Calling /analyze_media for /home/indranil/GoogleSolution/DigitalAssetProtection/official_archive/LAKERS_WARRIORS_001_6c502ea5.mp4
+[+] Response: 200 - Piracy
+[Scraper] DB Status: 14 pending / 35 scanned / 49 total
+[Scraper] Processing pending queue...
+[Scraper] Found link in DB: /home/indranil/GoogleSolution/DigitalAssetProtection/official_archive/LAKERS_WARRIORS_001_6ed1c7a3.mp4 (ID: 69f248421b24172266fb5524)
+[*] Calling /analyze_media for /home/indranil/GoogleSolution/DigitalAssetProtection/official_archive/LAKERS_WARRIORS_001_6ed1c7a3.mp4
+[+] Response: 200 - Safe
+[Scraper] DB Status: 13 pending / 36 scanned / 49 total
+[Scraper] Processing pending queue...
+[Scraper] Found link in DB: /home/indranil/GoogleSolution/DigitalAssetProtection/official_archive/LAKERS_WARRIORS_001_6983f949.mp4 (ID: 69f248421b24172266fb5525)
+[*] Calling /analyze_media for /home/indranil/GoogleSolution/DigitalAssetProtection/official_archive/LAKERS_WARRIORS_001_6983f949.mp4
+[+] Response: 200 - Piracy
+[Scraper] DB Status: 12 pending / 37 scanned / 49 total
+[Scraper] Processing pending queue...
+[Scraper] Found link in DB: /home/indranil/GoogleSolution/DigitalAssetProtection/official_archive/LAKERS_WARRIORS_001_82060775.mp4 (ID: 69f248421b24172266fb5526)
+[*] Calling /analyze_media for /home/indranil/GoogleSolution/DigitalAssetProtection/official_archive/LAKERS_WARRIORS_001_82060775.mp4
+[+] Response: 200 - Piracy
+[Scraper] DB Status: 11 pending / 38 scanned / 49 total
+[Scraper] Processing pending queue...
+[Scraper] Found link in DB: /home/indranil/GoogleSolution/DigitalAssetProtection/official_archive/LAKERS_WARRIORS_001_229baac0.mp4 (ID: 69f248421b24172266fb5527)
+[*] Calling /analyze_media for /home/indranil/GoogleSolution/DigitalAssetProtection/official_archive/LAKERS_WARRIORS_001_229baac0.mp4
+[+] Response: 200 - Piracy
+[Scraper] DB Status: 10 pending / 39 scanned / 49 total
+[Scraper] Processing pending queue...
+[Scraper] Found link in DB: /home/indranil/GoogleSolution/DigitalAssetProtection/official_archive/LAKERS_WARRIORS_001_50c66e9e.mp4 (ID: 69f248421b24172266fb5528)
+[*] Calling /analyze_media for /home/indranil/GoogleSolution/DigitalAssetProtection/official_archive/LAKERS_WARRIORS_001_50c66e9e.mp4
+[+] Response: 200 - Piracy
+[Scraper] DB Status: 9 pending / 40 scanned / 49 total
+[Scraper] Processing pending queue...
+[Scraper] Found link in DB: t.me/SoccerStreamsOfficial/99283 (ID: 69f2573dd6ef109cabf0c146)
+[!] Skip: No media stream found on page t.me/SoccerStreamsOfficial/99283
+[Scraper] DB Status: 9 pending / 40 scanned / 49 total
+[Scraper] Processing pending queue...
+[Scraper] Found link in DB: t.me/SoccerStreamsOfficial/99283 (ID: 69f2573dd6ef109cabf0c146)
+[!] Skip: No media stream found on page t.me/SoccerStreamsOfficial/99283
+[Scraper] DB Status: 9 pending / 40 scanned / 49 total
+[Scraper] Processing pending queue...
+[Scraper] Found link in DB: t.me/SoccerStreamsOfficial/99283 (ID: 69f2573dd6ef109cabf0c146)
+[!] Skip: No media stream found on page t.me/SoccerStreamsOfficial/99283
+[Scraper] DB Status: 9 pending / 40 scanned / 49 total
+[Scraper] Processing pending queue...
+[Scraper] Found link in DB: t.me/SoccerStreamsOfficial/99283 (ID: 69f2573dd6ef109cabf0c146)
+[!] Skip: No media stream found on page t.me/SoccerStreamsOfficial/99283
+[Scraper] DB Status: 9 pending / 40 scanned / 49 total
+[Scraper] Processing pending queue...
+[Scraper] Found link in DB: t.me/SoccerStreamsOfficial/99283 (ID: 69f2573dd6ef109cabf0c146)
+[!] Skip: No media stream found on page t.me/SoccerStreamsOfficial/99283
+[Scraper] DB Status: 9 pending / 40 scanned / 49 total
+[Scraper] Processing pending queue...
+[Scraper] Found link in DB: t.me/SoccerStreamsOfficial/99283 (ID: 69f2573dd6ef109cabf0c146)
+[!] Skip: No media stream found on page t.me/SoccerStreamsOfficial/99283
+[Scraper] DB Status: 9 pending / 40 scanned / 49 total
+[Scraper] Processing pending queue...
+[Scraper] Found link in DB: t.me/SoccerStreamsOfficial/99283 (ID: 69f2573dd6ef109cabf0c146)
+[!] Skip: No media stream found on page t.me/SoccerStreamsOfficial/99283
+[Scraper] DB Status: 9 pending / 40 scanned / 49 total
+[Scraper] Processing pending queue...
+[Scraper] Found link in DB: t.me/SoccerStreamsOfficial/99283 (ID: 69f2573dd6ef109cabf0c146)
+[!] Skip: No media stream found on page t.me/SoccerStreamsOfficial/99283
+[Scraper] DB Status: 9 pending / 40 scanned / 49 total
+[Scraper] Processing pending queue...
+[Scraper] Found link in DB: t.me/SoccerStreamsOfficial/99283 (ID: 69f2573dd6ef109cabf0c146)
+[!] Skip: No media stream found on page t.me/SoccerStreamsOfficial/99283
+[Scraper] DB Status: 8 pending / 41 scanned / 49 total
+[Scraper] Processing pending queue...
+[Scraper] Found link in DB: http://streamhub-mirror.ru/live/match-12 (ID: 69f2573dd6ef109cabf0c147)
+[!] Skip: No media stream found on page http://streamhub-mirror.ru/live/match-12
+[Scraper] DB Status: 7 pending / 42 scanned / 49 total
+[Scraper] Processing pending queue...
+[Scraper] Found link in DB: https://www.tiktok.com/@goalzone/video/73829102 (ID: 69f2573dd6ef109cabf0c148)
+[!] Skip: No media stream found on page https://www.tiktok.com/@goalzone/video/73829102
+[Scraper] DB Status: 6 pending / 43 scanned / 49 total
+[Scraper] Processing pending queue...
+[Scraper] Found link in DB: https://www.youtube.com/shorts/xYz123aBc (ID: 69f2573dd6ef109cabf0c149)
+[!] Skip: No media stream found on page https://www.youtube.com/shorts/xYz123aBc
+[Scraper] DB Status: 5 pending / 44 scanned / 49 total
+[Scraper] Processing pending queue...
+[Scraper] Found link in DB: https://www.instagram.com/reel/A1b2C3d4E5/ (ID: 69f2573dd6ef109cabf0c14a)
+[!] Skip: No media stream found on page https://www.instagram.com/reel/A1b2C3d4E5/
+[Scraper] DB Status: 4 pending / 45 scanned / 49 total
+[Scraper] Processing pending queue...
+[Scraper] Found link in DB: http://pirate-sports.net/champions-league.m3u8 (ID: 69f2573dd6ef109cabf0c14b)
+[*] Calling /analyze_media for http://pirate-sports.net/champions-league.m3u8
+[+] Response: 400 - None
+[Scraper] DB Status: 3 pending / 46 scanned / 49 total
+[Scraper] Processing pending queue...
+[Scraper] Found link in DB: http://soccercatch.stream/vip (ID: 69f2573dd6ef109cabf0c14c)
+[!] Skip: No media stream found on page http://soccercatch.stream/vip
+[Scraper] DB Status: 2 pending / 47 scanned / 49 total
+[Scraper] Processing pending queue...
+[Scraper] Found link in DB: http://rojadirecta.watch/event/4128/multi.html (ID: 69f2573dd6ef109cabf0c14d)
+[!] Skip: No media stream found on page http://rojadirecta.watch/event/4128/multi.html
+[Scraper] DB Status: 1 pending / 48 scanned / 49 total
+[Scraper] Processing pending queue...
+[Scraper] Found link in DB: https://x.com/TotalFooty/status/198273645 (ID: 69f2573dd6ef109cabf0c14e)
+[!] Skip: No media stream found on page https://x.com/TotalFooty/status/198273645
+[Scraper] DB Status: 0 pending / 49 scanned / 49 total
+[Scraper] DB Status: 0 pending / 49 scanned / 49 total
+[Scraper] DB Status: 0 pending / 49 scanned / 49 total
+[Scraper] DB Status: 0 pending / 49 scanned / 49 total
+[Scraper] DB Status: 0 pending / 49 scanned / 49 total
+[Scraper] DB Status: 0 pending / 49 scanned / 49 total
+[Scraper] DB Status: 0 pending / 49 scanned / 49 total
+[Scraper] DB Status: 0 pending / 49 scanned / 49 total
+[Scraper] DB Status: 0 pending / 49 scanned / 49 total
+[Scraper] DB Status: 0 pending / 49 scanned / 49 total
+[Scraper] DB Status: 0 pending / 49 scanned / 49 total
+[Scraper] DB Status: 0 pending / 49 scanned / 49 total
+[Scraper] DB Status: 0 pending / 49 scanned / 49 total
+[Scraper] DB Status: 0 pending / 49 scanned / 49 total
+[Scraper] DB Status: 0 pending / 49 scanned / 49 total
+[Scraper] DB Status: 0 pending / 49 scanned / 49 total
+[Scraper] DB Status: 0 pending / 49 scanned / 49 total
+[Scraper] DB Status: 0 pending / 49 scanned / 49 total
+[Scraper] DB Status: 0 pending / 49 scanned / 49 total
+[Scraper] DB Status: 0 pending / 49 scanned / 49 total
+[Scraper] DB Status: 0 pending / 49 scanned / 49 total
+[Scraper] DB Status: 0 pending / 49 scanned / 49 total
+[Scraper] DB Status: 0 pending / 49 scanned / 49 total
+[Scraper] DB Status: 0 pending / 49 scanned / 49 total
+[Scraper] DB Status: 0 pending / 49 scanned / 49 total
+[Scraper] DB Status: 0 pending / 49 scanned / 49 total
+[Scraper] DB Status: 0 pending / 49 scanned / 49 total
+[Scraper] DB Status: 0 pending / 49 scanned / 49 total
+[Scraper] DB Status: 0 pending / 49 scanned / 49 total
+[Scraper] DB Status: 0 pending / 49 scanned / 49 total
+[Scraper] DB Status: 0 pending / 49 scanned / 49 total
+[Scraper] DB Status: 0 pending / 49 scanned / 49 total
+[Scraper] DB Status: 0 pending / 49 scanned / 49 total
+[Scraper] DB Status: 0 pending / 49 scanned / 49 total
+[Scraper] DB Status: 0 pending / 49 scanned / 49 total
+[Scraper] DB Status: 0 pending / 49 scanned / 49 total
+[Scraper] DB Status: 48 pending / 1 scanned / 49 total
+[Scraper] Processing pending queue...
+[Scraper] Found link in DB: /home/indranil/GoogleSolution/DigitalAssetProtection/official_archive/LAKERS_WARRIORS_001_c01d133d.mp4 (ID: 69f23b1b993752d440f5f8c6)
+[*] Calling /analyze_media for /home/indranil/GoogleSolution/DigitalAssetProtection/official_archive/LAKERS_WARRIORS_001_c01d133d.mp4
+[+] Response: 200 - Piracy
+[Scraper] DB Status: 46 pending / 3 scanned / 49 total
+[Scraper] Processing pending queue...
+[Scraper] Found link in DB: /home/indranil/GoogleSolution/DigitalAssetProtection/official_archive/LAKERS_WARRIORS_001_d4adf9ff.mp4 (ID: 69f23b1b993752d440f5f8c8)
+[*] Calling /analyze_media for /home/indranil/GoogleSolution/DigitalAssetProtection/official_archive/LAKERS_WARRIORS_001_d4adf9ff.mp4
+[+] Response: 200 - Piracy
+[Scraper] DB Status: 44 pending / 5 scanned / 49 total
+[Scraper] Processing pending queue...
+[Scraper] Found link in DB: /home/indranil/GoogleSolution/DigitalAssetProtection/official_archive/LAKERS_WARRIORS_001_381d4748.mp4 (ID: 69f23b1b993752d440f5f8ca)
+[*] Calling /analyze_media for /home/indranil/GoogleSolution/DigitalAssetProtection/official_archive/LAKERS_WARRIORS_001_381d4748.mp4
+[+] Response: 200 - Piracy
+[Scraper] DB Status: 42 pending / 7 scanned / 49 total
+[Scraper] Processing pending queue...
+[Scraper] Found link in DB: /home/indranil/GoogleSolution/DigitalAssetProtection/official_archive/LAKERS_WARRIORS_001_2ce84d45.mp4 (ID: 69f23b1b993752d440f5f8cc)
+[*] Calling /analyze_media for /home/indranil/GoogleSolution/DigitalAssetProtection/official_archive/LAKERS_WARRIORS_001_2ce84d45.mp4
+[+] Response: 200 - Monetize
+[Scraper] DB Status: 40 pending / 9 scanned / 49 total
+[Scraper] Processing pending queue...
+[Scraper] Found link in DB: /home/indranil/GoogleSolution/DigitalAssetProtection/official_archive/LAKERS_WARRIORS_001_ca496d68.mp4 (ID: 69f23b1b993752d440f5f8ce)
+[*] Calling /analyze_media for /home/indranil/GoogleSolution/DigitalAssetProtection/official_archive/LAKERS_WARRIORS_001_ca496d68.mp4
+[+] Response: 200 - Safe
+[Scraper] DB Status: 38 pending / 11 scanned / 49 total
+[Scraper] Processing pending queue...
+[Scraper] Found link in DB: /home/indranil/GoogleSolution/DigitalAssetProtection/official_archive/LAKERS_WARRIORS_001_e02565eb.mp4 (ID: 69f242b66a21cd2f8d148faa)
+[*] Calling /analyze_media for /home/indranil/GoogleSolution/DigitalAssetProtection/official_archive/LAKERS_WARRIORS_001_e02565eb.mp4
+[+] Response: 200 - Piracy
+[Scraper] DB Status: 36 pending / 13 scanned / 49 total
+[Scraper] Processing pending queue...
+[Scraper] Found link in DB: /home/indranil/GoogleSolution/DigitalAssetProtection/official_archive/LAKERS_WARRIORS_001_931333d5.mp4 (ID: 69f242b66a21cd2f8d148fac)
+[*] Calling /analyze_media for /home/indranil/GoogleSolution/DigitalAssetProtection/official_archive/LAKERS_WARRIORS_001_931333d5.mp4
+[+] Response: 200 - Piracy
+[Scraper] DB Status: 34 pending / 15 scanned / 49 total
+[Scraper] Processing pending queue...
+[Scraper] Found link in DB: /home/indranil/GoogleSolution/DigitalAssetProtection/official_archive/LAKERS_WARRIORS_001_8b147e7e.mp4 (ID: 69f242b66a21cd2f8d148fae)
+[*] Calling /analyze_media for /home/indranil/GoogleSolution/DigitalAssetProtection/official_archive/LAKERS_WARRIORS_001_8b147e7e.mp4
+[+] Response: 200 - Piracy
+[Scraper] DB Status: 32 pending / 17 scanned / 49 total
+[Scraper] Processing pending queue...
+[Scraper] Found link in DB: /home/indranil/GoogleSolution/DigitalAssetProtection/official_archive/LAKERS_WARRIORS_001_570296fb.mp4 (ID: 69f242b66a21cd2f8d148fb0)
+[*] Calling /analyze_media for /home/indranil/GoogleSolution/DigitalAssetProtection/official_archive/LAKERS_WARRIORS_001_570296fb.mp4
+[+] Response: 200 - Piracy
+[Scraper] DB Status: 30 pending / 19 scanned / 49 total
+[Scraper] Processing pending queue...
+[Scraper] Found link in DB: /home/indranil/GoogleSolution/DigitalAssetProtection/official_archive/LAKERS_WARRIORS_001_f2e311a9.mp4 (ID: 69f242b66a21cd2f8d148fb2)
+[*] Calling /analyze_media for /home/indranil/GoogleSolution/DigitalAssetProtection/official_archive/LAKERS_WARRIORS_001_f2e311a9.mp4
+[+] Response: 200 - Piracy
+[Scraper] DB Status: 28 pending / 21 scanned / 49 total
+[Scraper] Processing pending queue...
+[Scraper] Found link in DB: /home/indranil/GoogleSolution/DigitalAssetProtection/official_archive/LAKERS_WARRIORS_001_95cb8841.mp4 (ID: 69f2454a0ce2886b96d1ccb3)
+[*] Calling /analyze_media for /home/indranil/GoogleSolution/DigitalAssetProtection/official_archive/LAKERS_WARRIORS_001_95cb8841.mp4
+[+] Response: 200 - Piracy
+[Scraper] DB Status: 26 pending / 23 scanned / 49 total
+[Scraper] Processing pending queue...
+[Scraper] Found link in DB: /home/indranil/GoogleSolution/DigitalAssetProtection/official_archive/LAKERS_WARRIORS_001_28c848e1.mp4 (ID: 69f2454a0ce2886b96d1ccb5)
+[*] Calling /analyze_media for /home/indranil/GoogleSolution/DigitalAssetProtection/official_archive/LAKERS_WARRIORS_001_28c848e1.mp4
+[+] Response: 200 - Safe
+[Scraper] DB Status: 24 pending / 25 scanned / 49 total
+[Scraper] Processing pending queue...
+[Scraper] Found link in DB: /home/indranil/GoogleSolution/DigitalAssetProtection/official_archive/LAKERS_WARRIORS_001_9a7db99c.mp4 (ID: 69f2454a0ce2886b96d1ccb7)
+[*] Calling /analyze_media for /home/indranil/GoogleSolution/DigitalAssetProtection/official_archive/LAKERS_WARRIORS_001_9a7db99c.mp4
+[+] Response: 200 - Piracy
+[Scraper] DB Status: 22 pending / 27 scanned / 49 total
+[Scraper] Processing pending queue...
+[Scraper] Found link in DB: /home/indranil/GoogleSolution/DigitalAssetProtection/official_archive/LAKERS_WARRIORS_001_5eb4cf20.mp4 (ID: 69f2454a0ce2886b96d1ccb9)
+[*] Calling /analyze_media for /home/indranil/GoogleSolution/DigitalAssetProtection/official_archive/LAKERS_WARRIORS_001_5eb4cf20.mp4
+[!] API Error: Server disconnected without sending a response.
+[Scraper] DB Status: 20 pending / 29 scanned / 49 total
+[Scraper] Processing pending queue...
+[Scraper] Found link in DB: /home/indranil/GoogleSolution/DigitalAssetProtection/official_archive/LAKERS_WARRIORS_001_ed39db2d.mp4 (ID: 69f2454a0ce2886b96d1ccbb)
+[*] Calling /analyze_media for /home/indranil/GoogleSolution/DigitalAssetProtection/official_archive/LAKERS_WARRIORS_001_ed39db2d.mp4
+[!] API Error: All connection attempts failed
+[Scraper] DB Status: 18 pending / 31 scanned / 49 total
+[Scraper] Processing pending queue...
+[Scraper] Found link in DB: /home/indranil/GoogleSolution/DigitalAssetProtection/official_archive/LAKERS_WARRIORS_001_861beb57.mp4 (ID: 69f248421b24172266fb5520)
+[*] Calling /analyze_media for /home/indranil/GoogleSolution/DigitalAssetProtection/official_archive/LAKERS_WARRIORS_001_861beb57.mp4
+[!] API Error: All connection attempts failed
+[Scraper] DB Status: 16 pending / 33 scanned / 49 total
+[Scraper] Processing pending queue...
+[Scraper] Found link in DB: /home/indranil/GoogleSolution/DigitalAssetProtection/official_archive/LAKERS_WARRIORS_001_e37127ec.mp4 (ID: 69f248421b24172266fb5522)
+[*] Calling /analyze_media for /home/indranil/GoogleSolution/DigitalAssetProtection/official_archive/LAKERS_WARRIORS_001_e37127ec.mp4
+[!] API Error: All connection attempts failed
+[Scraper] DB Status: 14 pending / 35 scanned / 49 total
+[Scraper] Processing pending queue...
+[Scraper] Found link in DB: /home/indranil/GoogleSolution/DigitalAssetProtection/official_archive/LAKERS_WARRIORS_001_6ed1c7a3.mp4 (ID: 69f248421b24172266fb5524)
+[*] Calling /analyze_media for /home/indranil/GoogleSolution/DigitalAssetProtection/official_archive/LAKERS_WARRIORS_001_6ed1c7a3.mp4
+[!] API Error: All connection attempts failed
+[Scraper] DB Status: 12 pending / 37 scanned / 49 total
+[Scraper] Processing pending queue...
+[Scraper] Found link in DB: /home/indranil/GoogleSolution/DigitalAssetProtection/official_archive/LAKERS_WARRIORS_001_82060775.mp4 (ID: 69f248421b24172266fb5526)
+[*] Calling /analyze_media for /home/indranil/GoogleSolution/DigitalAssetProtection/official_archive/LAKERS_WARRIORS_001_82060775.mp4
+[+] Response: 200 - Piracy
+[Scraper] DB Status: 10 pending / 39 scanned / 49 total
+[Scraper] Processing pending queue...
+[Scraper] Found link in DB: /home/indranil/GoogleSolution/DigitalAssetProtection/official_archive/LAKERS_WARRIORS_001_50c66e9e.mp4 (ID: 69f248421b24172266fb5528)
+[*] Calling /analyze_media for /home/indranil/GoogleSolution/DigitalAssetProtection/official_archive/LAKERS_WARRIORS_001_50c66e9e.mp4
+[+] Response: 200 - Piracy
+[Scraper] DB Status: 8 pending / 41 scanned / 49 total
+[Scraper] Processing pending queue...
+[Scraper] Found link in DB: http://streamhub-mirror.ru/live/match-12 (ID: 69f2573dd6ef109cabf0c147)
+[!] Skip: No media stream found on page http://streamhub-mirror.ru/live/match-12
+[Scraper] DB Status: 9 pending / 40 scanned / 49 total
+[Scraper] Processing pending queue...
+[Scraper] Found link in DB: t.me/SoccerStreamsOfficial/99283 (ID: 69f2573dd6ef109cabf0c146)
+[!] Skip: No media stream found on page t.me/SoccerStreamsOfficial/99283
+[Scraper] DB Status: 9 pending / 40 scanned / 49 total
+[Scraper] Processing pending queue...
+[Scraper] Found link in DB: t.me/SoccerStreamsOfficial/99283 (ID: 69f2573dd6ef109cabf0c146)
+[!] Skip: No media stream found on page t.me/SoccerStreamsOfficial/99283
+[Scraper] DB Status: 9 pending / 40 scanned / 49 total
+[Scraper] Processing pending queue...
+[Scraper] Found link in DB: t.me/SoccerStreamsOfficial/99283 (ID: 69f2573dd6ef109cabf0c146)
+[!] Skip: No media stream found on page t.me/SoccerStreamsOfficial/99283
+[Scraper] DB Status: 9 pending / 40 scanned / 49 total
+[Scraper] Processing pending queue...
+[Scraper] Found link in DB: t.me/SoccerStreamsOfficial/99283 (ID: 69f2573dd6ef109cabf0c146)
+[!] Skip: No media stream found on page t.me/SoccerStreamsOfficial/99283
+[Scraper] DB Status: 9 pending / 40 scanned / 49 total
+[Scraper] Processing pending queue...
+[Scraper] Found link in DB: t.me/SoccerStreamsOfficial/99283 (ID: 69f2573dd6ef109cabf0c146)
+[!] Skip: No media stream found on page t.me/SoccerStreamsOfficial/99283
+[Scraper] DB Status: 9 pending / 40 scanned / 49 total
+[Scraper] Processing pending queue...
+[Scraper] Found link in DB: t.me/SoccerStreamsOfficial/99283 (ID: 69f2573dd6ef109cabf0c146)
+[!] Skip: No media stream found on page t.me/SoccerStreamsOfficial/99283
+[Scraper] DB Status: 9 pending / 40 scanned / 49 total
+[Scraper] Processing pending queue...
+[Scraper] Found link in DB: t.me/SoccerStreamsOfficial/99283 (ID: 69f2573dd6ef109cabf0c146)
+[!] Skip: No media stream found on page t.me/SoccerStreamsOfficial/99283
+[Scraper] DB Status: 9 pending / 40 scanned / 49 total
+[Scraper] Processing pending queue...
+[Scraper] Found link in DB: t.me/SoccerStreamsOfficial/99283 (ID: 69f2573dd6ef109cabf0c146)
+[!] Skip: No media stream found on page t.me/SoccerStreamsOfficial/99283
+[Scraper] DB Status: 9 pending / 40 scanned / 49 total
+[Scraper] Processing pending queue...
+[Scraper] Found link in DB: t.me/SoccerStreamsOfficial/99283 (ID: 69f2573dd6ef109cabf0c146)
+[!] Skip: No media stream found on page t.me/SoccerStreamsOfficial/99283
+[Scraper] DB Status: 9 pending / 40 scanned / 49 total
+[Scraper] Processing pending queue...
+[Scraper] Found link in DB: t.me/SoccerStreamsOfficial/99283 (ID: 69f2573dd6ef109cabf0c146)
+[!] Skip: No media stream found on page t.me/SoccerStreamsOfficial/99283
+[Scraper] DB Status: 9 pending / 40 scanned / 49 total
+[Scraper] Processing pending queue...
+[Scraper] Found link in DB: t.me/SoccerStreamsOfficial/99283 (ID: 69f2573dd6ef109cabf0c146)
+[!] Skip: No media stream found on page t.me/SoccerStreamsOfficial/99283
+[Scraper] DB Status: 12 pending / 40 scanned / 51 total
+[Scraper] Processing pending queue...
+[Scraper] Found link in DB: t.me/SoccerStreamsOfficial/99283 (ID: 69f2573dd6ef109cabf0c146)
+[!] Skip: No media stream found on page t.me/SoccerStreamsOfficial/99283
+[Scraper] DB Status: 12 pending / 40 scanned / 52 total
+[Scraper] Processing pending queue...
+[Scraper] Found link in DB: t.me/SoccerStreamsOfficial/99283 (ID: 69f2573dd6ef109cabf0c146)
+[!] Skip: No media stream found on page t.me/SoccerStreamsOfficial/99283
+[Scraper] DB Status: 13 pending / 40 scanned / 53 total
+[Scraper] Processing pending queue...
+[Scraper] Found link in DB: t.me/SoccerStreamsOfficial/99283 (ID: 69f2573dd6ef109cabf0c146)
+[!] Skip: No media stream found on page t.me/SoccerStreamsOfficial/99283
+[Scraper] DB Status: 13 pending / 40 scanned / 53 total
+[Scraper] Processing pending queue...
+[Scraper] Found link in DB: t.me/SoccerStreamsOfficial/99283 (ID: 69f2573dd6ef109cabf0c146)
+[!] Skip: No media stream found on page t.me/SoccerStreamsOfficial/99283
+[Scraper] DB Status: 13 pending / 40 scanned / 53 total
+[Scraper] Processing pending queue...
+[Scraper] Found link in DB: t.me/SoccerStreamsOfficial/99283 (ID: 69f2573dd6ef109cabf0c146)
+[!] Skip: No media stream found on page t.me/SoccerStreamsOfficial/99283
+[Scraper] DB Status: 13 pending / 40 scanned / 53 total
+[Scraper] Processing pending queue...
+[Scraper] Found link in DB: t.me/SoccerStreamsOfficial/99283 (ID: 69f2573dd6ef109cabf0c146)
+[!] Skip: No media stream found on page t.me/SoccerStreamsOfficial/99283
+[Scraper] DB Status: 12 pending / 41 scanned / 53 total
+[Scraper] Processing pending queue...
+[Scraper] Found link in DB: http://streamhub-mirror.ru/live/match-12 (ID: 69f2573dd6ef109cabf0c147)
+[!] Skip: No media stream found on page http://streamhub-mirror.ru/live/match-12
+[Scraper] DB Status: 13 pending / 40 scanned / 53 total
+[Scraper] Processing pending queue...
+[Scraper] Found link in DB: t.me/SoccerStreamsOfficial/99283 (ID: 69f2573dd6ef109cabf0c146)
+[!] Skip: No media stream found on page t.me/SoccerStreamsOfficial/99283
+[Scraper] DB Status: 13 pending / 40 scanned / 53 total
+[Scraper] Processing pending queue...
+[Scraper] Found link in DB: t.me/SoccerStreamsOfficial/99283 (ID: 69f2573dd6ef109cabf0c146)
+[!] Skip: No media stream found on page t.me/SoccerStreamsOfficial/99283
+[Scraper] DB Status: 13 pending / 40 scanned / 53 total
+[Scraper] Processing pending queue...
+[Scraper] Found link in DB: t.me/SoccerStreamsOfficial/99283 (ID: 69f2573dd6ef109cabf0c146)
+[!] Skip: No media stream found on page t.me/SoccerStreamsOfficial/99283
+[Scraper] DB Status: 13 pending / 40 scanned / 53 total
+[Scraper] Processing pending queue...
+[Scraper] Found link in DB: t.me/SoccerStreamsOfficial/99283 (ID: 69f2573dd6ef109cabf0c146)
+[!] Skip: No media stream found on page t.me/SoccerStreamsOfficial/99283
+[Scraper] DB Status: 13 pending / 40 scanned / 53 total
+[Scraper] Processing pending queue...
+[Scraper] Found link in DB: t.me/SoccerStreamsOfficial/99283 (ID: 69f2573dd6ef109cabf0c146)
+[!] Skip: No media stream found on page t.me/SoccerStreamsOfficial/99283
+[Scraper] DB Status: 13 pending / 40 scanned / 53 total
+[Scraper] Processing pending queue...
+[Scraper] Found link in DB: t.me/SoccerStreamsOfficial/99283 (ID: 69f2573dd6ef109cabf0c146)
+[!] Skip: No media stream found on page t.me/SoccerStreamsOfficial/99283
+[Scraper] DB Status: 13 pending / 40 scanned / 53 total
+[Scraper] Processing pending queue...
+[Scraper] Found link in DB: t.me/SoccerStreamsOfficial/99283 (ID: 69f2573dd6ef109cabf0c146)
+[!] Skip: No media stream found on page t.me/SoccerStreamsOfficial/99283
+[Scraper] DB Status: 13 pending / 40 scanned / 53 total
+[Scraper] Processing pending queue...
+[Scraper] Found link in DB: t.me/SoccerStreamsOfficial/99283 (ID: 69f2573dd6ef109cabf0c146)
+[!] Skip: No media stream found on page t.me/SoccerStreamsOfficial/99283
+[Scraper] DB Status: 12 pending / 41 scanned / 53 total
+[Scraper] Processing pending queue...
+[Scraper] Found link in DB: http://streamhub-mirror.ru/live/match-12 (ID: 69f2573dd6ef109cabf0c147)
+[!] Skip: No media stream found on page http://streamhub-mirror.ru/live/match-12
+[Scraper] DB Status: 11 pending / 42 scanned / 53 total
+[Scraper] Processing pending queue...
+[Scraper] Found link in DB: https://www.tiktok.com/@goalzone/video/73829102 (ID: 69f2573dd6ef109cabf0c148)
+[!] Skip: No media stream found on page https://www.tiktok.com/@goalzone/video/73829102
+[Scraper] DB Status: 10 pending / 43 scanned / 53 total
+[Scraper] Processing pending queue...
+[Scraper] Found link in DB: https://www.youtube.com/shorts/xYz123aBc (ID: 69f2573dd6ef109cabf0c149)
+[!] Skip: No media stream found on page https://www.youtube.com/shorts/xYz123aBc
+[Scraper] DB Status: 9 pending / 44 scanned / 53 total
+[Scraper] Processing pending queue...
+[Scraper] Found link in DB: https://www.instagram.com/reel/A1b2C3d4E5/ (ID: 69f2573dd6ef109cabf0c14a)

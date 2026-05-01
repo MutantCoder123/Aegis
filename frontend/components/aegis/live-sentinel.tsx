@@ -26,7 +26,7 @@ interface ActionCard {
   platform: string
   url: string
   reasoning: string[]
-  verdict: "INFRINGEMENT_CONFIRMED" | "BORDERLINE" | "BENIGN"
+  verdict: "INFRINGEMENT_CONFIRMED" | "BORDERLINE" | "BENIGN" | "PENDING"
 }
 
 const REASONING_TEMPLATES: ActionCard["reasoning"][] = [
@@ -76,19 +76,36 @@ export function LiveSentinel() {
   }, [])
 
   const handleAction = React.useCallback((event: FirehoseActionEvent) => {
-    setActions((prev) => [
-      {
-        id: event.id,
-        ts: event.ts,
-        matchId: event.matchId,
-        cosine: event.cosine,
-        platform: event.platform,
-        url: event.url,
-        reasoning: event.reasoning,
-        verdict: event.verdict,
-      },
-      ...prev,
-    ].slice(0, 4))
+    setActions((prev) => {
+      const existingIdx = prev.findIndex((a) => a.url === event.url || a.id === event.id)
+      if (existingIdx !== -1) {
+        const next = [...prev]
+        next[existingIdx] = {
+          id: event.id,
+          ts: event.ts,
+          matchId: event.matchId,
+          cosine: event.cosine,
+          platform: event.platform,
+          url: event.url,
+          reasoning: event.reasoning,
+          verdict: event.verdict,
+        }
+        return next
+      }
+      return [
+        {
+          id: event.id,
+          ts: event.ts,
+          matchId: event.matchId,
+          cosine: event.cosine,
+          platform: event.platform,
+          url: event.url,
+          reasoning: event.reasoning,
+          verdict: event.verdict,
+        },
+        ...prev,
+      ].slice(0, 5)
+    })
   }, [])
 
   useFirehoseStream({
@@ -136,7 +153,7 @@ export function LiveSentinel() {
     setEvidenceTarget({ infringement, match })
   }
 
-  const handleEnforce = (a: ActionCard, action: "TAKEDOWN" | "MONETIZE") => {
+  const handleEnforce = (a: ActionCard, action: "TAKEDOWN" | "MONETIZE" | "WHITELIST") => {
     enforcement.mutate({ id: `LIVE-${a.id}`, action })
     setActions((prev) => prev.filter((item) => item.id !== a.id))
   }
@@ -231,10 +248,16 @@ export function LiveSentinel() {
                             "inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-[9.5px] font-bold uppercase tracking-wider",
                             a.verdict === "INFRINGEMENT_CONFIRMED"
                               ? "bg-alert text-background"
+                              : a.verdict === "PENDING"
+                              ? "bg-stone-500 text-background"
                               : "bg-highlight text-background",
                           )}
                         >
-                          {a.verdict === "INFRINGEMENT_CONFIRMED" ? "Confirmed" : "Borderline"}
+                          {a.verdict === "INFRINGEMENT_CONFIRMED"
+                            ? "Confirmed"
+                            : a.verdict === "PENDING"
+                            ? "Investigating"
+                            : "Borderline"}
                         </span>
                         <span className="scoreboard text-[10.5px] text-muted-foreground">
                           {a.matchId}
@@ -250,9 +273,14 @@ export function LiveSentinel() {
                       </div>
                       <div className="text-right">
                         <div className="text-[10px] uppercase tracking-wider text-muted-foreground">
-                          Cosine
+                          Similarity
                         </div>
-                        <div className="scoreboard text-[18px] leading-none">{a.cosine.toFixed(3)}</div>
+                        <div className={cn(
+                          "scoreboard text-[18px] leading-none",
+                          a.cosine > 0.9 ? "text-alert" : a.cosine > 0.7 ? "text-highlight" : "text-muted-foreground"
+                        )}>
+                          {(a.cosine * 100).toFixed(1)}%
+                        </div>
                       </div>
                     </div>
 
@@ -283,7 +311,7 @@ export function LiveSentinel() {
                         className="flex-1 inline-flex items-center justify-center gap-1.5 rounded-md border border-foreground/15 bg-white/40 hover:bg-white/70 px-3 py-2 text-[11.5px] font-medium transition-colors"
                       >
                         <Eye className="h-3 w-3" />
-                        View Evidence
+                        Evidence
                       </button>
                       {a.verdict === "INFRINGEMENT_CONFIRMED" ? (
                         <button
@@ -294,13 +322,21 @@ export function LiveSentinel() {
                           Dismantle
                         </button>
                       ) : (
-                        <button
-                          onClick={() => handleEnforce(a, "MONETIZE")}
-                          className="inline-flex items-center justify-center gap-1.5 rounded-md bg-success text-background hover:bg-success-deep px-3 py-2 text-[11.5px] font-semibold transition-colors"
-                        >
-                          <Coins className="h-3 w-3" />
-                          Claim
-                        </button>
+                        <div className="flex gap-1.5">
+                          <button
+                            onClick={() => handleEnforce(a, "MONETIZE")}
+                            className="inline-flex items-center justify-center gap-1.5 rounded-md bg-success text-background hover:bg-success-deep px-3 py-2 text-[11.5px] font-semibold transition-colors"
+                          >
+                            <Coins className="h-3 w-3" />
+                            Claim
+                          </button>
+                          <button
+                            onClick={() => handleEnforce(a, "WHITELIST")}
+                            className="inline-flex items-center justify-center gap-1.5 rounded-md border border-foreground/15 bg-white/40 hover:bg-white/70 px-3 py-2 text-[11.5px] font-medium transition-colors"
+                          >
+                            Allow
+                          </button>
+                        </div>
                       )}
                     </div>
                   </GlowCard>

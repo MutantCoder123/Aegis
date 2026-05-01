@@ -40,6 +40,9 @@ export interface Infringement {
   reach: number
   timestamp: string
   vectorUuid: string
+  matchedOfficialUrl?: string
+  matchedOfficialId?: string
+  matchedTimestamp?: string
 }
 
 export type AssetType = "Live HLS" | "Master VOD" | "Highlight Reel" | "Press Photo" | "Key Frame"

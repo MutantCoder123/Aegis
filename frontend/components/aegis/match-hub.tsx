@@ -292,8 +292,8 @@ function RevenueChart({
         </div>
       </div>
 
-      <div className="h-[260px] w-full">
-        <ResponsiveContainer width="100%" height="100%">
+      <div className="h-[280px] w-full min-h-[280px]">
+        <ResponsiveContainer width="100%" height="100%" minWidth={0}>
           <AreaChart data={series} margin={{ top: 8, right: 16, left: 0, bottom: 0 }}>
             <defs>
               <linearGradient id="projGrad" x1="0" x2="0" y1="0" y2="1">

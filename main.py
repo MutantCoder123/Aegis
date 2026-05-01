@@ -42,6 +42,10 @@ archive_path = os.path.join(os.getcwd(), "official_archive")
 os.makedirs(archive_path, exist_ok=True)
 app.mount("/official_archive", StaticFiles(directory=archive_path), name="official_archive")
 
+demo_stream_path = os.path.join(os.getcwd(), "demo_stream")
+os.makedirs(demo_stream_path, exist_ok=True)
+app.mount("/demo_stream", StaticFiles(directory=demo_stream_path), name="demo_stream")
+
 @app.get("/")
 def root():
     return {"message": "Sports Media Copyright Engine Running. Use /analyze_media to process payloads."}

@@ -182,7 +182,7 @@ function FleetGrowthChart() {
       </div>
 
       <div className="h-[260px] w-full">
-        <ResponsiveContainer width="100%" height="100%">
+        <ResponsiveContainer width="100%" height="100%" minWidth={0}>
           <LineChart data={FLEET_GROWTH} margin={{ top: 8, right: 16, left: 0, bottom: 0 }}>
             <CartesianGrid stroke="var(--border)" strokeDasharray="2 4" vertical={false} />
             <XAxis

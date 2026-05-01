@@ -1,3 +1,4 @@
+# Aegis Ingestion Worker - VERSION 2.0 - FIXED POLLING
 import asyncio
 import os
 import random
@@ -7,172 +8,141 @@ import httpx
 from database import social_intel_collection, raw_telemetry_collection
 import traceback
 
-# --- 1. REDDIT DAEMON (PRAW) ---
-# Note: For hackathon safety, we simulate the PRAW comment stream if keys are missing
-# but keep the structure robust for real credentials.
-import praw
+# --- 1. REDDIT DAEMON ---
 async def scrape_reddit():
     print("[*] Starting Reddit daemon...")
     reddit_client_id = os.getenv("REDDIT_CLIENT_ID")
     if not reddit_client_id:
-        print("[!] No REDDIT_CLIENT_ID provided. Simulating reddit PRAW stream.")
-        while True:
-            intel_record = {
-                "platform": "Reddit",
-                "group_name": "r/soccerstreams",
-                "extracted_text": "1080p stream working perfectly: streamhub-mirror[.]ru",
-                "raw_url": "reddit.com/r/soccerstreams/comments/x/live_match",
-                "timestamp": datetime.now(timezone.utc).isoformat(),
-                "members_count": random.randint(300000, 500000),
-                "action": "Monitoring",
-            }
-            await social_intel_collection.insert_one(intel_record)
-            await asyncio.sleep(60)
-    else:
-        # Real PRAW implementation
-        reddit = praw.Reddit(
-            client_id=os.getenv("REDDIT_CLIENT_ID"),
-            client_secret=os.getenv("REDDIT_CLIENT_SECRET"),
-            user_agent=os.getenv("REDDIT_USER_AGENT", "AegisBot/1.0"),
-        )
-        subreddit = reddit.subreddit("soccerstreams")
-        try:
-            for comment in subreddit.stream.comments(skip_existing=True): # Blocking call wrapped in async ideally, but simplified for hackathon
-                url_match = re.search(r"(?P<url>https?://[^\s]+)", comment.body)
-                if url_match:
-                    intel_record = {
-                        "platform": "Reddit",
-                        "group_name": f"r/{subreddit.display_name}",
-                        "extracted_text": comment.body,
-                        "raw_url": url_match.group("url"),
-                        "timestamp": datetime.now(timezone.utc).isoformat(),
-                        "members_count": subreddit.subscribers,
-                        "action": "Monitoring"
-                    }
-                    await social_intel_collection.insert_one(intel_record)
-                    print("[Reddit] New link ingested.")
-                await asyncio.sleep(1) # Yield to event loop
-        except Exception as e:
-            print(f"[Reddit Error] {e}")
+        print("[!] No REDDIT_CLIENT_ID provided. Skipping simulation.")
+        return
+    import praw
+    reddit = praw.Reddit(
+        client_id=os.getenv("REDDIT_CLIENT_ID"),
+        client_secret=os.getenv("REDDIT_CLIENT_SECRET"),
+        user_agent="AegisBot/1.0",
+    )
+    subreddit = reddit.subreddit("soccerstreams")
+    try:
+        for comment in subreddit.stream.comments(skip_existing=True):
+            url_match = re.search(r"(?P<url>https?://[^\s]+)", comment.body)
+            if url_match:
+                 await social_intel_collection.insert_one({
+                     "platform": "Reddit",
+                     "raw_url": url_match.group("url"),
+                     "timestamp": datetime.now(timezone.utc).isoformat(),
+                     "scanned": False
+                 })
+                 print("[Reddit] Link ingested.")
+    except Exception as e:
+        print(f"[Reddit Error] {e}")
 
-
-# --- 2. TELEGRAM DAEMON (Telethon) ---
-# Similar to Reddit, we build the Telethon logic but fallback to simulation if keys are missing
-from telethon import TelegramClient, events
+# --- 2. TELEGRAM LISTENER ---
 async def scrape_telegram():
     print("[*] Starting Telegram listener...")
     api_id = os.getenv("TELEGRAM_API_ID")
     if not api_id:
-         print("[!] No TELEGRAM_API_ID provided. Simulating Telethon stream.")
-         while True:
-             intel_record = {
+        print("[!] No TELEGRAM_API_ID provided. Skipping simulation.")
+        return
+    from telethon import TelegramClient, events
+    client = TelegramClient('aegis_session', int(api_id), os.getenv("TELEGRAM_API_HASH"))
+    await client.start()
+    @client.on(events.NewMessage(chats=['LiveMatchHD']))
+    async def handler(event):
+        url_match = re.search(r"(?P<url>https?://[^\s]+)", event.text)
+        if url_match:
+             await social_intel_collection.insert_one({
                  "platform": "Telegram",
-                 "group_name": "LiveMatchHD",
-                 "extracted_text": "HD Stream link in bio! Fast before takedown.",
-                 "raw_url": "t.me/LiveMatchHD/8421",
+                 "raw_url": url_match.group("url"),
                  "timestamp": datetime.now(timezone.utc).isoformat(),
-                 "members_count": random.randint(150000, 200000),
-                 "action": "Injecting Ads"
-             }
-             await social_intel_collection.insert_one(intel_record)
-             await asyncio.sleep(45)
-    else:
-        api_id = int(api_id)
-        api_hash = os.getenv("TELEGRAM_API_HASH")
-        client = TelegramClient('aegis_session', api_id, api_hash)
-        await client.start()
-        
-        # Listen to specified target channels
-        @client.on(events.NewMessage(chats=['LiveMatchHD', 'SoccerStreamsOfficial']))
-        async def handler(event):
-            url_match = re.search(r"(?P<url>https?://[^\s]+)", event.text)
-            if url_match:
-                 intel_record = {
-                     "platform": "Telegram",
-                     "group_name": event.chat.username or "Unknown",
-                     "extracted_text": event.text,
-                     "raw_url": url_match.group("url"),
-                     "timestamp": datetime.now(timezone.utc).isoformat(),
-                     "members_count": 0, # Fetching participants requires extra API calls
-                     "action": "Logging"
-                 }
-                 await social_intel_collection.insert_one(intel_record)
-                 print("[Telegram] New link ingested.")
-                 
-        print("[*] Telethon listening for events...")
-        await client.run_until_disconnected()
+                 "scanned": False
+             })
+             print("[Telegram] Link ingested.")
+    await client.run_until_disconnected()
 
-
-# --- 3. HEADLESS SCRAPER (Playwright) ---
+# --- 3. HEADLESS SCRAPER ---
 from playwright.async_api import async_playwright
 async def run_headless_scraper():
-    """
-    Watches MongoDB for new URLs, boots Playwright to intercept .m3u8 traffic
-    and fires it to the local /analyze_media endpoint.
-    """
-    print("[*] Starting Playwright Headless Interceptor...")
-    
-    # We will simulate this to loop locally just for testing, but in production
-    # this would listen to an asynchronous queue from the Reddit/Telegram scrapers.
-    # Use a real local segment from demo_stream for simulation since mock URLs cause FFmpeg hangs.
-    video_target_url = "/home/indranil/GoogleSolution/DigitalAssetProtection/demo_stream/seg003.ts" 
+    from database import MONGO_URI
+    print(f"[*] Connecting to MongoDB: {MONGO_URI}")
+    from database import mongo_client
+    print(f"[*] Databases: {await mongo_client.list_database_names()}")
+    from database import mongo_db
+    print(f"[*] Current DB: {mongo_db.name}")
+    print(f"[*] Collections in {mongo_db.name}: {await mongo_db.list_collection_names()}")
+    # STARTUP RESET: Mark everything as pending to scan from start
+    print("[Scraper] Startup Reset: Clearing 'scanned' status for all records...")
+    await social_intel_collection.update_many({}, {"$set": {"scanned": False}})
     
     while True:
         try:
-            async with async_playwright() as p:
-                browser = await p.chromium.launch(headless=True)
-                page = await browser.new_page()
-                
-                # Setup request interception to find video streams
-                m3u8_found = None
-                
-                async def intercept(request):
-                    nonlocal m3u8_found
-                    if ".m3u8" in request.url:
-                        m3u8_found = request.url
-                    await request.continue_() # Pass through
-                
-                await page.route("**/*", intercept)
-                
-                # Mock navigation
-                # await page.goto(video_target_url)  # Disabled to not spam actual example.com
-                await asyncio.sleep(2)
-                
-                # Simulate finding a real path
-                m3u8_found = video_target_url
-                
-                if m3u8_found:
-                    print(f"[Playwright] Intercepted stream payload: {m3u8_found}")
-                    
-                    # Fire to our own API
-                    async with httpx.AsyncClient() as client:
-                        payload = {
-                            "media_url": m3u8_found,
-                            "username": "headless_worker",
-                            "post_text": "Intercepted from Playwright"
-                        }
-                        try:
-                            # We send it to our own FastAPI backend
-                            await client.post("http://127.0.0.1:8000/analyze_media", json=payload, timeout=30.0)
-                        except httpx.ConnectError:
-                            pass # FastAPI not running yet
-                        except httpx.TimeoutException:
-                            print("[Playwright] API request timed out waiting for backend analysis.")
-                            pass
-                            
-                await browser.close()
-        except Exception as e:
-            print(f"[Playwright Error] {type(e).__name__}: {e}")
+            # CHECK MONGODB
+            total_count = await social_intel_collection.count_documents({})
+            pending_count = await social_intel_collection.count_documents({"scanned": False})
+            scanned_count = await social_intel_collection.count_documents({"scanned": True})
+            print(f"[Scraper] DB Status: {pending_count} pending / {scanned_count} scanned / {total_count} total")
             
-        await asyncio.sleep(60)
+            target = None
+            if pending_count > 0:
+                print(f"[Scraper] Processing pending queue...")
+                # Targeted Intelligence Pipeline: Pull LIVE targets before POST_MATCH
+                target = await social_intel_collection.find_one_and_update(
+                    {"scanned": False},
+                    {"$set": {"scanned": True}},
+                    sort=[("ingestion_mode", 1), ("priority_score", -1)]
+                )
+            if not target:
+                # Eliminate repeated heartbeat scan loop
+                # print("[Scraper] Queue empty. Waiting for new links...")
+                await asyncio.sleep(20)
+                continue
+            
+            print(f"[Scraper] Found link in DB: {target.get('raw_url')} (ID: {target.get('_id')})")
+            
+            m3u8_found = target['raw_url']
+            platform = target['platform']
+
+            # Process
+            final_media_url = m3u8_found
+            if not m3u8_found.startswith("/"):
+                async with async_playwright() as p:
+                    browser = await p.chromium.launch(headless=True)
+                    page = await browser.new_page()
+                    def intercept(request):
+                        nonlocal final_media_url
+                        if any(x in request.url for x in [".m3u8", ".ts", ".mp4"]):
+                            final_media_url = request.url
+                    page.on("request", intercept)
+                    try:
+                        await page.goto(m3u8_found, timeout=30000)
+                        await asyncio.sleep(5)
+                    except: pass
+                    await browser.close()
+
+            # Analyze
+            is_verified_media = (final_media_url != m3u8_found) or m3u8_found.startswith("/") or any(x in final_media_url for x in [".m3u8", ".ts", ".mp4"])
+            if is_verified_media:
+                print(f"[*] Calling /analyze_media for {final_media_url}")
+                async with httpx.AsyncClient() as client:
+                    try:
+                        resp = await client.post("http://127.0.0.1:8000/analyze_media", json={
+                            "media_url": final_media_url,
+                            "platform": platform,
+                            "username": target.get("metadata", {}).get("username", "anonymous_detector"),
+                            "post_text": target.get("metadata", {}).get("text", "Suspected piracy stream detected via telemetry."),
+                            "engagement_metrics": target.get("metadata", {}).get("engagement_metrics", {})
+                        }, timeout=30.0)
+                        print(f"[+] Response: {resp.status_code} - {resp.json().get('status')}")
+                    except Exception as e:
+                        print(f"[!] API Error: {e}")
+            else:
+                print(f"[!] Skip: No media stream found on page {m3u8_found}")
+
+        except Exception as e:
+            print(f"[Scraper Error] {e}")
+        await asyncio.sleep(10)
 
 async def run_worker():
-    print("Starting Asynchronous Ingestion Daemons (MongoDB Polyglot Persistence)...")
-    await asyncio.gather(
-        scrape_telegram(),
-        scrape_reddit(),
-        run_headless_scraper()
-    )
+    await asyncio.gather(scrape_reddit(), scrape_telegram(), run_headless_scraper())
 
 if __name__ == "__main__":
     asyncio.run(run_worker())

@@ -1,0 +1,33 @@
+# Git
+.git
+.gitignore
+
+# Python
+.venv
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache
+
+# Node
+frontend/node_modules
+frontend/.next
+
+# Media & Data
+official_archive
+demo_stream
+*.ts
+*.m3u8
+*.mp4
+*.mkv
+*.png
+*.jpg
+*.jpeg
+
+# Agents & IDE
+.agents
+.vscode
+.gemini
+server_test.log
+vault_debug.log

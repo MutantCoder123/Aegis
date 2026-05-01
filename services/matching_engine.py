@@ -179,6 +179,7 @@ async def search_vault(
                 broadcaster_id,
                 timestamp,
                 is_static_ref,
+                video_chunk_url,
                 (vector <=> CAST(:query_vector AS vector)) AS cosine_distance
             FROM official_asset_vectors
             {where_clause}
@@ -206,6 +207,7 @@ async def search_vault(
             "broadcaster_id": best.broadcaster_id,
             "timestamp": best.timestamp,
             "is_static_ref": best.is_static_ref,
+            "video_chunk_url": best.video_chunk_url,
             "vault_distance": cosine_distance,
         }
 
@@ -260,6 +262,8 @@ async def evaluate_suspect_sequence(suspect_vectors: list) -> dict:
             "is_verified_match": True,
             "average_score": t1_match["score"],
             "matched_official_uuid": t1_match["id"],
+            "matched_official_url": t1_match["video_chunk_url"],
+            "matched_official_id": t1_match["match_id"],
             "broadcaster_id": t1_match["broadcaster_id"],
             "matched_timestamp": t1_match["timestamp"]
         }
@@ -282,13 +286,16 @@ async def evaluate_suspect_sequence(suspect_vectors: list) -> dict:
         scores.extend(t2_scores)
         
     matches_above_80 = sum(1 for s in scores if s > 80.0)
-    is_verified = matches_above_80 >= 2
+    # If we only have 1 frame, allow 1 match. If we have multiple, require 2 for verification.
+    is_verified = (matches_above_80 >= 1 and len(scores) == 1) or (matches_above_80 >= 2)
     avg_score = sum(scores) / len(scores)
     
     return {
         "is_verified_match": is_verified,
         "average_score": avg_score,
         "matched_official_uuid": matched_id if is_verified else None,
+        "matched_official_url": t1_match["video_chunk_url"] if is_verified else None,
+        "matched_official_id": match_group_id if is_verified else None,
         "broadcaster_id": broadcaster_id if is_verified else None,
         "matched_timestamp": t1_match["timestamp"] if is_verified else None
     }

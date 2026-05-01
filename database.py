@@ -74,6 +74,9 @@ class ProcessedStream(Base):
     confidence_score = Column(Float)
     action_taken = Column(String)
     reasoning = Column(Text, nullable=True)
+    matched_official_url = Column(String, nullable=True)
+    matched_official_id = Column(String, nullable=True)
+    matched_timestamp = Column(DateTime(timezone=True), nullable=True)
     timestamp = Column(DateTime(timezone=True), server_default=func.now())
 
 class OfficialAssetVector(Base):

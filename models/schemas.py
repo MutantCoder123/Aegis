@@ -1,5 +1,10 @@
 from pydantic import BaseModel
-from typing import Optional, List
+from typing import Optional, List, Dict
+from enum import Enum
+
+class IngestionMode(str, Enum):
+    LIVE = "LIVE"
+    POST_MATCH = "POST_MATCH"
 
 class MediaAnalysisRequest(BaseModel):
     media_url: str
@@ -28,7 +33,10 @@ class TelemetryReport(BaseModel):
     source: str
     url: str
     action: str
+    platform: Optional[str] = "Web"
     metadata: Optional[dict] = {}
+    velocity_metrics: Optional[Dict[str, int]] = None
+    ingestion_mode: Optional[IngestionMode] = IngestionMode.LIVE
 
 class IngestOfficialRequest(BaseModel):
     stream_url: str

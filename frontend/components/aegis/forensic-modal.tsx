@@ -6,6 +6,7 @@ import type { Infringement, Match } from "@/lib/aegis-data"
 import { useEnforcementAction, type EnforcementAction } from "@/lib/enforcement-api"
 import { X, Play, ShieldOff, Coins, Fingerprint, Clock, Hash } from "lucide-react"
 import { cn, formatNumber } from "@/lib/utils"
+import { resolveAssetUrl } from "@/lib/api"
 
 interface ForensicModalProps {
   infringement: Infringement | null
@@ -89,8 +90,10 @@ export function ForensicModal({ infringement, match, onClose }: ForensicModalPro
               {/* Side-by-side video */}
               <div className="grid grid-cols-2 gap-4">
                 <VideoPanel
-                  label="Master HLS"
-                  sublabel="Verified Ground Truth · 1080p"
+                  label="Master VOD / HLS"
+                  sublabel={infringement.matchedOfficialId || "Verified Ground Truth"}
+                  url={infringement.matchedOfficialUrl}
+                  timestamp={infringement.matchedTimestamp}
                   tone="success"
                   toneA="#1c1917"
                   toneB="#3d2817"
@@ -98,6 +101,8 @@ export function ForensicModal({ infringement, match, onClose }: ForensicModalPro
                 <VideoPanel
                   label="Suspect Pirate Feed"
                   sublabel={infringement.url}
+                  url={infringement.url}
+                  timestamp={infringement.timestamp}
                   tone="alert"
                   toneA="#2a1517"
                   toneB="#3d2817"
@@ -120,7 +125,7 @@ export function ForensicModal({ infringement, match, onClose }: ForensicModalPro
                     icon={<Hash className="h-3 w-3" />}
                     label="Cosine Distance"
                     value={infringement.cosineDistance.toFixed(3)}
-                    sub={infringement.cosineDistance > 0.9 ? "≥ 0.90 · Auto-Verified" : "Borderline"}
+                    sub={infringement.cosineDistance > 0.85 ? "≥ 0.85 · Auto-Verified" : "Verification Threshold"}
                     accent="text-foreground"
                   />
                   <LedgerCell
@@ -194,16 +199,23 @@ export function ForensicModal({ infringement, match, onClose }: ForensicModalPro
 function VideoPanel({
   label,
   sublabel,
+  url,
   tone,
   toneA,
   toneB,
+  timestamp,
 }: {
   label: string
   sublabel: string
+  url?: string
   tone: "success" | "alert"
   toneA: string
   toneB: string
+  timestamp?: string
 }) {
+  const videoRef = React.useRef<HTMLVideoElement>(null)
+  const [error, setError] = React.useState(false)
+
   return (
     <div className="rounded-xl overflow-hidden border border-white/60 bg-foreground">
       <div className="flex items-center justify-between px-3 py-2 bg-foreground text-background">
@@ -230,20 +242,35 @@ function VideoPanel({
           background: `linear-gradient(135deg, ${toneA} 0%, ${toneB} 100%)`,
         }}
       >
-        {/* Faux frame texture */}
-        <div className="absolute inset-0 opacity-40 grid-bg" />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+        {url && !error ? (
+          <video
+            ref={videoRef}
+            src={resolveAssetUrl(url)}
+            autoPlay
+            muted
+            loop
+            playsInline
+            onError={() => setError(true)}
+            className="absolute inset-0 h-full w-full object-cover"
+          />
+        ) : (
+          <>
+            {/* Faux frame texture */}
+            <div className="absolute inset-0 opacity-40 grid-bg" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
 
-        {/* Court silhouette stripe */}
-        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 h-[40%] w-[70%] border-2 border-background/15 rounded-[40%]" />
-        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 h-[60%] w-1 bg-background/15" />
+            {/* Court silhouette stripe */}
+            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 h-[40%] w-[70%] border-2 border-background/15 rounded-[40%]" />
+            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 h-[60%] w-1 bg-background/15" />
 
-        {/* Play button */}
-        <div className="absolute inset-0 grid place-items-center">
-          <div className="h-12 w-12 rounded-full bg-background/15 backdrop-blur-md grid place-items-center border border-background/20">
-            <Play className="h-5 w-5 text-background fill-background" />
-          </div>
-        </div>
+            {/* Play button */}
+            <div className="absolute inset-0 grid place-items-center">
+              <div className="h-12 w-12 rounded-full bg-background/15 backdrop-blur-md grid place-items-center border border-background/20">
+                <Play className="h-5 w-5 text-background fill-background" />
+              </div>
+            </div>
+          </>
+        )}
 
         {/* Scan line for alert tone */}
         {tone === "alert" && (
@@ -251,9 +278,9 @@ function VideoPanel({
         )}
 
         {/* Bottom timestamp HUD */}
-        <div className="absolute left-3 bottom-3 right-3 flex items-center justify-between font-mono text-[10px] text-background/80">
-          <span>03:14:22.482Z</span>
-          <span>Frame #7,420</span>
+        <div className="absolute left-3 bottom-3 right-3 flex items-center justify-between font-mono text-[10px] text-background/80 bg-black/40 px-2 py-1 rounded backdrop-blur-sm">
+          <span>{timestamp ? new Date(timestamp).toISOString().slice(11, 23) : new Date().toISOString().slice(11, 23)}Z</span>
+          <span>Verified Segment</span>
         </div>
       </div>
     </div>
