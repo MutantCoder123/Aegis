@@ -32,6 +32,7 @@ import hashlib
 from services.queue_orchestrator import QueueOrchestrator
 from services.pubsub import firehose_pubsub
 from services.config_manager import get_current_config, update_config
+from services.media_extractor import MediaExtractor
 
 def debug_vault(msg):
     with open("/tmp/vault_debug.log", "a") as f:
@@ -509,25 +510,41 @@ async def get_match_threats(
     if not streams:
         return _demo_threats(match_id)
 
-    threats = []
+    threats_by_url = {}
     for stream in streams:
         timestamp = stream.timestamp or datetime.datetime.now(datetime.timezone.utc)
-        threats.append(
-            {
-                "id": f"THR-{stream.id}",
-                "matchId": match_id,
-                "platform": stream.platform or "Unknown",
-                "url": (stream.media_url or "").replace("/home/indranil/GoogleSolution/DigitalAssetProtection", ""),
-                "cosineDistance": round(stream.confidence_score or 0, 3),
-                "status": _stream_status(stream.action_taken),
-                "reach": int(max(1000, (stream.confidence_score or 0.5) * 42000)),
-                "timestamp": timestamp.astimezone(datetime.timezone.utc).isoformat().replace("+00:00", "Z"),
-                "vectorUuid": f"processed_stream_{stream.id}",
-                "matchedOfficialUrl": (stream.matched_official_url or "").replace("/home/indranil/GoogleSolution/DigitalAssetProtection", ""),
-                "matchedOfficialId": stream.matched_official_id,
-                "matchedTimestamp": stream.matched_timestamp.astimezone(datetime.timezone.utc).isoformat().replace("+00:00", "Z") if stream.matched_timestamp else None,
-            }
-        )
+        threat = {
+            "id": f"THR-{stream.id}",
+            "matchId": match_id,
+            "platform": stream.platform or "Unknown",
+            "url": (stream.media_url or "").replace("/home/indranil/GoogleSolution/DigitalAssetProtection", ""),
+            "cosineDistance": round(stream.confidence_score or 0, 3),
+            "status": _stream_status(stream.action_taken),
+            "reach": int(max(1000, (stream.confidence_score or 0.5) * 42000)),
+            "timestamp": timestamp.astimezone(datetime.timezone.utc).isoformat().replace("+00:00", "Z"),
+            "vectorUuid": f"processed_stream_{stream.id}",
+            "matchedOfficialUrl": (stream.matched_official_url or "").replace("/home/indranil/GoogleSolution/DigitalAssetProtection", ""),
+            "matchedOfficialId": stream.matched_official_id,
+            "matchedTimestamp": stream.matched_timestamp.astimezone(datetime.timezone.utc).isoformat().replace("+00:00", "Z") if stream.matched_timestamp else None,
+        }
+        
+        import re
+        url_key = threat["url"]
+        base_url_key = re.sub(r'[?&]start=\d+', '', url_key)
+        
+        if base_url_key not in threats_by_url:
+            threats_by_url[base_url_key] = []
+        threats_by_url[base_url_key].append(threat)
+
+    threats = []
+    for url_key, items in threats_by_url.items():
+        # Sort by cosineDistance descending
+        items.sort(key=lambda x: x["cosineDistance"], reverse=True)
+        # Take the top 5
+        threats.extend(items[:5])
+        
+    # Finally sort everything by ID descending to keep it chronological
+    threats.sort(key=lambda x: int(x["id"].replace("THR-", "")), reverse=True)
 
     return threats
 
@@ -605,6 +622,16 @@ async def ingest_vault_asset(
 ):
     debug_vault(f"Headers received: X-Broadcaster-ID={x_broadcaster}, X-Source-Key={x_source_key}")
     
+    # Resolve source URL if it's a social/mock URL
+    resolved_url = source_url
+    if source_url:
+        debug_vault(f"Resolving source_url: {source_url}")
+        resolved_url = await MediaExtractor.get_stream_url(source_url)
+        if not resolved_url:
+             debug_vault(f"Failed to resolve URL: {source_url}")
+             raise HTTPException(status_code=400, detail="Could not resolve media stream from provided URL")
+        debug_vault(f"Resolved URL: {resolved_url}")
+    
     # Determine tenant
     tenant_id = None
     if x_broadcaster and x_source_key:
@@ -663,25 +690,42 @@ async def ingest_vault_asset(
             shutil.copyfileobj(file.file, tmp)
         final_source = temp_path
         debug_vault(f"File uploaded to {temp_path}")
+    else:
+        final_source = resolved_url
 
     if not final_source:
         debug_vault("Error: Missing asset source")
         raise HTTPException(status_code=400, detail="Missing asset source (file or URL)")
 
-    from services.vault_worker import process_master_vod
+    from services.vault_worker import process_master_vod, continuous_ingest_broadcast
 
-    async def run_and_cleanup(_path, _match, _b_id, _f_type, _t_path):
+    async def run_and_cleanup(_path, _match, _b_id, _f_type, _t_path, _asset_type):
         uv_logger = logging.getLogger("uvicorn.error")
-        debug_vault(f"Background Task Started: path={_path}, match={_match}, broadcaster={_b_id}")
+        debug_vault(f"Background Task Started: path={_path}, match={_match}, broadcaster={_b_id}, type={_asset_type}")
         try:
-            await process_master_vod(
-                _path,
-                _match,
-                AsyncSessionLocal,
-                "secure_vod_ingest",
-                _b_id,
-                _f_type,
-            )
+            if _asset_type == "Live HLS":
+                # Continuous ingestion for live streams
+                await continuous_ingest_broadcast(
+                    _path,
+                    _match,
+                    60, # Poll manifest every 60s
+                    AsyncSessionLocal,
+                    "secure_live_ingest",
+                    _b_id
+                )
+            else:
+                # One-time processing for VOD or images
+                # Pass source_url (if provided) so process_master_vod retains the original YouTube URL
+                # for playback, while internally resolving the stream URL.
+                vod_path = source_url if source_url else _path
+                await process_master_vod(
+                    vod_path,
+                    _match,
+                    AsyncSessionLocal,
+                    "secure_vod_ingest",
+                    _b_id,
+                    _f_type,
+                )
             debug_vault(f"Background Task Finished Successfully: {_match}")
         except Exception as e:
             uv_logger.error(f"[Vault] Background task error: {e}")
@@ -700,7 +744,8 @@ async def ingest_vault_asset(
         match_id,
         tenant_id,
         file_type,
-        temp_path
+        temp_path,
+        asset_type
     )
 
     return {

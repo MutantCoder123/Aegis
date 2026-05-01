@@ -1,0 +1,840 @@
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading weights:   0%|          | 0/398 [00:00<?, ?it/s]Loading weights: 100%|██████████| 398/398 [00:00<00:00, 14782.02it/s]
+GEMINI_API_KEY environment variable is missing.
+INFO:     Will watch for changes in these directories: ['/home/indranil/GoogleSolution/DigitalAssetProtection']
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO:     Started reloader process [192620] using StatReload
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading weights:   0%|          | 0/398 [00:00<?, ?it/s]Loading weights: 100%|██████████| 398/398 [00:00<00:00, 13236.17it/s]
+GEMINI_API_KEY environment variable is missing.
+INFO:     Started server process [193064]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'services/mocks.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [193064]
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading weights:   0%|          | 0/398 [00:00<?, ?it/s]Loading weights: 100%|██████████| 398/398 [00:00<00:00, 16049.12it/s]
+GEMINI_API_KEY environment variable is missing.
+INFO:     Started server process [193631]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+[*] Discovery Radar initiated. Monitoring YouTube, Instagram, and TikTok...
+[MockYouTubeRadar] Simulating hunt for keywords: ['Lakers vs Warriors Full Highlights', 'UFC 301 Main Card Replay', 'Champions League Final 2026']
+[MockSocialRadar] Simulating hunt on Instagram for hashtags: ['nba', 'ufc', 'championsleague', 'footballgoals']
+INFO:     127.0.0.1:43718 - "OPTIONS /api/streams/firehose HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43724 - "OPTIONS /api/streams/firehose HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43738 - "OPTIONS /api/streams/firehose HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43916 - "OPTIONS /api/streams/firehose HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43932 - "OPTIONS /api/matches/LAKERS_WARRIORS_001/heatmap HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43934 - "OPTIONS /api/matches/LAKERS_WARRIORS_001/threats HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43934 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43916 - "GET /api/matches/LAKERS_WARRIORS_001/threats HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43932 - "GET /api/matches/LAKERS_WARRIORS_001/heatmap HTTP/1.1" 200 OK
+[Sieve] Evaluating https://www.instagram.com/p/mock_f3db6676 | Velocity: 34.11 views/hr
+[Sieve] Low velocity discarded (34.11 < 500)
+[Sieve] Evaluating https://www.instagram.com/p/mock_03eb8abb | Velocity: 10.00 views/hr
+[Sieve] Low velocity discarded (10.00 < 500)
+[Sieve] Duplicate discarded: https://www.youtube.com/watch?v=Tj0YrgOAfhs
+[Sieve] Evaluating https://www.instagram.com/p/mock_8e6ac98b | Velocity: 4163.82 views/hr
+[Sieve] Duplicate discarded: https://www.youtube.com/watch?v=21X5lGlDOfg
+[Sieve] Evaluating https://www.youtube.com/watch?v=mock_fd6efed8 | Velocity: 397.29 views/hr
+[Sieve] Low velocity discarded (397.29 < 500)
+[Sieve] Evaluating https://www.youtube.com/watch?v=mock_7f2f96ed | Velocity: 13.95 views/hr
+[Sieve] Low velocity discarded (13.95 < 500)
+[Sieve] Evaluating https://www.instagram.com/p/mock_833ba825 | Velocity: 19642.67 views/hr
+[Sieve] Evaluating https://www.youtube.com/watch?v=mock_681f9092 | Velocity: 8512.90 views/hr
+[Sieve] Evaluating https://www.instagram.com/p/mock_b66d12c3 | Velocity: 275.99 views/hr
+[Sieve] Low velocity discarded (275.99 < 500)
+[MockSocialRadar] Simulating hunt on TikTok for hashtags: ['nba', 'ufc', 'championsleague', 'footballgoals']
+INFO:     127.0.0.1:43932 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43916 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58514 - "GET /demo_stream/playlist.m3u8 HTTP/1.1" 206 Partial Content
+INFO:     127.0.0.1:58520 - "GET /demo_stream/seg000.ts HTTP/1.1" 206 Partial Content
+[Sieve] Evaluating https://www.tiktok.com/p/mock_81ce7a98 | Velocity: 13.12 views/hr
+[Sieve] Low velocity discarded (13.12 < 500)
+[Sieve] Evaluating https://www.tiktok.com/p/mock_81db7b8f | Velocity: 13143.33 views/hr
+[Sieve] Evaluating https://www.tiktok.com/p/mock_30a8026c | Velocity: 9077.79 views/hr
+[Sieve] Evaluating https://www.tiktok.com/p/mock_a542ad50 | Velocity: 43.40 views/hr
+[Sieve] Low velocity discarded (43.40 < 500)
+[Sieve] Evaluating https://www.tiktok.com/p/mock_5c09a1a9 | Velocity: 90396.31 views/hr
+INFO:     127.0.0.1:43738 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+[Sieve] Evaluating https://www.tiktok.com/p/mock_c98d32fe | Velocity: 13862.96 views/hr
+INFO:     127.0.0.1:43724 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+[Sieve] Evaluating https://www.tiktok.com/p/mock_fc15a1af | Velocity: 30.64 views/hr
+[Sieve] Low velocity discarded (30.64 < 500)
+[Sieve] Duplicate discarded: https://www.youtube.com/watch?v=21X5lGlDOfg
+[Sieve] Evaluating https://www.tiktok.com/p/mock_62c05991 | Velocity: 28895.19 views/hr
+INFO:     127.0.0.1:43718 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58522 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58538 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58544 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+[MockYouTubeRadar] Simulating hunt for keywords: ['Lakers vs Warriors Full Highlights', 'UFC 301 Main Card Replay', 'Champions League Final 2026']
+[Sieve] Evaluating https://www.youtube.com/watch?v=Tj0YrgOAfhs | Velocity: 49998.76 views/hr
+[Sieve] Evaluating https://www.youtube.com/watch?v=mock_e6561245 | Velocity: 78.40 views/hr
+[Sieve] Low velocity discarded (78.40 < 500)
+[Sieve] Duplicate discarded: https://www.youtube.com/watch?v=21X5lGlDOfg
+[Sieve] Evaluating https://www.youtube.com/watch?v=mock_60ec905e | Velocity: 17.68 views/hr
+[Sieve] Low velocity discarded (17.68 < 500)
+INFO:     127.0.0.1:53908 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+[MockSocialRadar] Simulating hunt on Instagram for hashtags: ['nba', 'ufc', 'championsleague', 'footballgoals']
+[Sieve] Evaluating https://www.instagram.com/p/mock_3b7f659f | Velocity: 23415.02 views/hr
+[Sieve] Duplicate discarded: https://www.youtube.com/watch?v=21X5lGlDOfg
+[Sieve] Evaluating https://www.instagram.com/p/mock_3c30d9d0 | Velocity: 14.91 views/hr
+[Sieve] Low velocity discarded (14.91 < 500)
+[Sieve] Evaluating https://www.instagram.com/p/mock_a740c986 | Velocity: 85.00 views/hr
+[Sieve] Low velocity discarded (85.00 < 500)
+[Sieve] Evaluating https://www.instagram.com/p/mock_e95ccc32 | Velocity: 17.57 views/hr
+[Sieve] Low velocity discarded (17.57 < 500)
+INFO:     127.0.0.1:53910 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+[Sieve] Evaluating https://www.instagram.com/p/mock_53e17b14 | Velocity: 7530.20 views/hr
+[MockSocialRadar] Simulating hunt on TikTok for hashtags: ['nba', 'ufc', 'championsleague', 'footballgoals']
+[Sieve] Evaluating https://www.tiktok.com/p/mock_bbbf6cff | Velocity: 25.75 views/hr
+[Sieve] Low velocity discarded (25.75 < 500)
+[Sieve] Evaluating https://www.tiktok.com/p/mock_1abd06b9 | Velocity: 4103.55 views/hr
+INFO:     127.0.0.1:53918 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+[Sieve] Evaluating https://www.tiktok.com/p/mock_b1b05083 | Velocity: 7303.46 views/hr
+[Sieve] Duplicate discarded: https://www.youtube.com/watch?v=21X5lGlDOfg
+INFO:     127.0.0.1:41220 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+[Sieve] Duplicate discarded: https://www.youtube.com/watch?v=21X5lGlDOfg
+[Sieve] Evaluating https://www.tiktok.com/p/mock_8490529e | Velocity: 24.17 views/hr
+[Sieve] Low velocity discarded (24.17 < 500)
+[Sieve] Evaluating https://www.tiktok.com/p/mock_0e95b669 | Velocity: 42.60 views/hr
+[Sieve] Low velocity discarded (42.60 < 500)
+[Sieve] Evaluating https://www.tiktok.com/p/mock_cc1be073 | Velocity: 32.33 views/hr
+[Sieve] Low velocity discarded (32.33 < 500)
+[Sieve] Evaluating https://www.tiktok.com/p/mock_93aff444 | Velocity: 3266.45 views/hr
+INFO:     127.0.0.1:41228 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41236 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51654 - "GET /demo_stream/playlist.m3u8 HTTP/1.1" 206 Partial Content
+INFO:     127.0.0.1:51670 - "GET /demo_stream/seg000.ts HTTP/1.1" 206 Partial Content
+[MockYouTubeRadar] Simulating hunt for keywords: ['Lakers vs Warriors Full Highlights', 'UFC 301 Main Card Replay', 'Champions League Final 2026']
+[Sieve] Duplicate discarded: https://www.youtube.com/watch?v=Tj0YrgOAfhs
+[Sieve] Evaluating https://www.youtube.com/watch?v=mock_4d206910 | Velocity: 1721.13 views/hr
+[Sieve] Evaluating https://www.youtube.com/watch?v=mock_51b115e1 | Velocity: 770.30 views/hr
+[Sieve] Evaluating https://www.youtube.com/watch?v=mock_54749f0e | Velocity: 5.52 views/hr
+[Sieve] Low velocity discarded (5.52 < 500)
+INFO:     127.0.0.1:55350 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+[Sieve] Duplicate discarded: https://www.youtube.com/watch?v=21X5lGlDOfg
+[Sieve] Evaluating https://www.youtube.com/watch?v=mock_db20e0da | Velocity: 756.58 views/hr
+INFO:     127.0.0.1:55364 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+[MockSocialRadar] Simulating hunt on Instagram for hashtags: ['nba', 'ufc', 'championsleague', 'footballgoals']
+[Sieve] Duplicate discarded: https://www.youtube.com/watch?v=21X5lGlDOfg
+[Sieve] Evaluating https://www.instagram.com/p/mock_a6966aa7 | Velocity: 32.12 views/hr
+[Sieve] Low velocity discarded (32.12 < 500)
+[Sieve] Evaluating https://www.instagram.com/p/mock_078b9bd4 | Velocity: 6018.26 views/hr
+[Sieve] Evaluating https://www.instagram.com/p/mock_adb648dd | Velocity: 3848.70 views/hr
+[Sieve] Duplicate discarded: https://www.youtube.com/watch?v=21X5lGlDOfg
+INFO:     127.0.0.1:47364 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+[Sieve] Evaluating https://www.instagram.com/p/mock_127b4cac | Velocity: 19.12 views/hr
+[Sieve] Low velocity discarded (19.12 < 500)
+[MockSocialRadar] Simulating hunt on TikTok for hashtags: ['nba', 'ufc', 'championsleague', 'footballgoals']
+[Sieve] Evaluating https://www.tiktok.com/p/mock_df0bfd57 | Velocity: 17.91 views/hr
+[Sieve] Low velocity discarded (17.91 < 500)
+[Sieve] Evaluating https://www.tiktok.com/p/mock_1d1a8484 | Velocity: 78.67 views/hr
+[Sieve] Low velocity discarded (78.67 < 500)
+[Sieve] Evaluating https://www.tiktok.com/p/mock_6ddc2e03 | Velocity: 7262.97 views/hr
+[Sieve] Evaluating https://www.tiktok.com/p/mock_5e990980 | Velocity: 18844.69 views/hr
+[Sieve] Evaluating https://www.tiktok.com/p/mock_661ca2bd | Velocity: 14270.67 views/hr
+INFO:     127.0.0.1:47380 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+[Sieve] Evaluating https://www.tiktok.com/p/mock_51889cdb | Velocity: 6154.79 views/hr
+INFO:     127.0.0.1:47394 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+[MockYouTubeRadar] Simulating hunt for keywords: ['Lakers vs Warriors Full Highlights', 'UFC 301 Main Card Replay', 'Champions League Final 2026']
+[Sieve] Duplicate discarded: https://www.youtube.com/watch?v=Tj0YrgOAfhs
+[Sieve] Duplicate discarded: https://www.youtube.com/watch?v=21X5lGlDOfg
+[Sieve] Evaluating https://www.youtube.com/watch?v=mock_9922309e | Velocity: 155.00 views/hr
+[Sieve] Low velocity discarded (155.00 < 500)
+[Sieve] Evaluating https://www.youtube.com/watch?v=mock_e020de74 | Velocity: 558.77 views/hr
+[Sieve] Evaluating https://www.youtube.com/watch?v=mock_3a31b222 | Velocity: 456.35 views/hr
+[Sieve] Low velocity discarded (456.35 < 500)
+INFO:     127.0.0.1:34494 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+[MockSocialRadar] Simulating hunt on Instagram for hashtags: ['nba', 'ufc', 'championsleague', 'footballgoals']
+[Sieve] Evaluating https://www.instagram.com/p/mock_93b0a277 | Velocity: 46.62 views/hr
+[Sieve] Low velocity discarded (46.62 < 500)
+[Sieve] Duplicate discarded: https://www.youtube.com/watch?v=21X5lGlDOfg
+[Sieve] Duplicate discarded: https://www.youtube.com/watch?v=21X5lGlDOfg
+[Sieve] Evaluating https://www.instagram.com/p/mock_287eea46 | Velocity: 3546.29 views/hr
+[Sieve] Evaluating https://www.instagram.com/p/mock_62565df0 | Velocity: 9254.48 views/hr
+[Sieve] Evaluating https://www.instagram.com/p/mock_672c41c4 | Velocity: 46.00 views/hr
+[Sieve] Low velocity discarded (46.00 < 500)
+[Sieve] Duplicate discarded: https://www.youtube.com/watch?v=21X5lGlDOfg
+[MockSocialRadar] Simulating hunt on TikTok for hashtags: ['nba', 'ufc', 'championsleague', 'footballgoals']
+INFO:     127.0.0.1:38800 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+[Sieve] Evaluating https://www.tiktok.com/p/mock_d1ecb55c | Velocity: 7002.45 views/hr
+[Sieve] Evaluating https://www.tiktok.com/p/mock_a92b784e | Velocity: 9.08 views/hr
+[Sieve] Low velocity discarded (9.08 < 500)
+[Sieve] Duplicate discarded: https://www.youtube.com/watch?v=21X5lGlDOfg
+[Sieve] Duplicate discarded: https://www.youtube.com/watch?v=21X5lGlDOfg
+[Sieve] Evaluating https://www.tiktok.com/p/mock_d0725198 | Velocity: 55499.77 views/hr
+INFO:     127.0.0.1:38816 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+[Sieve] Duplicate discarded: https://www.youtube.com/watch?v=21X5lGlDOfg
+[Sieve] Evaluating https://www.tiktok.com/p/mock_228f3d9d | Velocity: 51.17 views/hr
+[Sieve] Low velocity discarded (51.17 < 500)
+[Sieve] Evaluating https://www.tiktok.com/p/mock_daf0a8ae | Velocity: 51.33 views/hr
+[Sieve] Low velocity discarded (51.33 < 500)
+[Sieve] Evaluating https://www.tiktok.com/p/mock_1e4d2a4b | Velocity: 20973.79 views/hr
+INFO:     127.0.0.1:38826 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+[Sieve] Duplicate discarded: https://www.youtube.com/watch?v=21X5lGlDOfg
+INFO:     127.0.0.1:38836 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+[MockYouTubeRadar] Simulating hunt for keywords: ['Lakers vs Warriors Full Highlights', 'UFC 301 Main Card Replay', 'Champions League Final 2026']
+[Sieve] Duplicate discarded: https://www.youtube.com/watch?v=Tj0YrgOAfhs
+[Sieve] Duplicate discarded: https://www.youtube.com/watch?v=21X5lGlDOfg
+[Sieve] Duplicate discarded: https://www.youtube.com/watch?v=21X5lGlDOfg
+[Sieve] Evaluating https://www.youtube.com/watch?v=mock_4fcdd280 | Velocity: 597.35 views/hr
+[Sieve] Evaluating https://www.youtube.com/watch?v=mock_e01d0114 | Velocity: 370.12 views/hr
+[Sieve] Low velocity discarded (370.12 < 500)
+[Sieve] Evaluating https://www.youtube.com/watch?v=mock_23fe6ba1 | Velocity: 322.54 views/hr
+[Sieve] Low velocity discarded (322.54 < 500)
+INFO:     127.0.0.1:45340 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35274 - "POST /api/internal/publish HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35284 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35294 - "POST /api/internal/publish HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35290 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35302 - "POST /api/internal/publish HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35304 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35330 - "POST /api/internal/publish HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35340 - "POST /api/internal/publish HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35318 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35348 - "POST /api/internal/publish HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35356 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35364 - "POST /api/internal/publish HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35382 - "POST /api/internal/publish HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35380 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35384 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35386 - "POST /api/internal/publish HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35394 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49358 - "POST /api/internal/publish HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49370 - "POST /api/internal/publish HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49366 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49376 - "POST /api/internal/publish HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49378 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49392 - "POST /api/internal/publish HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49398 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49416 - "POST /api/internal/publish HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49408 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49422 - "POST /api/internal/publish HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49428 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49442 - "POST /api/internal/publish HTTP/1.1" 200 OK
+[MockSocialRadar] Simulating hunt on Instagram for hashtags: ['nba', 'ufc', 'championsleague', 'footballgoals']
+INFO:     127.0.0.1:49440 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49450 - "POST /api/internal/publish HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49476 - "POST /api/internal/publish HTTP/1.1" 200 OK
+[Sieve] Evaluating https://www.instagram.com/p/mock_1c81c52d | Velocity: 39.82 views/hr
+[Sieve] Low velocity discarded (39.82 < 500)
+[Sieve] Evaluating https://www.instagram.com/p/mock_e0cdd1b7 | Velocity: 87.33 views/hr
+[Sieve] Low velocity discarded (87.33 < 500)
+INFO:     127.0.0.1:49488 - "POST /api/internal/publish HTTP/1.1" 200 OK
+[Sieve] Duplicate discarded: https://www.youtube.com/watch?v=21X5lGlDOfg
+[Sieve] Duplicate discarded: https://www.youtube.com/watch?v=21X5lGlDOfg
+[Sieve] Duplicate discarded: https://www.youtube.com/watch?v=21X5lGlDOfg
+[MockSocialRadar] Simulating hunt on TikTok for hashtags: ['nba', 'ufc', 'championsleague', 'footballgoals']
+INFO:     127.0.0.1:49466 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49492 - "POST /api/internal/publish HTTP/1.1" 200 OK
+[Sieve] Evaluating https://www.tiktok.com/p/mock_07f5ebbc | Velocity: 211.98 views/hr
+[Sieve] Low velocity discarded (211.98 < 500)
+INFO:     127.0.0.1:49510 - "POST /api/internal/publish HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49508 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+[Sieve] Evaluating https://www.tiktok.com/p/mock_dbcf6edd | Velocity: 5468.04 views/hr
+[Sieve] Duplicate discarded: https://www.youtube.com/watch?v=21X5lGlDOfg
+INFO:     127.0.0.1:49530 - "POST /api/internal/publish HTTP/1.1" 200 OK
+[Sieve] Evaluating https://www.tiktok.com/p/mock_98630d09 | Velocity: 9161.31 views/hr
+[Sieve] Evaluating https://www.tiktok.com/p/mock_1265fe34 | Velocity: 4584.99 views/hr
+INFO:     127.0.0.1:49516 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49542 - "POST /api/internal/publish HTTP/1.1" 200 OK
+[Sieve] Evaluating https://www.tiktok.com/p/mock_81e42e32 | Velocity: 53.00 views/hr
+[Sieve] Low velocity discarded (53.00 < 500)
+[Sieve] Duplicate discarded: https://www.youtube.com/watch?v=21X5lGlDOfg
+[Sieve] Evaluating https://www.tiktok.com/p/mock_cb3007c0 | Velocity: 34.17 views/hr
+[Sieve] Low velocity discarded (34.17 < 500)
+INFO:     127.0.0.1:49552 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49564 - "POST /api/internal/publish HTTP/1.1" 200 OK
+[Sieve] Evaluating https://www.tiktok.com/p/mock_48db66cf | Velocity: 52.00 views/hr
+[Sieve] Low velocity discarded (52.00 < 500)
+[Sieve] Evaluating https://www.tiktok.com/p/mock_90b293f5 | Velocity: 67.00 views/hr
+[Sieve] Low velocity discarded (67.00 < 500)
+INFO:     127.0.0.1:49570 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45288 - "POST /api/internal/publish HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45282 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45292 - "POST /api/internal/publish HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45302 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45306 - "POST /api/internal/publish HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45324 - "POST /api/internal/publish HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45310 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45348 - "POST /api/internal/publish HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45338 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45356 - "POST /api/internal/publish HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45380 - "POST /api/internal/publish HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45368 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45396 - "POST /api/internal/publish HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45386 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45404 - "POST /api/internal/publish HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45412 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48600 - "POST /api/internal/publish HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48598 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48608 - "POST /api/internal/publish HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48614 - "POST /api/internal/publish HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48630 - "POST /api/internal/publish HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48644 - "POST /api/internal/publish HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48654 - "POST /api/internal/publish HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48656 - "POST /api/internal/publish HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48664 - "POST /api/internal/publish HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48670 - "POST /api/internal/publish HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48686 - "POST /api/internal/publish HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48698 - "POST /api/internal/publish HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48702 - "POST /api/internal/publish HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48718 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48738 - "POST /api/internal/publish HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48748 - "POST /api/internal/publish HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48722 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48758 - "POST /api/internal/publish HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48766 - "POST /api/internal/publish HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48770 - "POST /api/internal/publish HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48784 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57080 - "POST /api/internal/publish HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57086 - "POST /api/internal/publish HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57098 - "POST /api/internal/publish HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57064 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57102 - "POST /api/internal/publish HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57104 - "POST /api/internal/publish HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57110 - "POST /api/internal/publish HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57122 - "POST /api/internal/publish HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57134 - "POST /api/internal/publish HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57144 - "POST /api/internal/publish HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57150 - "POST /api/internal/publish HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57158 - "POST /api/internal/publish HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57160 - "POST /api/internal/publish HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57168 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57184 - "POST /api/internal/publish HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57190 - "POST /api/internal/publish HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51416 - "POST /api/internal/publish HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51422 - "POST /api/internal/publish HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51452 - "POST /api/internal/publish HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51454 - "POST /api/internal/publish HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51464 - "POST /api/internal/publish HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51438 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51486 - "POST /api/internal/publish HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51502 - "POST /api/internal/publish HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51510 - "POST /api/internal/publish HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51518 - "POST /api/internal/publish HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51474 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51526 - "POST /api/internal/publish HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51538 - "POST /api/internal/publish HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51552 - "POST /api/internal/publish HTTP/1.1" 200 OK
+[MockYouTubeRadar] Simulating hunt for keywords: ['Lakers vs Warriors Full Highlights', 'UFC 301 Main Card Replay', 'Champions League Final 2026']
+INFO:     127.0.0.1:51564 - "POST /api/internal/publish HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51578 - "POST /api/internal/publish HTTP/1.1" 200 OK
+[Sieve] Duplicate discarded: https://www.youtube.com/watch?v=Tj0YrgOAfhs
+INFO:     127.0.0.1:51582 - "POST /api/internal/publish HTTP/1.1" 200 OK
+[Sieve] Evaluating https://www.youtube.com/watch?v=mock_c9fe90d4 | Velocity: 444.38 views/hr
+[Sieve] Low velocity discarded (444.38 < 500)
+[Sieve] Evaluating https://www.youtube.com/watch?v=mock_3f48eb67 | Velocity: 1024.63 views/hr
+[Sieve] Evaluating https://www.youtube.com/watch?v=mock_48b95adf | Velocity: 378.99 views/hr
+[Sieve] Low velocity discarded (378.99 < 500)
+[Sieve] Evaluating https://www.youtube.com/watch?v=mock_66e896d9 | Velocity: 528.37 views/hr
+[Sieve] Duplicate discarded: https://www.youtube.com/watch?v=21X5lGlDOfg
+INFO:     127.0.0.1:51592 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51598 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51606 - "POST /api/internal/publish HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51616 - "POST /api/internal/publish HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51630 - "POST /api/internal/publish HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58442 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58450 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58466 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58474 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58476 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+[MockSocialRadar] Simulating hunt on Instagram for hashtags: ['nba', 'ufc', 'championsleague', 'footballgoals']
+INFO:     127.0.0.1:57322 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57328 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+[Sieve] Duplicate discarded: https://www.youtube.com/watch?v=21X5lGlDOfg
+[Sieve] Evaluating https://www.instagram.com/p/mock_536c2e8c | Velocity: 31704.45 views/hr
+[Sieve] Evaluating https://www.instagram.com/p/mock_28d2217b | Velocity: 3145.54 views/hr
+[Sieve] Evaluating https://www.instagram.com/p/mock_78f42688 | Velocity: 53.00 views/hr
+[Sieve] Low velocity discarded (53.00 < 500)
+INFO:     127.0.0.1:57330 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+[Sieve] Duplicate discarded: https://www.youtube.com/watch?v=21X5lGlDOfg
+[Sieve] Evaluating https://www.instagram.com/p/mock_39009bc1 | Velocity: 12252.74 views/hr
+[Sieve] Evaluating https://www.instagram.com/p/mock_5b2a7848 | Velocity: 40.67 views/hr
+[Sieve] Low velocity discarded (40.67 < 500)
+[Sieve] Duplicate discarded: https://www.youtube.com/watch?v=21X5lGlDOfg
+[Sieve] Evaluating https://www.instagram.com/p/mock_d67cf916 | Velocity: 2652.66 views/hr
+[MockSocialRadar] Simulating hunt on TikTok for hashtags: ['nba', 'ufc', 'championsleague', 'footballgoals']
+INFO:     127.0.0.1:57340 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+[Sieve] Evaluating https://www.tiktok.com/p/mock_911d02b8 | Velocity: 7905.37 views/hr
+[Sieve] Evaluating https://www.tiktok.com/p/mock_0428e0f7 | Velocity: 12541.74 views/hr
+[Sieve] Duplicate discarded: https://www.youtube.com/watch?v=21X5lGlDOfg
+INFO:     127.0.0.1:57352 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+[Sieve] Evaluating https://www.tiktok.com/p/mock_3a904839 | Velocity: 25.45 views/hr
+[Sieve] Low velocity discarded (25.45 < 500)
+[Sieve] Duplicate discarded: https://www.youtube.com/watch?v=21X5lGlDOfg
+[Sieve] Evaluating https://www.tiktok.com/p/mock_55257eea | Velocity: 7902.43 views/hr
+[Sieve] Evaluating https://www.tiktok.com/p/mock_ceeaa8cd | Velocity: 131.99 views/hr
+[Sieve] Low velocity discarded (131.99 < 500)
+[Sieve] Duplicate discarded: https://www.youtube.com/watch?v=21X5lGlDOfg
+[Sieve] Evaluating https://www.tiktok.com/p/mock_da2f9a59 | Velocity: 5.80 views/hr
+[Sieve] Low velocity discarded (5.80 < 500)
+[Sieve] Duplicate discarded: https://www.youtube.com/watch?v=21X5lGlDOfg
+INFO:     127.0.0.1:57370 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+[Telemetry] Promoted https://www.youtube.com/watch?v=Tj0YrgOAfhs to IngestionMode.LIVE Queue.
+[Telemetry] Received from chrome_extension, publishing log...
+INFO:     127.0.0.1:54836 - "POST /api/telemetry/report HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54846 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43406 - "OPTIONS /api/matches/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43412 - "OPTIONS /api/vault/assets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43422 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43406 - "GET /api/vault/assets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43412 - "GET /api/matches/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43412 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43406 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+[MockYouTubeRadar] Simulating hunt for keywords: ['Lakers vs Warriors Full Highlights', 'UFC 301 Main Card Replay', 'Champions League Final 2026']
+[Sieve] Duplicate discarded: https://www.youtube.com/watch?v=Tj0YrgOAfhs
+[Sieve] Evaluating https://www.youtube.com/watch?v=mock_706baeb7 | Velocity: 26.00 views/hr
+[Sieve] Low velocity discarded (26.00 < 500)
+[Sieve] Evaluating https://www.youtube.com/watch?v=mock_54c21f2e | Velocity: 24.07 views/hr
+[Sieve] Low velocity discarded (24.07 < 500)
+[Sieve] Evaluating https://www.youtube.com/watch?v=mock_9823b147 | Velocity: 57.25 views/hr
+[Sieve] Low velocity discarded (57.25 < 500)
+INFO:     127.0.0.1:43428 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48028 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48044 - "OPTIONS /api/matches/MASTER_TEST_001/heatmap HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48058 - "OPTIONS /api/matches/MASTER_TEST_001/threats HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48058 - "GET /api/matches/MASTER_TEST_001/threats HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48044 - "GET /api/matches/MASTER_TEST_001/heatmap HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48072 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48058 - "GET /api/vault/assets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48044 - "GET /api/matches/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45980 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48058 - "GET /api/vault/assets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48044 - "GET /api/matches/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45998 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48058 - "GET /api/vault/assets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48044 - "GET /api/matches/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46012 - "GET /api/vault/assets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48058 - "GET /api/matches/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46012 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48058 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46018 - "GET /api/vault/assets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48044 - "GET /api/matches/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46044 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37496 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46018 - "GET /api/vault/assets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48044 - "GET /api/matches/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37512 - "GET /api/vault/assets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46018 - "GET /api/matches/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46018 - "GET /api/matches/MASTER_TEST_001/heatmap HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37512 - "GET /api/matches/MASTER_TEST_001/threats HTTP/1.1" 200 OK
+[MockSocialRadar] Simulating hunt on Instagram for hashtags: ['nba', 'ufc', 'championsleague', 'footballgoals']
+[Sieve] Evaluating https://www.instagram.com/p/mock_dd4889c9 | Velocity: 3772.66 views/hr
+[Sieve] Duplicate discarded: https://www.youtube.com/watch?v=21X5lGlDOfg
+[Sieve] Duplicate discarded: https://www.youtube.com/watch?v=21X5lGlDOfg
+[Sieve] Evaluating https://www.instagram.com/p/mock_52cfe7aa | Velocity: 143.00 views/hr
+[Sieve] Low velocity discarded (143.00 < 500)
+[Sieve] Evaluating https://www.instagram.com/p/mock_5efeeb9a | Velocity: 12072.11 views/hr
+INFO:     127.0.0.1:52848 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+[Sieve] Evaluating https://www.instagram.com/p/mock_b74b1957 | Velocity: 23.60 views/hr
+[Sieve] Low velocity discarded (23.60 < 500)
+[Sieve] Evaluating https://www.instagram.com/p/mock_8db83968 | Velocity: 7332.71 views/hr
+INFO:     127.0.0.1:52852 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+[Sieve] Evaluating https://www.instagram.com/p/mock_09109fac | Velocity: 25.50 views/hr
+[Sieve] Low velocity discarded (25.50 < 500)
+[Sieve] Evaluating https://www.instagram.com/p/mock_523700a5 | Velocity: 22.00 views/hr
+[Sieve] Low velocity discarded (22.00 < 500)
+[Sieve] Evaluating https://www.instagram.com/p/mock_451794b7 | Velocity: 40.36 views/hr
+[Sieve] Low velocity discarded (40.36 < 500)
+[MockSocialRadar] Simulating hunt on TikTok for hashtags: ['nba', 'ufc', 'championsleague', 'footballgoals']
+[Sieve] Evaluating https://www.tiktok.com/p/mock_09f37cb9 | Velocity: 26.78 views/hr
+[Sieve] Low velocity discarded (26.78 < 500)
+[Sieve] Evaluating https://www.tiktok.com/p/mock_9d6f583e | Velocity: 21742.53 views/hr
+[Sieve] Duplicate discarded: https://www.youtube.com/watch?v=21X5lGlDOfg
+[Sieve] Evaluating https://www.tiktok.com/p/mock_41d896b5 | Velocity: 25.00 views/hr
+[Sieve] Low velocity discarded (25.00 < 500)
+[Sieve] Evaluating https://www.tiktok.com/p/mock_00e886c2 | Velocity: 25.00 views/hr
+[Sieve] Low velocity discarded (25.00 < 500)
+INFO:     127.0.0.1:52854 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+[MockYouTubeRadar] Simulating hunt for keywords: ['Lakers vs Warriors Full Highlights', 'UFC 301 Main Card Replay', 'Champions League Final 2026']
+[Sieve] Duplicate discarded: https://www.youtube.com/watch?v=Tj0YrgOAfhs
+[Sieve] Evaluating https://www.youtube.com/watch?v=mock_b4d4e611 | Velocity: 617.46 views/hr
+[Sieve] Evaluating https://www.youtube.com/watch?v=mock_549af086 | Velocity: 991.83 views/hr
+[Sieve] Evaluating https://www.youtube.com/watch?v=mock_ce1329d6 | Velocity: 406.06 views/hr
+[Sieve] Low velocity discarded (406.06 < 500)
+INFO:     127.0.0.1:46756 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+[MockSocialRadar] Simulating hunt on Instagram for hashtags: ['nba', 'ufc', 'championsleague', 'footballgoals']
+[Sieve] Evaluating https://www.instagram.com/p/mock_ee8f9380 | Velocity: 9693.65 views/hr
+[Sieve] Evaluating https://www.instagram.com/p/mock_32414f96 | Velocity: 25.70 views/hr
+[Sieve] Low velocity discarded (25.70 < 500)
+[Sieve] Evaluating https://www.instagram.com/p/mock_ea512fad | Velocity: 11851.35 views/hr
+[Sieve] Duplicate discarded: https://www.youtube.com/watch?v=21X5lGlDOfg
+[Sieve] Evaluating https://www.instagram.com/p/mock_b3a3e788 | Velocity: 371.99 views/hr
+[Sieve] Low velocity discarded (371.99 < 500)
+INFO:     127.0.0.1:43730 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+[Sieve] Evaluating https://www.instagram.com/p/mock_dec1023b | Velocity: 10966.47 views/hr
+[Sieve] Duplicate discarded: https://www.youtube.com/watch?v=21X5lGlDOfg
+[Sieve] Duplicate discarded: https://www.youtube.com/watch?v=21X5lGlDOfg
+[Sieve] Duplicate discarded: https://www.youtube.com/watch?v=21X5lGlDOfg
+[Sieve] Evaluating https://www.instagram.com/p/mock_5f34b532 | Velocity: 120.00 views/hr
+[Sieve] Low velocity discarded (120.00 < 500)
+[MockSocialRadar] Simulating hunt on TikTok for hashtags: ['nba', 'ufc', 'championsleague', 'footballgoals']
+INFO:     127.0.0.1:43736 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+[Sieve] Duplicate discarded: https://www.youtube.com/watch?v=21X5lGlDOfg
+[Sieve] Evaluating https://www.tiktok.com/p/mock_74f8e53b | Velocity: 6398.19 views/hr
+[Sieve] Duplicate discarded: https://www.youtube.com/watch?v=21X5lGlDOfg
+[Sieve] Duplicate discarded: https://www.youtube.com/watch?v=21X5lGlDOfg
+[Sieve] Duplicate discarded: https://www.youtube.com/watch?v=21X5lGlDOfg
+[Sieve] Duplicate discarded: https://www.youtube.com/watch?v=21X5lGlDOfg
+[Sieve] Evaluating https://www.tiktok.com/p/mock_7f82cd05 | Velocity: 9795.42 views/hr
+INFO:     127.0.0.1:43742 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+[Sieve] Evaluating https://www.tiktok.com/p/mock_8a4e1de0 | Velocity: 7831.69 views/hr
+[Sieve] Duplicate discarded: https://www.youtube.com/watch?v=21X5lGlDOfg
+INFO:     127.0.0.1:43754 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+[Sieve] Duplicate discarded: https://www.youtube.com/watch?v=21X5lGlDOfg
+[MockYouTubeRadar] Simulating hunt for keywords: ['Lakers vs Warriors Full Highlights', 'UFC 301 Main Card Replay', 'Champions League Final 2026']
+[Sieve] Duplicate discarded: https://www.youtube.com/watch?v=Tj0YrgOAfhs
+[Sieve] Evaluating https://www.youtube.com/watch?v=mock_94c55656 | Velocity: 21.73 views/hr
+[Sieve] Low velocity discarded (21.73 < 500)
+[Sieve] Evaluating https://www.youtube.com/watch?v=mock_0c77fbf1 | Velocity: 8.96 views/hr
+[Sieve] Low velocity discarded (8.96 < 500)
+[Sieve] Evaluating https://www.youtube.com/watch?v=mock_6f66f7b5 | Velocity: 16.10 views/hr
+[Sieve] Low velocity discarded (16.10 < 500)
+[Sieve] Evaluating https://www.youtube.com/watch?v=mock_f4db6df3 | Velocity: 738.35 views/hr
+[Sieve] Duplicate discarded: https://www.youtube.com/watch?v=21X5lGlDOfg
+INFO:     127.0.0.1:52326 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+[MockSocialRadar] Simulating hunt on Instagram for hashtags: ['nba', 'ufc', 'championsleague', 'footballgoals']
+[Sieve] Evaluating https://www.instagram.com/p/mock_b2a4b12d | Velocity: 72631.31 views/hr
+[Sieve] Duplicate discarded: https://www.youtube.com/watch?v=21X5lGlDOfg
+[Sieve] Evaluating https://www.instagram.com/p/mock_cfc71a25 | Velocity: 6889.97 views/hr
+[Sieve] Evaluating https://www.instagram.com/p/mock_78000f16 | Velocity: 12028.63 views/hr
+INFO:     127.0.0.1:39510 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+[Sieve] Duplicate discarded: https://www.youtube.com/watch?v=21X5lGlDOfg
+[Sieve] Duplicate discarded: https://www.youtube.com/watch?v=21X5lGlDOfg
+[Sieve] Evaluating https://www.instagram.com/p/mock_fa806139 | Velocity: 379.99 views/hr
+[Sieve] Low velocity discarded (379.99 < 500)
+[MockSocialRadar] Simulating hunt on TikTok for hashtags: ['nba', 'ufc', 'championsleague', 'footballgoals']
+INFO:     127.0.0.1:39520 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+[Sieve] Evaluating https://www.tiktok.com/p/mock_2506be7f | Velocity: 5030.78 views/hr
+[Sieve] Duplicate discarded: https://www.youtube.com/watch?v=21X5lGlDOfg
+[Sieve] Evaluating https://www.tiktok.com/p/mock_f65fa92b | Velocity: 18.58 views/hr
+[Sieve] Low velocity discarded (18.58 < 500)
+[Sieve] Evaluating https://www.tiktok.com/p/mock_1c4a3ff5 | Velocity: 6.10 views/hr
+[Sieve] Low velocity discarded (6.10 < 500)
+[Sieve] Evaluating https://www.tiktok.com/p/mock_3f355f43 | Velocity: 85307.44 views/hr
+INFO:     127.0.0.1:49688 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+[Sieve] Evaluating https://www.tiktok.com/p/mock_5e38ecc5 | Velocity: 18.25 views/hr
+[Sieve] Low velocity discarded (18.25 < 500)
+INFO:     127.0.0.1:49690 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+[MockYouTubeRadar] Simulating hunt for keywords: ['Lakers vs Warriors Full Highlights', 'UFC 301 Main Card Replay', 'Champions League Final 2026']
+[Sieve] Duplicate discarded: https://www.youtube.com/watch?v=Tj0YrgOAfhs
+[Sieve] Evaluating https://www.youtube.com/watch?v=mock_1aba2cd9 | Velocity: 1045.87 views/hr
+[Sieve] Evaluating https://www.youtube.com/watch?v=mock_6beefbcd | Velocity: 19.86 views/hr
+[Sieve] Low velocity discarded (19.86 < 500)
+[Sieve] Duplicate discarded: https://www.youtube.com/watch?v=21X5lGlDOfg
+[Sieve] Evaluating https://www.youtube.com/watch?v=mock_2c9adb13 | Velocity: 649.00 views/hr
+INFO:     127.0.0.1:48160 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+[MockSocialRadar] Simulating hunt on Instagram for hashtags: ['nba', 'ufc', 'championsleague', 'footballgoals']
+[Sieve] Evaluating https://www.instagram.com/p/mock_27cc231f | Velocity: 3701.98 views/hr
+INFO:     127.0.0.1:34582 - "OPTIONS /api/streams/firehose HTTP/1.1" 200 OK
+[Sieve] Duplicate discarded: https://www.youtube.com/watch?v=21X5lGlDOfg
+[Sieve] Evaluating https://www.instagram.com/p/mock_bc9e1aab | Velocity: 9.78 views/hr
+[Sieve] Low velocity discarded (9.78 < 500)
+[Sieve] Duplicate discarded: https://www.youtube.com/watch?v=21X5lGlDOfg
+[Sieve] Evaluating https://www.instagram.com/p/mock_4ba322d9 | Velocity: 23.67 views/hr
+[Sieve] Low velocity discarded (23.67 < 500)
+INFO:     127.0.0.1:34582 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+[Sieve] Evaluating https://www.instagram.com/p/mock_501149f5 | Velocity: 46341.96 views/hr
+[MockSocialRadar] Simulating hunt on TikTok for hashtags: ['nba', 'ufc', 'championsleague', 'footballgoals']
+INFO:     127.0.0.1:34588 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+[Sieve] Duplicate discarded: https://www.youtube.com/watch?v=21X5lGlDOfg
+[Sieve] Evaluating https://www.tiktok.com/p/mock_7ea92ac0 | Velocity: 109.25 views/hr
+[Sieve] Low velocity discarded (109.25 < 500)
+[Sieve] Evaluating https://www.tiktok.com/p/mock_59762192 | Velocity: 13.75 views/hr
+[Sieve] Low velocity discarded (13.75 < 500)
+[Sieve] Evaluating https://www.tiktok.com/p/mock_b00c31fb | Velocity: 15.36 views/hr
+[Sieve] Low velocity discarded (15.36 < 500)
+[Sieve] Evaluating https://www.tiktok.com/p/mock_d54182f1 | Velocity: 3608.66 views/hr
+[Sieve] Duplicate discarded: https://www.youtube.com/watch?v=21X5lGlDOfg
+INFO:     127.0.0.1:34594 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+[MockYouTubeRadar] Simulating hunt for keywords: ['Lakers vs Warriors Full Highlights', 'UFC 301 Main Card Replay', 'Champions League Final 2026']
+[Sieve] Duplicate discarded: https://www.youtube.com/watch?v=Tj0YrgOAfhs
+[Sieve] Evaluating https://www.youtube.com/watch?v=mock_8ed895a4 | Velocity: 516.45 views/hr
+[Sieve] Duplicate discarded: https://www.youtube.com/watch?v=21X5lGlDOfg
+[Sieve] Evaluating https://www.youtube.com/watch?v=mock_c9bba8be | Velocity: 9.52 views/hr
+[Sieve] Low velocity discarded (9.52 < 500)
+INFO:     127.0.0.1:39556 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+[MockSocialRadar] Simulating hunt on Instagram for hashtags: ['nba', 'ufc', 'championsleague', 'footballgoals']
+[Sieve] Duplicate discarded: https://www.youtube.com/watch?v=21X5lGlDOfg
+[Sieve] Evaluating https://www.instagram.com/p/mock_b8991b7c | Velocity: 23.50 views/hr
+[Sieve] Low velocity discarded (23.50 < 500)
+[Sieve] Duplicate discarded: https://www.youtube.com/watch?v=21X5lGlDOfg
+[Sieve] Evaluating https://www.instagram.com/p/mock_b720dec3 | Velocity: 17548.66 views/hr
+[Sieve] Evaluating https://www.instagram.com/p/mock_7b2fca44 | Velocity: 5341.99 views/hr
+[Sieve] Evaluating https://www.instagram.com/p/mock_a2863d10 | Velocity: 4136.97 views/hr
+INFO:     127.0.0.1:59494 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+[Sieve] Evaluating https://www.instagram.com/p/mock_1b2df118 | Velocity: 45.14 views/hr
+[Sieve] Low velocity discarded (45.14 < 500)
+[Sieve] Evaluating https://www.instagram.com/p/mock_4f24c6d7 | Velocity: 18.43 views/hr
+[Sieve] Low velocity discarded (18.43 < 500)
+[MockSocialRadar] Simulating hunt on TikTok for hashtags: ['nba', 'ufc', 'championsleague', 'footballgoals']
+INFO:     127.0.0.1:59496 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+[Sieve] Duplicate discarded: https://www.youtube.com/watch?v=21X5lGlDOfg
+[Sieve] Duplicate discarded: https://www.youtube.com/watch?v=21X5lGlDOfg
+[Sieve] Evaluating https://www.tiktok.com/p/mock_27c9fa4c | Velocity: 11036.96 views/hr
+[Sieve] Duplicate discarded: https://www.youtube.com/watch?v=21X5lGlDOfg
+[Sieve] Evaluating https://www.tiktok.com/p/mock_a98a9ecb | Velocity: 20945.89 views/hr
+INFO:     127.0.0.1:46858 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+[Sieve] Duplicate discarded: https://www.youtube.com/watch?v=21X5lGlDOfg
+[Sieve] Evaluating https://www.tiktok.com/p/mock_bc6be57b | Velocity: 31.50 views/hr
+[Sieve] Low velocity discarded (31.50 < 500)
+[Sieve] Duplicate discarded: https://www.youtube.com/watch?v=21X5lGlDOfg
+[Sieve] Evaluating https://www.tiktok.com/p/mock_e38d4150 | Velocity: 6452.93 views/hr
+[Sieve] Evaluating https://www.tiktok.com/p/mock_ae11cb82 | Velocity: 65.50 views/hr
+[Sieve] Low velocity discarded (65.50 < 500)
+INFO:     127.0.0.1:46866 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+[MockYouTubeRadar] Simulating hunt for keywords: ['Lakers vs Warriors Full Highlights', 'UFC 301 Main Card Replay', 'Champions League Final 2026']
+[Sieve] Duplicate discarded: https://www.youtube.com/watch?v=Tj0YrgOAfhs
+[Sieve] Evaluating https://www.youtube.com/watch?v=mock_e0aa5220 | Velocity: 37.17 views/hr
+[Sieve] Low velocity discarded (37.17 < 500)
+[Sieve] Evaluating https://www.youtube.com/watch?v=mock_64c50e85 | Velocity: 429.84 views/hr
+[Sieve] Low velocity discarded (429.84 < 500)
+[Sieve] Evaluating https://www.youtube.com/watch?v=mock_7278ed7c | Velocity: 18.84 views/hr
+[Sieve] Low velocity discarded (18.84 < 500)
+[Sieve] Evaluating https://www.youtube.com/watch?v=mock_23bb906d | Velocity: 16.80 views/hr
+[Sieve] Low velocity discarded (16.80 < 500)
+INFO:     127.0.0.1:42552 - "GET /api/vault/assets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42550 - "GET /api/matches/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42588 - "GET /api/vault/assets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42586 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42588 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42552 - "GET /api/matches/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42552 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42606 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42602 - "GET /api/vault/assets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42596 - "GET /api/matches/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51164 - "GET /api/vault/assets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42596 - "GET /api/matches/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51192 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51164 - "GET /api/vault/assets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42596 - "GET /api/matches/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51210 - "GET /api/matches/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51214 - "GET /api/vault/assets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51238 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51214 - "OPTIONS /api/matches/UFC_301_MAIN_001/heatmap HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51252 - "OPTIONS /api/matches/UFC_301_MAIN_001/threats HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51210 - "GET /api/vault/assets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51214 - "GET /api/matches/UFC_301_MAIN_001/heatmap HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51252 - "GET /api/matches/UFC_301_MAIN_001/threats HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51244 - "GET /api/matches/summary HTTP/1.1" 200 OK
+[MockSocialRadar] Simulating hunt on Instagram for hashtags: ['nba', 'ufc', 'championsleague', 'footballgoals']
+[Sieve] Evaluating https://www.instagram.com/p/mock_d9037674 | Velocity: 31530.12 views/hr
+[Sieve] Evaluating https://www.instagram.com/p/mock_bff087c2 | Velocity: 15758.77 views/hr
+[Sieve] Evaluating https://www.instagram.com/p/mock_7e508f31 | Velocity: 14.00 views/hr
+[Sieve] Low velocity discarded (14.00 < 500)
+[Sieve] Evaluating https://www.instagram.com/p/mock_18c16d61 | Velocity: 61.57 views/hr
+[Sieve] Low velocity discarded (61.57 < 500)
+INFO:     127.0.0.1:41228 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+[Sieve] Evaluating https://www.instagram.com/p/mock_285debe0 | Velocity: 46546.69 views/hr
+[MockSocialRadar] Simulating hunt on TikTok for hashtags: ['nba', 'ufc', 'championsleague', 'footballgoals']
+INFO:     127.0.0.1:41232 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41234 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+[Sieve] Duplicate discarded: https://www.youtube.com/watch?v=21X5lGlDOfg
+[Sieve] Evaluating https://www.tiktok.com/p/mock_18e9d56f | Velocity: 14311.93 views/hr
+INFO:     127.0.0.1:41240 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+[Sieve] Evaluating https://www.tiktok.com/p/mock_623802ae | Velocity: 35.75 views/hr
+[Sieve] Low velocity discarded (35.75 < 500)
+[Sieve] Evaluating https://www.tiktok.com/p/mock_ad69dec7 | Velocity: 44.14 views/hr
+[Sieve] Low velocity discarded (44.14 < 500)
+[Sieve] Evaluating https://www.tiktok.com/p/mock_826a709e | Velocity: 139.50 views/hr
+[Sieve] Low velocity discarded (139.50 < 500)
+[Sieve] Duplicate discarded: https://www.youtube.com/watch?v=21X5lGlDOfg
+INFO:     127.0.0.1:41244 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41254 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+[Sieve] Evaluating https://www.tiktok.com/p/mock_1c274f88 | Velocity: 30.00 views/hr
+[Sieve] Low velocity discarded (30.00 < 500)
+[MockYouTubeRadar] Simulating hunt for keywords: ['Lakers vs Warriors Full Highlights', 'UFC 301 Main Card Replay', 'Champions League Final 2026']
+[Sieve] Duplicate discarded: https://www.youtube.com/watch?v=Tj0YrgOAfhs
+[Sieve] Evaluating https://www.youtube.com/watch?v=mock_9e52d0b1 | Velocity: 6.85 views/hr
+[Sieve] Low velocity discarded (6.85 < 500)
+[Sieve] Evaluating https://www.youtube.com/watch?v=mock_c1267e63 | Velocity: 77.40 views/hr
+[Sieve] Low velocity discarded (77.40 < 500)
+[Sieve] Evaluating https://www.youtube.com/watch?v=mock_dfabbcac | Velocity: 738.95 views/hr
+[Sieve] Evaluating https://www.youtube.com/watch?v=mock_fedf2fc4 | Velocity: 262.99 views/hr
+[Sieve] Low velocity discarded (262.99 < 500)
+[Sieve] Evaluating https://www.youtube.com/watch?v=mock_5909048f | Velocity: 500.83 views/hr
+INFO:     127.0.0.1:43198 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43192 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53946 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53926 - "GET /api/vault/assets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53956 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53920 - "GET /api/matches/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53966 - "GET /api/vault/assets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53926 - "GET /api/matches/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53920 - "GET /api/vault/assets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53926 - "GET /api/vault/assets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53966 - "GET /api/matches/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36184 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53926 - "GET /api/matches/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53966 - "GET /api/vault/assets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53926 - "GET /api/vault/assets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36200 - "GET /api/matches/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53926 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36208 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53966 - "GET /api/matches/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36222 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36210 - "GET /api/vault/assets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53966 - "GET /api/matches/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36230 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36210 - "GET /api/vault/assets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36244 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53966 - "GET /api/matches/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36208 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36210 - "GET /api/vault/assets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53966 - "GET /api/matches/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36210 - "GET /api/vault/assets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53966 - "GET /api/matches/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36210 - "GET /api/matches/MASTER_TEST_001/threats HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53966 - "GET /api/matches/MASTER_TEST_001/heatmap HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36210 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50810 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50798 - "GET /api/vault/assets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50788 - "GET /api/matches/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50812 - "GET /api/vault/assets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50798 - "GET /api/matches/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34682 - "OPTIONS /api/matches/LAKERS_WARRIORS_001/heatmap HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34682 - "OPTIONS /api/matches/LAKERS_WARRIORS_001/threats HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50838 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50824 - "GET /api/vault/assets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50788 - "GET /api/matches/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34698 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50824 - "GET /api/matches/LAKERS_WARRIORS_001/threats HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50788 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+[MockSocialRadar] Simulating hunt on Instagram for hashtags: ['nba', 'ufc', 'championsleague', 'footballgoals']
+INFO:     127.0.0.1:34692 - "GET /api/matches/LAKERS_WARRIORS_001/heatmap HTTP/1.1" 200 OK
+[Sieve] Evaluating https://www.instagram.com/p/mock_16de69f5 | Velocity: 18.37 views/hr
+[Sieve] Low velocity discarded (18.37 < 500)
+[Sieve] Duplicate discarded: https://www.youtube.com/watch?v=21X5lGlDOfg
+[Sieve] Evaluating https://www.instagram.com/p/mock_32b5b297 | Velocity: 126.50 views/hr
+[Sieve] Low velocity discarded (126.50 < 500)
+[Sieve] Evaluating https://www.instagram.com/p/mock_21bd5b68 | Velocity: 22256.24 views/hr
+[Sieve] Evaluating https://www.instagram.com/p/mock_b2c8a960 | Velocity: 79.75 views/hr
+[Sieve] Low velocity discarded (79.75 < 500)
+[Sieve] Evaluating https://www.instagram.com/p/mock_304f0178 | Velocity: 29.00 views/hr
+[Sieve] Low velocity discarded (29.00 < 500)
+[Sieve] Evaluating https://www.instagram.com/p/mock_20125dab | Velocity: 3552.97 views/hr
+INFO:     127.0.0.1:34712 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50824 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34692 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+[Sieve] Evaluating https://www.instagram.com/p/mock_e8e3e585 | Velocity: 162.50 views/hr
+[Sieve] Low velocity discarded (162.50 < 500)
+[Sieve] Evaluating https://www.instagram.com/p/mock_9e425571 | Velocity: 13134.43 views/hr
+[MockSocialRadar] Simulating hunt on TikTok for hashtags: ['nba', 'ufc', 'championsleague', 'footballgoals']
+INFO:     127.0.0.1:34742 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34726 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41728 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+[Sieve] Evaluating https://www.tiktok.com/p/mock_fd6e2d53 | Velocity: 406.99 views/hr
+[Sieve] Low velocity discarded (406.99 < 500)
+[Sieve] Duplicate discarded: https://www.youtube.com/watch?v=21X5lGlDOfg
+[Sieve] Duplicate discarded: https://www.youtube.com/watch?v=21X5lGlDOfg
+[Sieve] Evaluating https://www.tiktok.com/p/mock_5e1da199 | Velocity: 4.82 views/hr
+[Sieve] Low velocity discarded (4.82 < 500)
+[Sieve] Duplicate discarded: https://www.youtube.com/watch?v=21X5lGlDOfg
+[Sieve] Evaluating https://www.tiktok.com/p/mock_0f8e02fd | Velocity: 7734.20 views/hr
+[Sieve] Evaluating https://www.tiktok.com/p/mock_10481d4b | Velocity: 9539.85 views/hr
+[Sieve] Evaluating https://www.tiktok.com/p/mock_6637ff8c | Velocity: 20.00 views/hr
+[Sieve] Low velocity discarded (20.00 < 500)
+INFO:     127.0.0.1:41744 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41746 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+[Sieve] Evaluating https://www.tiktok.com/p/mock_620fb2d7 | Velocity: 28.33 views/hr
+[Sieve] Low velocity discarded (28.33 < 500)
+[MockYouTubeRadar] Simulating hunt for keywords: ['Lakers vs Warriors Full Highlights', 'UFC 301 Main Card Replay', 'Champions League Final 2026']
+[Sieve] Evaluating https://www.tiktok.com/p/mock_d635ef80 | Velocity: 24.99 views/hr
+[Sieve] Low velocity discarded (24.99 < 500)
+[Sieve] Duplicate discarded: https://www.youtube.com/watch?v=Tj0YrgOAfhs
+[Sieve] Evaluating https://www.youtube.com/watch?v=mock_9aede8f6 | Velocity: 591.10 views/hr
+INFO:     127.0.0.1:45076 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+[Sieve] Duplicate discarded: https://www.youtube.com/watch?v=21X5lGlDOfg
+[Sieve] Evaluating https://www.youtube.com/watch?v=mock_89cfe7be | Velocity: 1397.66 views/hr
+INFO:     127.0.0.1:45082 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+[Sieve] Evaluating https://www.youtube.com/watch?v=mock_14e49a7e | Velocity: 2209.57 views/hr
+INFO:     127.0.0.1:45086 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45090 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45100 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45108 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45116 - "GET /api/streams/firehose HTTP/1.1" 200 OK
+[MockSocialRadar] Simulating hunt on Instagram for hashtags: ['nba', 'ufc', 'championsleague', 'footballgoals']
+[Sieve] Duplicate discarded: https://www.youtube.com/watch?v=21X5lGlDOfg
+[MockYouTubeRadar] Simulating hunt for keywords: ['Lakers vs Warriors Full Highlights', 'UFC 301 Main Card Replay', 'Champions League Final 2026']
+[Sieve] Evaluating https://www.instagram.com/p/mock_97cf88b8 | Velocity: 18343.48 views/hr
+[Sieve] Duplicate discarded: https://www.youtube.com/watch?v=Tj0YrgOAfhs
+[Sieve] Evaluating https://www.youtube.com/watch?v=mock_7ccc0724 | Velocity: 76.20 views/hr
+[Sieve] Low velocity discarded (76.20 < 500)
+[Sieve] Evaluating https://www.instagram.com/p/mock_90394e60 | Velocity: 11045.88 views/hr
+[Sieve] Evaluating https://www.youtube.com/watch?v=mock_080c6d06 | Velocity: 15.75 views/hr
+[Sieve] Low velocity discarded (15.75 < 500)
+[Sieve] Duplicate discarded: https://www.youtube.com/watch?v=21X5lGlDOfg
+[Sieve] Duplicate discarded: https://www.youtube.com/watch?v=21X5lGlDOfg
+[Sieve] Evaluating https://www.instagram.com/p/mock_8ad048e5 | Velocity: 5938.85 views/hr
+[Sieve] Duplicate discarded: https://www.youtube.com/watch?v=21X5lGlDOfg
+[Sieve] Evaluating https://www.instagram.com/p/mock_a08082f9 | Velocity: 12.27 views/hr
+[Sieve] Low velocity discarded (12.27 < 500)
+[Sieve] Evaluating https://www.instagram.com/p/mock_1662c995 | Velocity: 29116.41 views/hr
+[Sieve] Evaluating https://www.instagram.com/p/mock_0457f242 | Velocity: 1478.81 views/hr
+[Sieve] Evaluating https://www.instagram.com/p/mock_e2d5d4e2 | Velocity: 10.40 views/hr
+[Sieve] Low velocity discarded (10.40 < 500)
+[MockSocialRadar] Simulating hunt on TikTok for hashtags: ['nba', 'ufc', 'championsleague', 'footballgoals']
+[Sieve] Evaluating https://www.tiktok.com/p/mock_eeac3148 | Velocity: 57.43 views/hr
+[Sieve] Low velocity discarded (57.43 < 500)
+[Sieve] Evaluating https://www.tiktok.com/p/mock_888c29a9 | Velocity: 8003.34 views/hr
+[Sieve] Evaluating https://www.tiktok.com/p/mock_26de29c3 | Velocity: 19328.77 views/hr
+[Sieve] Evaluating https://www.tiktok.com/p/mock_6e59cb4c | Velocity: 6881.68 views/hr
+[Sieve] Evaluating https://www.tiktok.com/p/mock_f928ba6a | Velocity: 65.83 views/hr
+[Sieve] Low velocity discarded (65.83 < 500)
+[Sieve] Evaluating https://www.tiktok.com/p/mock_4c65c856 | Velocity: 2614.24 views/hr
+[Sieve] Evaluating https://www.tiktok.com/p/mock_64571e7d | Velocity: 25614.74 views/hr
+[Sieve] Evaluating https://www.tiktok.com/p/mock_97f1592a | Velocity: 6169.83 views/hr
+[Sieve] Duplicate discarded: https://www.youtube.com/watch?v=21X5lGlDOfg
+[Sieve] Duplicate discarded: https://www.youtube.com/watch?v=21X5lGlDOfg
+INFO:     127.0.0.1:47364 - "POST /api/vault/ingest HTTP/1.1" 202 Accepted
+[S3] S3 not configured, using local path.
+[VaultWorker] Local upload failed: [Errno 2] No such file or directory: 'https://www.youtube.com/watch?v=Tj0YrgOAfhs'
+[VaultWorker] ffmpeg segmentation failed for https://www.youtube.com/watch?v=Tj0YrgOAfhs
+[MockYouTubeRadar] Simulating hunt for keywords: ['Lakers vs Warriors Full Highlights', 'UFC 301 Main Card Replay', 'Champions League Final 2026']
+[Sieve] Duplicate discarded: https://www.youtube.com/watch?v=Tj0YrgOAfhs
+[Sieve] Evaluating https://www.youtube.com/watch?v=mock_7b7cc2a4 | Velocity: 3721.98 views/hr
+[Sieve] Duplicate discarded: https://www.youtube.com/watch?v=21X5lGlDOfg
+[Sieve] Evaluating https://www.youtube.com/watch?v=mock_c4716b45 | Velocity: 478.41 views/hr
+[Sieve] Low velocity discarded (478.41 < 500)
+[MockSocialRadar] Simulating hunt on Instagram for hashtags: ['nba', 'ufc', 'championsleague', 'footballgoals']
+[Sieve] Evaluating https://www.instagram.com/p/mock_ccd40882 | Velocity: 30.43 views/hr
+[Sieve] Low velocity discarded (30.43 < 500)
+[Sieve] Duplicate discarded: https://www.youtube.com/watch?v=21X5lGlDOfg
+[Sieve] Evaluating https://www.instagram.com/p/mock_76c87832 | Velocity: 53.75 views/hr
+[Sieve] Low velocity discarded (53.75 < 500)
+[Sieve] Evaluating https://www.instagram.com/p/mock_4ec55d0a | Velocity: 102.33 views/hr
+[Sieve] Low velocity discarded (102.33 < 500)
+[Sieve] Evaluating https://www.instagram.com/p/mock_7d118745 | Velocity: 11566.60 views/hr
+[Sieve] Duplicate discarded: https://www.youtube.com/watch?v=21X5lGlDOfg
+[Sieve] Duplicate discarded: https://www.youtube.com/watch?v=21X5lGlDOfg
+[Sieve] Evaluating https://www.instagram.com/p/mock_1ba680e6 | Velocity: 14.08 views/hr
+[Sieve] Low velocity discarded (14.08 < 500)
+[MockSocialRadar] Simulating hunt on TikTok for hashtags: ['nba', 'ufc', 'championsleague', 'footballgoals']
+[Sieve] Evaluating https://www.tiktok.com/p/mock_8b3e4495 | Velocity: 218.00 views/hr
+[Sieve] Low velocity discarded (218.00 < 500)
+[Sieve] Duplicate discarded: https://www.youtube.com/watch?v=21X5lGlDOfg
+[Sieve] Evaluating https://www.tiktok.com/p/mock_5f6d1616 | Velocity: 6433.99 views/hr
+[Sieve] Evaluating https://www.tiktok.com/p/mock_a3ab26b5 | Velocity: 7.71 views/hr
+[Sieve] Low velocity discarded (7.71 < 500)
+[Sieve] Evaluating https://www.tiktok.com/p/mock_ff206dba | Velocity: 20.67 views/hr
+[Sieve] Low velocity discarded (20.67 < 500)
+[Sieve] Evaluating https://www.tiktok.com/p/mock_9583e660 | Velocity: 39.89 views/hr
+[Sieve] Low velocity discarded (39.89 < 500)
+[Sieve] Duplicate discarded: https://www.youtube.com/watch?v=21X5lGlDOfg
+[Sieve] Evaluating https://www.tiktok.com/p/mock_fed53633 | Velocity: 19.08 views/hr
+[Sieve] Low velocity discarded (19.08 < 500)
+[Sieve] Duplicate discarded: https://www.youtube.com/watch?v=21X5lGlDOfg
+INFO:     127.0.0.1:40162 - "POST /api/vault/ingest HTTP/1.1" 202 Accepted
+[S3] S3 not configured, using local path.
+[VaultWorker] Local upload failed: [Errno 2] No such file or directory: 'https://www.youtube.com/watch?v=Tj0YrgOAfhs'
+[VaultWorker] ffmpeg segmentation failed for https://www.youtube.com/watch?v=Tj0YrgOAfhs
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [193631]

@@ -216,6 +216,21 @@ function VideoPanel({
   const videoRef = React.useRef<HTMLVideoElement>(null)
   const [error, setError] = React.useState(false)
 
+  // Extract YouTube ID if applicable
+  const isYouTube = url?.includes("youtube.com/watch") || url?.includes("youtu.be/")
+  let ytId = null
+  let ytStart = null
+  if (isYouTube && url) {
+    if (url.includes("youtube.com/watch")) {
+      ytId = url.split("v=")[1]?.split("&")[0]
+    } else if (url.includes("youtu.be/")) {
+      ytId = url.split("youtu.be/")[1]?.split("?")[0]
+    }
+    if (url.includes("start=")) {
+      ytStart = url.split("start=")[1]?.split("&")[0]
+    }
+  }
+
   return (
     <div className="rounded-xl overflow-hidden border border-white/60 bg-foreground">
       <div className="flex items-center justify-between px-3 py-2 bg-foreground text-background">
@@ -242,7 +257,14 @@ function VideoPanel({
           background: `linear-gradient(135deg, ${toneA} 0%, ${toneB} 100%)`,
         }}
       >
-        {url && !error ? (
+        {ytId ? (
+          <iframe
+            src={`https://www.youtube.com/embed/${ytId}?autoplay=1&mute=1${ytStart ? `&start=${ytStart}` : ""}`}
+            className="absolute inset-0 h-full w-full object-cover border-0"
+            allow="autoplay; encrypted-media"
+            allowFullScreen
+          />
+        ) : url && !error ? (
           <video
             ref={videoRef}
             src={resolveAssetUrl(url)}
@@ -279,7 +301,13 @@ function VideoPanel({
 
         {/* Bottom timestamp HUD */}
         <div className="absolute left-3 bottom-3 right-3 flex items-center justify-between font-mono text-[10px] text-background/80 bg-black/40 px-2 py-1 rounded backdrop-blur-sm">
-          <span>{timestamp ? new Date(timestamp).toISOString().slice(11, 23) : new Date().toISOString().slice(11, 23)}Z</span>
+          <span>
+            {timestamp 
+              ? (!isNaN(new Date(timestamp).getTime()) 
+                  ? new Date(timestamp).toISOString().slice(11, 23) 
+                  : timestamp)
+              : new Date().toISOString().slice(11, 23)}Z
+          </span>
           <span>Verified Segment</span>
         </div>
       </div>

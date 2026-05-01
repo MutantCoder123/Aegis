@@ -9,11 +9,14 @@ pgvector table without segment overlap or accumulator drift.
 import asyncio
 import logging
 import os
+import datetime
+import glob
+import shutil
 import tempfile
 import uuid
-import datetime
 from typing import Optional
 from services.s3_utils import upload_to_s3
+from services.media_extractor import MediaExtractor
 
 import numpy as np
 from PIL import Image
@@ -368,14 +371,57 @@ async def process_master_vod(
             return
 
     logger.info(f"[VaultWorker] 🚀 Starting process_master_vod (Video) for {video_path}")
-    import tempfile
-    import glob
-    import shutil
+    # Archive the asset if it's a local file.
+    master_vod_url = None
+    is_url = video_path.startswith(("http://", "https://"))
     
-    # NEW: Archive the FULL video first so playback represents the whole match, not just 5s chunks.
-    master_vod_url = await _upload_asset(video_path, match_id)
-    debug_vault(f"Master VOD archived: {master_vod_url}")
+    if not is_url:
+        master_vod_url = await _upload_asset(video_path, match_id)
+        debug_vault(f"Master VOD archived: {master_vod_url}")
+    else:
+        master_vod_url = video_path
+        debug_vault(f"Using remote URL for VOD reference: {master_vod_url}")
 
+    if is_url:
+        logger.info(f"[VaultWorker] 🌐 Resolving stream URL for: {video_path}")
+        resolved_url = await MediaExtractor.get_stream_url(video_path)
+        if not resolved_url:
+            logger.error(f"[VaultWorker] ❌ Failed to resolve URL: {video_path}")
+            return
+            
+        logger.info(f"[VaultWorker] 🌐 Streaming frames directly from URL: {resolved_url}")
+        vectors_inserted = 0
+        vod_start_time = datetime.datetime.now(datetime.timezone.utc).replace(hour=0, minute=0, second=0, microsecond=0)
+        
+        frame_idx = 0
+        async for frame_bytes in MediaExtractor.stream_frames(resolved_url, is_live=False):
+            vector = await _vectorize_bytes(frame_bytes)
+            if vector is not None:
+                # Assuming stream_frames returns 1fps as per its implementation
+                frame_timestamp = vod_start_time + datetime.timedelta(seconds=frame_idx)
+                
+                ok = await _store_vector(
+                    vector, 
+                    match_id, 
+                    video_path, 
+                    video_path, # Use original URL for playback reference
+                    db_session_factory, 
+                    source_origin, 
+                    broadcaster_id,
+                    timestamp=frame_timestamp
+                )
+                if ok:
+                    vectors_inserted += 1
+            
+            frame_idx += 1
+            # Limit to 300 frames (5 minutes) for reference ingestion to prevent infinite loops on long VODs
+            if frame_idx >= 300:
+                break
+        
+        logger.info(f"[VaultWorker] ✅ Streaming ingestion completed. {vectors_inserted} vectors stored for {match_id}.")
+        return
+
+    # LOCAL FILE LOGIC (Segmentation)
     temp_dir = tempfile.mkdtemp(prefix="vault_master_")
     
     cmd = [
@@ -412,7 +458,6 @@ async def process_master_vod(
     total_chunks = len(chunk_files)
     
     # Use a stable start time for the VOD (e.g. today at midnight) and add offsets
-    import datetime
     vod_start_time = datetime.datetime.now(datetime.timezone.utc).replace(hour=0, minute=0, second=0, microsecond=0)
     
     for i, chunk_path in enumerate(chunk_files):

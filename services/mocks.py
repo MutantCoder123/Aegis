@@ -12,34 +12,50 @@ class MockYouTubeRadar:
         print(f"[MockYouTubeRadar] Simulating hunt for keywords: {keywords}")
         await asyncio.sleep(1)
         
-        # Generate 5-10 fake targets
-        num_targets = random.randint(5, 10)
-        for i in range(num_targets):
-            # Varied velocity: some low (below 500), some very high (above 5,000)
-            if random.random() > 0.5:
-                views = random.randint(100, 400) # Low
-            else:
-                views = random.randint(5000, 20000) # High
-                
-            upload_time = datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(hours=random.randint(1, 24))
-            
-            # Occasionally use a real public stream for testing the extractor/worker flow
-            if random.random() > 0.7:
-                url = "https://www.youtube.com/watch?v=21X5lGlDOfg" # NASA Live (or similar)
-            else:
-                url = f"https://www.youtube.com/watch?v=mock_{hashlib.md5(str(random.random()).encode()).hexdigest()[:8]}"
-            
-            await VelocitySieve.evaluate_target(
-                url=url,
-                platform="YouTube",
-                source="youtube_radar",
-                views=views,
-                upload_time=upload_time,
-                metadata={
-                    "title": f"MOCK: {random.choice(keywords)} - Live Stream {i}",
-                    "channel": f"Mock Sports Channel {random.randint(1, 10)}"
-                }
-            )
+        # PRECISION TEST: Always inject the specific target URL
+        test_url = "https://www.youtube.com/watch?v=Tj0YrgOAfhs"
+        await VelocitySieve.evaluate_target(
+            url=test_url,
+            platform="YouTube",
+            source="youtube_radar",
+            views=50000, # Max priority
+            upload_time=datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(hours=1),
+            metadata={
+                "title": "PRECISION TEST: Authorized Content Mirror",
+                "channel": "Forensic Test Channel"
+            }
+        )
+
+        # --- DISABLED NOISE FOR PRECISION TESTING ---
+        # Generate 3-5 additional fake targets
+        # num_targets = random.randint(3, 5)
+        # for i in range(num_targets):
+        #     # Varied velocity: some low (below 500), some very high (above 5,000)
+        #     if random.random() > 0.5:
+        #         views = random.randint(100, 400) # Low
+        #     else:
+        #         views = random.randint(5000, 20000) # High
+        #         
+        #     upload_time = datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(hours=random.randint(1, 24))
+        #     
+        #     # Occasionally use a real public stream for testing the extractor/worker flow
+        #     if random.random() > 0.7:
+        #         url = "https://www.youtube.com/watch?v=21X5lGlDOfg" # NASA Live (or similar)
+        #     else:
+        #         url = f"https://www.youtube.com/watch?v=mock_{hashlib.md5(str(random.random()).encode()).hexdigest()[:8]}"
+        #     
+        #     await VelocitySieve.evaluate_target(
+        #         url=url,
+        #         platform="YouTube",
+        #         source="youtube_radar",
+        #         views=views,
+        #         upload_time=upload_time,
+        #         metadata={
+        #             "title": f"MOCK: {random.choice(keywords)} - Live Stream {i}",
+        #             "channel": f"Mock Sports Channel {random.randint(1, 10)}"
+        #         }
+        #     )
+
 
 class MockSocialRadar:
     @staticmethod
@@ -47,29 +63,31 @@ class MockSocialRadar:
         print(f"[MockSocialRadar] Simulating hunt on {platform} for hashtags: {hashtags}")
         await asyncio.sleep(1)
         
-        num_targets = random.randint(5, 10)
-        for i in range(num_targets):
-            if random.random() > 0.5:
-                views = random.randint(50, 450)
-            else:
-                views = random.randint(10000, 100000)
-                
-            upload_time = datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(hours=random.randint(1, 12))
-            
-            # Occasionally use a real public stream
-            if random.random() > 0.7:
-                url = "https://www.youtube.com/watch?v=21X5lGlDOfg"
-            else:
-                url = f"https://www.{platform.lower()}.com/p/mock_{hashlib.md5(str(random.random()).encode()).hexdigest()[:8]}"
-            
-            await VelocitySieve.evaluate_target(
-                url=url,
-                platform=platform.title(),
-                source="social_radar",
-                views=views,
-                upload_time=upload_time,
-                metadata={"hashtag": random.choice(hashtags)}
-            )
+        # --- DISABLED NOISE FOR PRECISION TESTING ---
+        # num_targets = random.randint(5, 10)
+        # for i in range(num_targets):
+        #     if random.random() > 0.5:
+        #         views = random.randint(50, 450)
+        #     else:
+        #         views = random.randint(10000, 100000)
+        #         
+        #     upload_time = datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(hours=random.randint(1, 12))
+        #     
+        #     # Occasionally use a real public stream
+        #     if random.random() > 0.7:
+        #         url = "https://www.youtube.com/watch?v=21X5lGlDOfg"
+        #     else:
+        #         url = f"https://www.{platform.lower()}.com/p/mock_{hashlib.md5(str(random.random()).encode()).hexdigest()[:8]}"
+        #     
+        #     await VelocitySieve.evaluate_target(
+        #         url=url,
+        #         platform=platform.title(),
+        #         source="social_radar",
+        #         views=views,
+        #         upload_time=upload_time,
+        #         metadata={"hashtag": random.choice(hashtags)}
+        #     )
+
 
 async def mock_handoff_to_arbiter(
     frame_bytes: bytearray, 

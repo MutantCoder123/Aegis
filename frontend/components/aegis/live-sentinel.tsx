@@ -35,7 +35,10 @@ interface ActionCard {
   }
   isEscalated: boolean
   aiVerdict?: "MALICIOUS" | "WHITELISTED" | "PENDING"
+  aiVerdict?: "MALICIOUS" | "WHITELISTED" | "PENDING"
   aiReasoning?: string
+  matchedOfficialUrl?: string
+  pirateTime?: number
 }
 
 export function LiveSentinel() {
@@ -56,7 +59,7 @@ export function LiveSentinel() {
     setSystemLogs((prev) => [...prev, entry].slice(-100))
   }, [])
 
-  const handleAction = React.useCallback((event: FirehoseActionEvent) => {
+  const handleAction = React.useCallback((event: FirehoseActionEvent & { matchedOfficialUrl?: string, pirateTime?: number }) => {
     setAdjudications((prev) => {
       const existingIdx = prev.findIndex((a) => a.url === event.url || a.id === event.id)
       if (existingIdx !== -1) {
@@ -76,6 +79,8 @@ export function LiveSentinel() {
           isEscalated: event.tier_3_escalation,
           aiVerdict: event.ai_verdict,
           aiReasoning: event.ai_reasoning,
+          matchedOfficialUrl: event.matchedOfficialUrl,
+          pirateTime: event.pirateTime,
         }
         return next
       }
@@ -95,9 +100,11 @@ export function LiveSentinel() {
           isEscalated: event.tier_3_escalation,
           aiVerdict: event.ai_verdict,
           aiReasoning: event.ai_reasoning,
+          matchedOfficialUrl: event.matchedOfficialUrl,
+          pirateTime: event.pirateTime,
         },
         ...prev,
-      ].slice(0, 10)
+      ].slice(0, 50)
     })
   }, [])
 
@@ -119,6 +126,11 @@ export function LiveSentinel() {
   // render its full forensic breakdown, and we link to the matching ledger
   // entry whenever one exists for this matchId.
   const handleViewEvidence = (a: ActionCard) => {
+    let finalUrl = a.url
+    if (a.pirateTime && (finalUrl.includes("youtube.com") || finalUrl.includes("youtu.be"))) {
+      finalUrl = finalUrl.includes("?") ? `${finalUrl}&start=${a.pirateTime}` : `${finalUrl}?start=${a.pirateTime}`
+    }
+
     const ledgerHit = infringements.find((i) => i.matchId === a.matchId)
     const infringement: Infringement = ledgerHit
       ? {
@@ -126,22 +138,25 @@ export function LiveSentinel() {
           // Override volatile fields with what the live card actually shows so
           // the evidence panel reflects this specific adjudication event.
           platform: a.platform,
-          url: a.url,
+          url: finalUrl,
           cosineDistance: a.cosine,
+          matchedOfficialUrl: a.matchedOfficialUrl || ledgerHit.matchedOfficialUrl,
           status:
             a.verdict === "INFRINGEMENT_CONFIRMED" ? "dismantled" : "pending",
         }
       : {
           id: `LIVE-${a.id}`,
           matchId: a.matchId,
-          platform: a.platform,
-          url: a.url,
+          platform: a.platform as any,
+          url: finalUrl,
           cosineDistance: a.cosine,
           status:
             a.verdict === "INFRINGEMENT_CONFIRMED" ? "dismantled" : "pending",
           reach: Math.round(5_000 + Math.random() * 40_000),
           timestamp: a.ts,
           vectorUuid: `v_live_${a.id.toString(36).padStart(6, "0")}`,
+          matchedOfficialUrl: a.matchedOfficialUrl || "/vault/placeholder.mp4",
+          matchedOfficialId: a.matchId,
         }
     const match = matches.find((m) => m.id === a.matchId) ?? null
     setEvidenceTarget({ infringement, match })

@@ -14,7 +14,7 @@ class MediaExtractor:
         """
         if "mock_" in target_url:
             # Simulation Mode: Redirect mock URLs to a stable test stream
-            return "https://www.youtube.com/watch?v=21X5lGlDOfg" # NASA Live
+            return "https://www.youtube.com/watch?v=21X5lGlDOfg" 
 
         if target_url.endswith((".m3u8", ".mp4", ".ts")) or target_url.startswith(("/", "./", "../")):
             return target_url
@@ -26,7 +26,13 @@ class MediaExtractor:
                 stdout=asyncio.subprocess.PIPE,
                 stderr=asyncio.subprocess.PIPE
             )
-            stdout, stderr = await process.communicate()
+            # Add a timeout to prevent hanging if yt-dlp is throttled
+            try:
+                stdout, stderr = await asyncio.wait_for(process.communicate(), timeout=30.0)
+            except asyncio.TimeoutError:
+                process.terminate()
+                logging.error(f"[MediaExtractor] yt-dlp timed out for {target_url}")
+                return None
             
             if process.returncode == 0:
                 return stdout.decode().strip()
@@ -42,13 +48,6 @@ class MediaExtractor:
         """
         Pipes media stream into FFmpeg and yields raw frames (PNG) at 1fps.
         """
-        # FFmpeg command:
-        # -i stream_url: input stream
-        # -vf fps=1: sample 1 frame per second
-        # -f image2pipe: output to pipe
-        # -vcodec png: format frames as PNG
-        # -: stdout
-        
         ffmpeg_cmd = [
             "ffmpeg",
             "-i", stream_url,
@@ -58,7 +57,6 @@ class MediaExtractor:
             "-"
         ]
         
-        # If it's a live stream, we might want to add some flags for low latency/real-time
         if is_live:
             ffmpeg_cmd = [
                 "ffmpeg",
@@ -73,46 +71,37 @@ class MediaExtractor:
         process = await asyncio.create_subprocess_exec(
             *ffmpeg_cmd,
             stdout=asyncio.subprocess.PIPE,
-            stderr=asyncio.subprocess.DEVNULL
+            stderr=asyncio.subprocess.PIPE # CAPTURE ERROR LOGS
         )
 
         try:
-            # PNG frames start with 0x89 0x50 0x4E 0x47 0x0D 0x0A 0x1A 0x0A
-            # and end with 0x49 0x45 0x4E 0x44 0xAE 0x42 0x60 0x82
-            
-            # We'll read the stream in chunks and split by PNG header/footer or just rely on image2pipe behavior.
-            # image2pipe with png codec writes complete PNG files one after another.
-            
             buffer = bytearray()
             while True:
+                # Read stdout for image data
                 chunk = await process.stdout.read(4096)
                 if not chunk:
+                    # Check stderr if process ended early
+                    if process.returncode is not None and process.returncode != 0:
+                        stderr_data = await process.stderr.read()
+                        logging.error(f"[MediaExtractor] FFmpeg exited with code {process.returncode}: {stderr_data.decode()}")
                     break
                 
                 buffer.extend(chunk)
-                
-                # Simple PNG splitting logic:
-                # Look for PNG header and the next header to extract a full frame.
                 header = b"\x89PNG\r\n\x1a\n"
                 
                 while True:
                     start_idx = buffer.find(header)
                     if start_idx == -1:
-                        # No header found, clear buffer if too large to avoid memory leak
-                        if len(buffer) > 1024 * 1024: # 1MB
+                        if len(buffer) > 1024 * 1024:
                             buffer.clear()
                         break
                     
                     next_header_idx = buffer.find(header, start_idx + len(header))
                     if next_header_idx == -1:
-                        # Only one header found, wait for more data
                         break
                     
-                    # We have a full PNG frame
                     frame_data = buffer[start_idx:next_header_idx]
                     yield frame_data
-                    
-                    # Remove processed frame from buffer
                     del buffer[:next_header_idx]
 
         except Exception as e:

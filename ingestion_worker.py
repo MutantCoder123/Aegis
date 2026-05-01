@@ -4,6 +4,7 @@ import os
 import random
 import re
 from datetime import datetime, timezone
+import traceback
 import httpx
 from services.media_extractor import MediaExtractor
 from services.vector_vault import CLIPVectorizer, VaultSearch
@@ -103,10 +104,40 @@ async def run_stealth_extractor():
             
             print(f"[Worker] Found target: {raw_url} | Mode: {mode}")
 
+            # Notify UI of new target scanning
+            async with httpx.AsyncClient() as client:
+                try:
+                    await client.post("http://127.0.0.1:8000/api/internal/publish", json={
+                        "event_type": "target",
+                        "data": {
+                            "id": str(target.get('_id')),
+                            "ts": datetime.now(timezone.utc).strftime("%H:%M:%S"),
+                            "url": raw_url,
+                            "platform": platform,
+                            "velocity": random.randint(100, 500),
+                            "status": "scanning"
+                        }
+                    })
+                except: pass
+
             # 1. Resolve Media Stream URL
             stream_url = await MediaExtractor.get_stream_url(raw_url)
             if not stream_url:
                 print(f"[!] Extraction Failed: Could not resolve stream for {raw_url}")
+                async with httpx.AsyncClient() as client:
+                    try:
+                        await client.post("http://127.0.0.1:8000/api/internal/publish", json={
+                            "event_type": "target",
+                            "data": {
+                                "id": str(target.get('_id')),
+                                "ts": datetime.now(timezone.utc).strftime("%H:%M:%S"),
+                                "url": raw_url,
+                                "platform": platform,
+                                "velocity": 0,
+                                "status": "failed"
+                            }
+                        })
+                    except: pass
                 continue
 
             # 2. Process Stream In-Memory
@@ -142,19 +173,45 @@ async def run_stealth_extractor():
                         verdict = adjudication["verdict"]
                         confidence = adjudication["confidence"]
                         
-                        if verdict == "CONFIRMED_MALICIOUS":
+                        if verdict in ["CONFIRMED_MALICIOUS", "RESTREAM_SUSPECTED"]:
                             print(f"[Phase 4] {verdict} | Conf: {confidence:.2f} | Asset: {match_data['asset'].match_id}")
                             
+                            # Save to Database so it appears in Forensic Ledger
+                            from database import AsyncSessionLocal, ProcessedStream
+                            async with AsyncSessionLocal() as session:
+                                new_stream = ProcessedStream(
+                                    broadcaster_id=match_data['asset'].broadcaster_id,
+                                    platform=platform,
+                                    media_url=f"{raw_url}&start={frame_count}" if "?" in raw_url else f"{raw_url}?start={frame_count}",
+                                    action_taken="pending",
+                                    confidence_score=confidence,
+                                    matched_official_url=match_data['asset'].video_chunk_url,
+                                    matched_official_id=match_data['asset'].match_id,
+                                    matched_timestamp=match_data['asset'].timestamp,
+                                    timestamp=datetime.now(timezone.utc),
+                                    reasoning=str([
+                                        f"→ Match Found: {match_data['asset'].match_id}",
+                                        f"→ Confidence Score: {int(confidence * 100)}%",
+                                        f"→ Mode: {mode}",
+                                        f"→ Temporal Guard: {verdict}"
+                                    ])
+                                )
+                                session.add(new_stream)
+                                await session.commit()
+                                await session.refresh(new_stream)
+                                db_id = new_stream.id
+
                             # Emit PubSub Event to UI via Relay
-                            stable_id = hashlib.md5(raw_url.encode()).hexdigest()[:12]
                             event_data = {
-                                "id": stable_id,
+                                "id": str(db_id),
                                 "ts": datetime.now(timezone.utc).strftime("%H:%M:%S"),
                                 "matchId": match_data['asset'].match_id,
-                                "cosine": confidence,
+                                "cosine": float(confidence),
                                 "platform": platform,
                                 "url": raw_url,
                                 "verdict": verdict,
+                                "matchedOfficialUrl": match_data['asset'].video_chunk_url,
+                                "pirateTime": int(frame_count),
                                 "reasoning": [
                                     f"→ Match Found: {match_data['asset'].match_id}",
                                     f"→ Confidence Score: {int(confidence * 100)}%",
@@ -170,7 +227,8 @@ async def run_stealth_extractor():
                                         "data": event_data
                                     })
                                 except Exception as e:
-                                    print(f"[!] Relay failed: {e}")
+                                    import traceback
+                                    print(f"[!] Relay failed: {repr(e)}\n{traceback.format_exc()}")
 
                         elif verdict == "TIER_3_REQUIRED":
                             print(f"[Phase 5] Escalating Gray Zone to Gemini AI Arbiter...")

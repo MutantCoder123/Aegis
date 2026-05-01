@@ -23,8 +23,10 @@ import {
   X,
   Upload,
   FileUp,
+  CheckCircle2,
 } from "lucide-react"
 import { cn, formatNumber } from "@/lib/utils"
+import { getAegisIdentity, setAegisIdentity } from "@/lib/aegis-auth"
 
 type FilterKey = "all" | "video" | "image"
 
@@ -48,14 +50,17 @@ export function TheVault() {
 
 function Ingestor() {
   const { broadcaster } = useBroadcaster()
+  const identity = getAegisIdentity()
   const ingest = useVaultIngest(broadcaster.id)
+  
   const [showKey, setShowKey] = React.useState(false)
-  const [type, setType] = React.useState<AssetType>("Live HLS")
-  const [matchId, setMatchId] = React.useState("LAKERS_WARRIORS_001")
-  const [displayName, setDisplayName] = React.useState("Lakers vs Warriors · Court Side HD")
-  const [sourceKey, setSourceKey] = React.useState("hls_a4e8b2c19f3d7e0a8b6c2f1d")
+  const [type, setType] = React.useState<AssetType>("Master VOD")
+  const [matchId, setMatchId] = React.useState("MASTER_TEST_002")
+  const [displayName, setDisplayName] = React.useState("Precision Test · 4K Master Reference")
+  const [sourceKey, setSourceKey] = React.useState(identity.sourceKey)
   const [assetSource, setAssetSource] = React.useState<File | string | null>(null)
   const [indexing, setIndexing] = React.useState(false)
+  const [completed, setCompleted] = React.useState(false)
   const [progress, setProgress] = React.useState(0)
 
   const fileInputRef = React.useRef<HTMLInputElement>(null)
@@ -74,21 +79,28 @@ function Ingestor() {
     if (typeof assetSource === "string") {
       formData.append("source_url", assetSource)
     } else {
-      formData.append("file", assetSource)
+      formData.append("file", assetSource as File)
     }
 
-    ingest.mutate(formData as any) // We'll update the hook type next
+    // Sync identity if key was typed manually
+    if (sourceKey !== identity.sourceKey) {
+      setAegisIdentity({ ...identity, sourceKey })
+    }
+
+    ingest.mutate(formData)
 
     const id = setInterval(() => {
       setProgress((p) => {
         if (p >= 100) {
           clearInterval(id)
           setIndexing(false)
+          setCompleted(true)
+          setTimeout(() => setCompleted(false), 3000)
           return 100
         }
-        return p + 5
+        return p + 2
       })
-    }, 80)
+    }, 100)
   }
 
   return (
@@ -129,16 +141,16 @@ function Ingestor() {
 
       <div className="mt-4">
         <Field label="Asset Type">
-          <div className="flex flex-wrap gap-1.5 p-1 bg-white/40 border border-white/60 rounded-lg">
+          <div className="flex items-center gap-1.5 p-1 bg-white/50 border border-white/60 rounded-lg">
             {ASSET_TYPE_OPTIONS.map((t) => {
-              const Icon = t.icon
               const isActive = type === t.value
+              const Icon = t.icon
               return (
                 <button
                   key={t.value}
                   onClick={() => setType(t.value)}
                   className={cn(
-                    "rounded-md px-2.5 py-2 text-[11.5px] font-medium flex items-center justify-center gap-1.5 transition-all",
+                    "rounded-md px-2.5 py-2 text-[11.5px] font-medium flex items-center justify-center gap-1.5 transition-all flex-1",
                     isActive
                       ? "bg-foreground text-background shadow-sm"
                       : "text-foreground/70 hover:bg-white/60",
@@ -153,7 +165,6 @@ function Ingestor() {
         </Field>
       </div>
 
-      {/* Asset Source Dropzone */}
       <Field label="ASSET SOURCE (UPLOAD FILE OR STREAM URL)" className="mt-4">
         <div
           onDragOver={(e) => {
@@ -239,7 +250,7 @@ function Ingestor() {
             <button
               type="button"
               onClick={() => setShowKey((v) => !v)}
-              className="absolute right-2 top-1/2 -translate-y-1/2 h-7 w-7 grid place-items-center rounded-md hover:bg-foreground/5"
+              className="absolute right-2 top-1/2 -translate-y-1/2 h-8 w-8 rounded-full hover:bg-foreground/5 grid place-items-center transition-colors"
             >
               {showKey ? (
                 <EyeOff className="h-3.5 w-3.5 text-muted-foreground" />
@@ -258,9 +269,10 @@ function Ingestor() {
         </div>
         <button
           onClick={handleIndex}
-          disabled={indexing}
+          disabled={indexing || !assetSource}
           className={cn(
             "relative overflow-hidden rounded-lg px-5 py-2.5 text-[12.5px] font-semibold flex items-center gap-2 transition-all",
+            completed ? "bg-success text-background" : 
             indexing
               ? "bg-foreground/40 text-background cursor-wait"
               : "bg-foreground text-background hover:bg-foreground/90 disabled:opacity-50 disabled:cursor-not-allowed",
@@ -269,11 +281,16 @@ function Ingestor() {
           {indexing && (
             <div className="absolute inset-0 bg-highlight/10 animate-pulse pointer-events-none" />
           )}
-          {indexing ? (
+          {completed ? (
+            <>
+              <CheckCircle2 className="h-3.5 w-3.5" />
+              Ingestion Queued
+            </>
+          ) : indexing ? (
             <>
               <span
                 className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
-                style={{ width: `${progress}%`, transition: "width 0.08s linear" }}
+                style={{ width: `${progress}%`, transition: "width 0.1s linear" }}
               />
               <Sparkles className="h-3.5 w-3.5 animate-pulse" />
               Indexing… {progress}%
@@ -576,19 +593,25 @@ function AssetViewer({ asset, onClose }: { asset: Asset | null; onClose: () => v
 }
 
 function AssetMedia({ asset }: { asset: Asset }) {
+  const videoRef = React.useRef<HTMLVideoElement>(null)
+
   if (asset.media === "video") {
     if (!asset.videoUrl) {
       return <PendingMedia label="Awaiting video stream from backend" kind="video" />
     }
     return (
-      <video
-        key={asset.videoUrl}
-        src={resolveAssetUrl(asset.videoUrl)}
-        controls
-        autoPlay
-        playsInline
-        className="w-full aspect-video bg-black"
-      />
+      <div className="relative aspect-video bg-black">
+        <video
+          ref={videoRef}
+          key={asset.videoUrl}
+          src={resolveAssetUrl(asset.videoUrl)}
+          controls
+          autoPlay
+          muted
+          playsInline
+          className="w-full h-full"
+        />
+      </div>
     )
   }
   if (!asset.imageUrl) {
