@@ -1,15 +1,16 @@
+import os
 import datetime
 from typing import Dict, Any, Optional
 from models.schemas import IngestionMode
 
 class TemporalGuard:
-    THRESHOLD_CONFIRMED = 0.92
+    THRESHOLD_CONFIRMED = float(os.getenv("SIMILARITY_THRESHOLD_CONFIRMED", "0.95"))
     THRESHOLD_GRAY_ZONE = 0.75
     THRESHOLD_DISCARD = 0.70
     BROADCAST_DELAY_SECONDS = 60  # Allowance for standard stream delay
 
     @staticmethod
-    def evaluate(match_data: Dict[str, Any], ingestion_mode: IngestionMode) -> Dict[str, Any]:
+    def evaluate(match_data: Dict[str, Any], ingestion_mode: IngestionMode, consecutive_frames: int = 1) -> Dict[str, Any]:
         """
         Adjudicates a match based on ingestion mode and temporal constraints.
         """
@@ -34,7 +35,6 @@ class TemporalGuard:
             # LIVE check: Must be within reasonable window of the current clock
             if abs(time_diff) > TemporalGuard.BROADCAST_DELAY_SECONDS:
                 # If similarity is very high but time is off, it might be a "Restream" of an old match.
-                # We flag as suspicious but not "Live Mirror".
                 if similarity > TemporalGuard.THRESHOLD_CONFIRMED:
                     return {
                         "verdict": "RESTREAM_SUSPECTED",
@@ -43,21 +43,31 @@ class TemporalGuard:
                     }
                 return {"verdict": "DISCARD", "confidence": similarity, "reason": "Temporal mismatch for LIVE mode."}
 
-        # 3. Gray Zone Routing
+        # 3. Gray Zone Routing & Consecutive Checking
         if similarity >= TemporalGuard.THRESHOLD_CONFIRMED:
-            return {
-                "verdict": "CONFIRMED_MALICIOUS",
-                "confidence": similarity,
-                "match_id": asset.match_id,
-                "timestamp": asset.timestamp.isoformat()
-            }
+            if consecutive_frames >= 3:
+                return {
+                    "verdict": "CONFIRMED_MALICIOUS",
+                    "confidence": similarity,
+                    "match_id": asset.match_id,
+                    "timestamp": asset.timestamp.isoformat(),
+                    "reason": f"3+ consecutive frames matched above {TemporalGuard.THRESHOLD_CONFIRMED} threshold."
+                }
+            else:
+                return {
+                    "verdict": "PENDING_CONSECUTIVE",
+                    "confidence": similarity,
+                    "match_id": asset.match_id,
+                    "timestamp": asset.timestamp.isoformat(),
+                    "reason": f"High similarity but lacks consecutive proof ({consecutive_frames}/3)."
+                }
         elif similarity >= TemporalGuard.THRESHOLD_GRAY_ZONE:
             return {
                 "verdict": "TIER_3_REQUIRED",
                 "confidence": similarity,
                 "match_id": asset.match_id,
                 "timestamp": asset.timestamp.isoformat(),
-                "reason": "Similarity in gray zone (0.75 - 0.90). Escalating to AI Arbiter."
+                "reason": "Similarity in gray zone (0.75 - 0.95). Escalating to AI Arbiter."
             }
         
         return {"verdict": "DISCARD", "confidence": similarity}

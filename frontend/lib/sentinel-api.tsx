@@ -98,5 +98,5 @@ export function useFirehoseStream({
     })
 
     return () => controller.abort()
-  }, [onAction, onLog])
+  }, [onAction, onLog, onTarget])
 }

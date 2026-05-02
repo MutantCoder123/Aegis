@@ -868,6 +868,9 @@ async def report_telemetry(payload: TelemetryReport):
             "platform": payload.platform or "Web",
             "url": payload.url,
             "verdict": "PENDING",
+            "ingestion_mode": payload.ingestion_mode,
+            "priority_score": 100,
+            "velocity_metrics": payload.velocity_metrics or {"views_per_hour": 0},
             "reasoning": [
                 f"→ Detected via {payload.source}",
                 f"→ Mode: {payload.ingestion_mode}",
@@ -875,6 +878,16 @@ async def report_telemetry(payload: TelemetryReport):
                 "→ Promoting to Forensic Ingestion Worker...",
                 "→ Status: QUEUED_FOR_VERIFICATION"
             ]
+        })
+
+        # Emit a "target" event for the UI "Live System Log"
+        await firehose_pubsub.publish("target", {
+            "id": stable_id,
+            "ts": now.strftime("%H:%M:%S"),
+            "url": payload.url,
+            "platform": payload.platform or "Web",
+            "velocity": payload.velocity_metrics.get("views_per_hour", 0) if payload.velocity_metrics else 0,
+            "status": "investigating"
         })
 
     # Publish to real-time firehose log

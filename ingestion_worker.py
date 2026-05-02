@@ -145,6 +145,8 @@ async def run_stealth_extractor():
             print(f"[*] Starting In-Memory Extraction ({'LIVE' if is_live else 'VOD'}) at 1fps...")
             
             frame_count = 0
+            target_state = {"last_match_id": None, "consecutive": 0}
+
             async for frame_bytes in MediaExtractor.stream_frames(stream_url, is_live=is_live):
                 frame_count += 1
                 
@@ -159,6 +161,22 @@ async def run_stealth_extractor():
                         metadata=target.get("metadata", {})
                     ))
 
+                if frame_count % 10 == 0:
+                    async with httpx.AsyncClient() as client:
+                        try:
+                            await client.post("http://127.0.0.1:8000/api/internal/publish", json={
+                                "event_type": "target",
+                                "data": {
+                                    "id": str(target.get('_id')),
+                                    "ts": datetime.now(timezone.utc).strftime("%H:%M:%S"),
+                                    "url": raw_url,
+                                    "platform": platform,
+                                    "velocity": random.randint(100, 500),
+                                    "status": f"scanning ({frame_count}f)"
+                                }
+                            })
+                        except: pass
+
                 # PHASE 4: Vector Vault & Temporal Guard
                 try:
                     # 1. Vectorize
@@ -168,8 +186,20 @@ async def run_stealth_extractor():
                     match_data = await VaultSearch.find_nearest(vector)
                     
                     if match_data:
+                        # Apply Logo Sieve Color Penalty
+                        from services.logo_sieve import LogoSieve
+                        color_multiplier = LogoSieve.evaluate(frame_bytes, match_data)
+                        match_data['similarity'] = match_data['similarity'] * color_multiplier
+
+                        match_id = match_data['asset'].match_id
+                        if match_id == target_state["last_match_id"]:
+                            target_state["consecutive"] += 1
+                        else:
+                            target_state["last_match_id"] = match_id
+                            target_state["consecutive"] = 1
+
                         # 3. Adjudicate (Temporal Guard)
-                        adjudication = TemporalGuard.evaluate(match_data, mode)
+                        adjudication = TemporalGuard.evaluate(match_data, mode, target_state["consecutive"])
                         verdict = adjudication["verdict"]
                         confidence = adjudication["confidence"]
                         

@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { aegisFetch } from "./api"
 
-export type EnforcementAction = "TAKEDOWN" | "MONETIZE"
+export type EnforcementAction = "TAKEDOWN" | "MONETIZE" | "WHITELIST"
 
 export interface EnforcementResult {
   id: string

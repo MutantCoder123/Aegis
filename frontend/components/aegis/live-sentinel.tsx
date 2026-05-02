@@ -35,7 +35,6 @@ interface ActionCard {
   }
   isEscalated: boolean
   aiVerdict?: "MALICIOUS" | "WHITELISTED" | "PENDING"
-  aiVerdict?: "MALICIOUS" | "WHITELISTED" | "PENDING"
   aiReasoning?: string
   matchedOfficialUrl?: string
   pirateTime?: number
@@ -61,7 +60,7 @@ export function LiveSentinel() {
 
   const handleAction = React.useCallback((event: FirehoseActionEvent & { matchedOfficialUrl?: string, pirateTime?: number }) => {
     setAdjudications((prev) => {
-      const existingIdx = prev.findIndex((a) => a.url === event.url || a.id === event.id)
+      const existingIdx = prev.findIndex((a) => a.id === event.id || (a.url === event.url && a.verdict === "PENDING"))
       if (existingIdx !== -1) {
         const next = [...prev]
         next[existingIdx] = {
@@ -196,8 +195,8 @@ export function LiveSentinel() {
             ref={feedRef}
             className="thin-scroll flex-1 overflow-y-auto px-5 py-4 space-y-2.5"
           >
-            {systemLogs.map((l) => (
-              <div key={l.id} className="flex items-center justify-between group">
+            {systemLogs.map((l, idx) => (
+              <div key={`${l.id}-${idx}`} className="flex items-center justify-between group">
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2 mb-0.5">
                     <span className="text-[10px] text-stone-100/40 scoreboard">{l.ts}</span>

@@ -11,16 +11,23 @@ node_modules/
 dist/
 .next/
 
-# HLS Artifacts & Media
-official_archive/
-demo_stream/
-*.ts
-*.m3u8
-*.mp4
-*.mkv
-*.png
-*.jpg
-*.jpeg
+# Logs & Temporary Files
+*.log
+scratch/
+.agents/
 
-# OS
+# Build & OS Artifacts
+awscliv2.zip
 .DS_Store
+
+# Ignore loose media files in root directory (Screenshots, ad-hoc test videos)
+/*.png
+/*.jpg
+/*.jpeg
+/*.mp4
+/*.ts
+/*.m3u8
+/*.mkv
+
+# NOTE: The mock data directories (demo_stream/ and official_archive/) 
+# are explicitly NOT ignored so they can be pushed to GitHub for demonstration.
