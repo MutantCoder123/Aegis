@@ -54,8 +54,24 @@ export function LiveSentinel() {
   } | null>(null)
   const feedRef = React.useRef<HTMLDivElement | null>(null)
 
+  // Load logs from localStorage on initial mount
+  React.useEffect(() => {
+    try {
+      const saved = localStorage.getItem("aegis_system_logs")
+      if (saved) {
+        setSystemLogs(JSON.parse(saved))
+      }
+    } catch (e) {
+      console.error("Failed to parse saved logs:", e)
+    }
+  }, [])
+
   const handleTarget = React.useCallback((entry: FirehoseTargetEvent) => {
-    setSystemLogs((prev) => [...prev, entry].slice(-100))
+    setSystemLogs((prev) => {
+      const next = [...prev, entry].slice(-200) // Keep last 200 logs
+      localStorage.setItem("aegis_system_logs", JSON.stringify(next))
+      return next
+    })
   }, [])
 
   const handleAction = React.useCallback((event: FirehoseActionEvent & { matchedOfficialUrl?: string, pirateTime?: number }) => {

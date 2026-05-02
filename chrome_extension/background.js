@@ -1,7 +1,7 @@
 // background.js - Service Worker for Aegis Telemetry
 
 const TARGET_KEYWORDS = ["stream", "live", "watch", ".m3u8"];
-const TELEMETRY_SERVER = "http://localhost:8000/api/telemetry/report";
+const TELEMETRY_SERVER = "https://d2cjj63n2qmfgx.cloudfront.net/api/telemetry/report";
 
 // Listen to all completed navigations
 chrome.webNavigation.onCompleted.addListener((details) => {

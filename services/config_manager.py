@@ -4,6 +4,13 @@ from dotenv import set_key, load_dotenv
 
 ENV_FILE = os.path.join(os.getcwd(), ".env")
 
+def mask_secret(secret: str) -> str:
+    if not secret:
+        return ""
+    if len(secret) <= 8:
+        return "••••••••"
+    return secret[:4] + "••••••••"
+
 def get_current_config() -> Dict[str, Any]:
     """
     Reads the current configuration from environment variables.
@@ -11,28 +18,28 @@ def get_current_config() -> Dict[str, Any]:
     load_dotenv(override=True)
     return {
         "gemini": {
-            "apiKey": os.getenv("GEMINI_API_KEY", ""),
+            "apiKey": mask_secret(os.getenv("GEMINI_API_KEY", "")),
             "model": os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
         },
         "youtube": {
-            "apiKey": os.getenv("YOUTUBE_API_KEY", "")
+            "apiKey": mask_secret(os.getenv("YOUTUBE_API_KEY", ""))
         },
         "instagram": {
-            "apiKey": os.getenv("INSTAGRAM_ACCESS_TOKEN", "")
+            "apiKey": mask_secret(os.getenv("INSTAGRAM_ACCESS_TOKEN", ""))
         },
         "twitter": {
-            "apiKey": os.getenv("TWITTER_BEARER_TOKEN", "")
+            "apiKey": mask_secret(os.getenv("TWITTER_BEARER_TOKEN", ""))
         },
         "reddit": {
             "clientId": os.getenv("REDDIT_CLIENT_ID", ""),
-            "clientSecret": os.getenv("REDDIT_CLIENT_SECRET", ""),
+            "clientSecret": mask_secret(os.getenv("REDDIT_CLIENT_SECRET", "")),
             "userAgent": os.getenv("REDDIT_USER_AGENT", "AegisBot/1.0")
         },
         "telegram": {
-            "botToken": os.getenv("TELEGRAM_BOT_TOKEN", "")
+            "botToken": mask_secret(os.getenv("TELEGRAM_BOT_TOKEN", ""))
         },
         "discord": {
-            "botToken": os.getenv("DISCORD_BOT_TOKEN", "")
+            "botToken": mask_secret(os.getenv("DISCORD_BOT_TOKEN", ""))
         }
     }
 
@@ -60,6 +67,9 @@ def update_config(config: Dict[str, Any]):
             val = val.get(part, {})
         
         if isinstance(val, str):
+            # Ignore masked secrets so we don't accidentally overwrite the real key with "••••••••"
+            if "••••••••" in val:
+                continue
             set_key(ENV_FILE, env_key, val)
             os.environ[env_key] = val
     
