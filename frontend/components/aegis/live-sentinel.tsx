@@ -53,16 +53,21 @@ export function LiveSentinel() {
     match: Match | null
   } | null>(null)
   const feedRef = React.useRef<HTMLDivElement | null>(null)
+  const adjRef = React.useRef<HTMLDivElement | null>(null)
 
   // Load logs from localStorage on initial mount
   React.useEffect(() => {
     try {
-      const saved = localStorage.getItem("aegis_system_logs")
-      if (saved) {
-        setSystemLogs(JSON.parse(saved))
+      const savedLogs = localStorage.getItem("aegis_system_logs")
+      if (savedLogs) {
+        setSystemLogs(JSON.parse(savedLogs))
+      }
+      const savedAdjudications = localStorage.getItem("aegis_adjudications")
+      if (savedAdjudications) {
+        setAdjudications(JSON.parse(savedAdjudications))
       }
     } catch (e) {
-      console.error("Failed to parse saved logs:", e)
+      console.error("Failed to parse saved state:", e)
     }
   }, [])
 
@@ -77,8 +82,8 @@ export function LiveSentinel() {
   const handleAction = React.useCallback((event: FirehoseActionEvent & { matchedOfficialUrl?: string, pirateTime?: number }) => {
     setAdjudications((prev) => {
       const existingIdx = prev.findIndex((a) => a.id === event.id || (a.url === event.url && a.verdict === "PENDING"))
+      let next = [...prev]
       if (existingIdx !== -1) {
-        const next = [...prev]
         next[existingIdx] = {
           id: event.id,
           ts: event.ts,
@@ -97,29 +102,32 @@ export function LiveSentinel() {
           matchedOfficialUrl: event.matchedOfficialUrl,
           pirateTime: event.pirateTime,
         }
-        return next
+      } else {
+        next = [
+          ...prev,
+          {
+            id: event.id,
+            ts: event.ts,
+            matchId: event.matchId,
+            cosine: event.cosine,
+            platform: event.platform,
+            url: event.url,
+            reasoning: event.reasoning,
+            verdict: event.verdict,
+            ingestionMode: event.ingestion_mode,
+            priority: event.priority_score,
+            velocity: event.velocity_metrics ? { vph: event.velocity_metrics.views_per_hour } : undefined,
+            isEscalated: event.tier_3_escalation,
+            aiVerdict: event.ai_verdict,
+            aiReasoning: event.ai_reasoning,
+            matchedOfficialUrl: event.matchedOfficialUrl,
+            pirateTime: event.pirateTime,
+          }
+        ]
       }
-      return [
-        {
-          id: event.id,
-          ts: event.ts,
-          matchId: event.matchId,
-          cosine: event.cosine,
-          platform: event.platform,
-          url: event.url,
-          reasoning: event.reasoning,
-          verdict: event.verdict,
-          ingestionMode: event.ingestion_mode,
-          priority: event.priority_score,
-          velocity: event.velocity_metrics ? { vph: event.velocity_metrics.views_per_hour } : undefined,
-          isEscalated: event.tier_3_escalation,
-          aiVerdict: event.ai_verdict,
-          aiReasoning: event.ai_reasoning,
-          matchedOfficialUrl: event.matchedOfficialUrl,
-          pirateTime: event.pirateTime,
-        },
-        ...prev,
-      ].slice(0, 50)
+      next = next.slice(-50)
+      localStorage.setItem("aegis_adjudications", JSON.stringify(next))
+      return next
     })
   }, [])
 
@@ -135,6 +143,13 @@ export function LiveSentinel() {
       feedRef.current.scrollTop = feedRef.current.scrollHeight
     }
   }, [systemLogs])
+
+  // Auto-scroll adjudication feed
+  React.useEffect(() => {
+    if (adjRef.current) {
+      adjRef.current.scrollTop = adjRef.current.scrollHeight
+    }
+  }, [adjudications])
 
   // Open the Forensic Evidence Chamber for a given live action card. We
   // synthesize a real Infringement record from the action so the modal can
@@ -179,7 +194,11 @@ export function LiveSentinel() {
 
   const handleEnforce = (a: ActionCard, action: "TAKEDOWN" | "MONETIZE" | "WHITELIST") => {
     enforcement.mutate({ id: `LIVE-${a.id}`, action })
-    setAdjudications((prev) => prev.filter((item) => item.id !== a.id))
+    setAdjudications((prev) => {
+      const next = prev.filter((item) => item.id !== a.id)
+      localStorage.setItem("aegis_adjudications", JSON.stringify(next))
+      return next
+    })
   }
 
   return (
@@ -268,7 +287,7 @@ export function LiveSentinel() {
             </span>
           </div>
 
-          <div className="thin-scroll flex-1 overflow-y-auto space-y-3 pr-1">
+          <div ref={adjRef} className="thin-scroll flex-1 overflow-y-auto space-y-3 pr-1">
             <AnimatePresence initial={false}>
               {adjudications.map((a) => (
                 <motion.div
