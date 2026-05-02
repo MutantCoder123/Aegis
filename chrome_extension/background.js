@@ -4,7 +4,7 @@ const TARGET_KEYWORDS = ["stream", "live", "watch", ".m3u8"];
 const TELEMETRY_SERVER = "https://d2cjj63n2qmfgx.cloudfront.net/api/telemetry/report";
 
 // Listen to all completed navigations
-chrome.webNavigation.onCompleted.addListener((details) => {
+function handleNavigation(details) {
   // We only care about the main frame (the actual URL the user is on)
   if (details.frameId !== 0) return;
 
@@ -42,4 +42,10 @@ chrome.webNavigation.onCompleted.addListener((details) => {
       console.debug("[Aegis] Backend telemetry server offline:", error);
     });
   }
-});
+}
+
+// Listen to all completed hard navigations
+chrome.webNavigation.onCompleted.addListener(handleNavigation);
+
+// Listen to all Single Page Application (SPA) soft navigations (e.g. YouTube)
+chrome.webNavigation.onHistoryStateUpdated.addListener(handleNavigation);

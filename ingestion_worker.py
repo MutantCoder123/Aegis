@@ -107,7 +107,8 @@ async def run_stealth_extractor():
             # Notify UI of new target scanning
             async with httpx.AsyncClient() as client:
                 try:
-                    await client.post("http://127.0.0.1:8000/api/internal/publish", json={
+                    relay_url = os.getenv("API_RELAY_URL", "http://127.0.0.1:8000")
+                    await client.post(f"{relay_url}/api/internal/publish", json={
                         "event_type": "target",
                         "data": {
                             "id": str(target.get('_id')),
@@ -126,7 +127,8 @@ async def run_stealth_extractor():
                 print(f"[!] Extraction Failed: Could not resolve stream for {raw_url}")
                 async with httpx.AsyncClient() as client:
                     try:
-                        await client.post("http://127.0.0.1:8000/api/internal/publish", json={
+                        relay_url = os.getenv("API_RELAY_URL", "http://127.0.0.1:8000")
+                        await client.post(f"{relay_url}/api/internal/publish", json={
                             "event_type": "target",
                             "data": {
                                 "id": str(target.get('_id')),
@@ -164,7 +166,8 @@ async def run_stealth_extractor():
                 if frame_count % 10 == 0:
                     async with httpx.AsyncClient() as client:
                         try:
-                            await client.post("http://127.0.0.1:8000/api/internal/publish", json={
+                            relay_url = os.getenv("API_RELAY_URL", "http://127.0.0.1:8000")
+                            await client.post(f"{relay_url}/api/internal/publish", json={
                                 "event_type": "target",
                                 "data": {
                                     "id": str(target.get('_id')),
@@ -252,7 +255,8 @@ async def run_stealth_extractor():
                             
                             async with httpx.AsyncClient() as client:
                                 try:
-                                    await client.post("http://127.0.0.1:8000/api/internal/publish", json={
+                                    relay_url = os.getenv("API_RELAY_URL", "http://127.0.0.1:8000")
+                                    await client.post(f"{relay_url}/api/internal/publish", json={
                                         "event_type": "action",
                                         "data": event_data
                                     })
@@ -274,7 +278,8 @@ async def run_stealth_extractor():
                             # Log the escalation to the UI relay
                             async with httpx.AsyncClient() as client:
                                 try:
-                                    await client.post("http://127.0.0.1:8000/api/internal/publish", json={
+                                    relay_url = os.getenv("API_RELAY_URL", "http://127.0.0.1:8000")
+                                    await client.post(f"{relay_url}/api/internal/publish", json={
                                         "event_type": "log",
                                         "data": {
                                             "id": f"esc-{datetime.now().timestamp()}",
