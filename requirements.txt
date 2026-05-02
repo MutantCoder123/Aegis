@@ -19,3 +19,4 @@ opencv-python
 scenedetect
 pgvector
 boto3
+yt-dlp

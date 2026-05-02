@@ -14,13 +14,24 @@ class MediaExtractor:
         """
         if "mock_" in target_url:
             # Simulation Mode: Redirect mock URLs to a stable test stream
-            return "https://www.youtube.com/watch?v=21X5lGlDOfg" 
+            target_url = "https://raw.githubusercontent.com/intel-iot-devkit/sample-videos/master/person-bicycle-car-detection.mp4"
 
         if target_url.endswith((".m3u8", ".mp4", ".ts")) or target_url.startswith(("/", "./", "../")):
             return target_url
 
         try:
-            cmd = ["yt-dlp", "--get-url", "-f", "best", target_url]
+            cmd = [
+                "python3", "-m", "yt_dlp", 
+                "--get-url", 
+                "-f", "best", 
+                "--extractor-args", "youtube:player_client=android,web",
+                "--no-check-certificates",
+                "--ignore-config",
+                "--no-warnings",
+                "--add-header", "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36",
+                "--add-header", "Accept-Language: en-US,en;q=0.9",
+                target_url
+            ]
             process = await asyncio.create_subprocess_exec(
                 *cmd,
                 stdout=asyncio.subprocess.PIPE,
@@ -83,7 +94,8 @@ class MediaExtractor:
                     # Check stderr if process ended early
                     if process.returncode is not None and process.returncode != 0:
                         stderr_data = await process.stderr.read()
-                        logging.error(f"[MediaExtractor] FFmpeg exited with code {process.returncode}: {stderr_data.decode()}")
+                        err_msg = stderr_data.decode()
+                        print(f"[MediaExtractor] FFmpeg exited with code {process.returncode}: {err_msg}")
                     break
                 
                 buffer.extend(chunk)
@@ -107,10 +119,27 @@ class MediaExtractor:
         except Exception as e:
             logging.error(f"[MediaExtractor] Stream processing error: {e}")
         finally:
+            # Final cleanup and check for last frame
             if process.returncode is None:
                 try:
-                    process.terminate()
-                    await process.wait()
+                    # Give it a tiny bit of time to finish
+                    await asyncio.sleep(0.1)
+                    if process.returncode is None:
+                        process.terminate()
                 except:
                     pass
-            logging.info("[MediaExtractor] FFmpeg process cleaned up.")
+            
+            # Read any remaining data in buffer
+            if buffer:
+                header = b"\x89PNG\r\n\x1a\n"
+                start_idx = buffer.find(header)
+                if start_idx != -1:
+                    yield buffer[start_idx:]
+            
+            # Get return code and stderr
+            return_code = await process.wait()
+            stderr_data = await process.stderr.read()
+            if return_code != 0 and return_code != -15: # -15 is SIGTERM
+                print(f"[MediaExtractor] FFmpeg failed with code {return_code}: {stderr_data.decode()}")
+            
+            logging.info(f"[MediaExtractor] FFmpeg process cleaned up with code {return_code}")

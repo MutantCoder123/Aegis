@@ -73,6 +73,22 @@ async def scrape_telegram():
 async def run_stealth_extractor():
     print("[*] Stealth Extraction Worker initiated.")
     
+    # Diagnostics
+    print("[*] Diagnostic Check:")
+    try:
+        proc = await asyncio.create_subprocess_exec("ffmpeg", "-version", stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE)
+        await proc.wait()
+        print("    [OK] ffmpeg is available.")
+    except Exception as e:
+        print(f"    [FAIL] ffmpeg check failed: {e}")
+
+    try:
+        proc = await asyncio.create_subprocess_exec("python3", "-m", "yt_dlp", "--version", stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE)
+        stdout, _ = await proc.communicate()
+        print(f"    [OK] yt-dlp is available (version {stdout.decode().strip()}).")
+    except Exception as e:
+        print(f"    [FAIL] yt-dlp check failed: {e}")
+    
     # Initialize CLIP model once
     vectorizer = CLIPVectorizer()
     
